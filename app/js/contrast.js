@@ -1,4 +1,11 @@
 function initRenderContrast() {
+	clearError();
+
+	if (!image.file || !image.dimensions) {
+		showError('Load an image before running a contrast test.');
+		return false;
+	}
+
 	if (!cachedPixels) {
 		setLoadingState(true, 'Caching image and highlighting conflicting contrasts.');
 	} else {
@@ -7,7 +14,20 @@ function initRenderContrast() {
 
 	var context = getContext();
 
-	setTimeout(renderContrastIssues.bind(null, context), 250);
+	if (!context) {
+		setLoadingState(false);
+		showError('Your browser could not initialize the image preview canvas.');
+		return false;
+	}
+
+	setTimeout(function() {
+		try {
+			renderContrastIssues(context);
+		} catch (error) {
+			setLoadingState(false);
+			showError(error.message);
+		}
+	}, 250);
 }
 
 function renderContrastIssues(context) {
@@ -24,7 +44,7 @@ function renderContrastIssues(context) {
 	var testColor = getTestColor();
 
 	for (var x = 0; x < width; x++) {
-		for (y = 0; y < height; y++) {
+		for (var y = 0; y < height; y++) {
 			renderContrastIssue(context, testContrast, testColor, x, y);
 		}
 	}

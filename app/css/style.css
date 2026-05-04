@@ -108,6 +108,7 @@ h2 {
 }
 
 .notice,
+.error-panel,
 .upload-panel,
 .checker-stage {
 	border: 1px solid var(--border);
@@ -119,6 +120,16 @@ h2 {
 .notice {
 	margin-bottom: 20px;
 	padding: 16px 18px;
+}
+
+.error-panel {
+	margin-bottom: 20px;
+	padding: 14px 16px;
+	border-color: #b42318;
+	background: #fff4f2;
+	box-shadow: none;
+	color: #7a271a;
+	font-weight: 700;
 }
 
 .upload-panel {

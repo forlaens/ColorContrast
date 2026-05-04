@@ -10,7 +10,7 @@ function getCanvasCursorPosition(e, canvas) {
 
 function getCanvas() {
 	var canvas = selector('#image_preview');
-	if (typeof canvas.getContext === 'undefined') {
+	if (!canvas || typeof canvas.getContext === 'undefined') {
 		return false;
 	}
 	return canvas;
@@ -20,6 +20,11 @@ function getContext(canvas) {
 	if (!canvas) {
 		canvas = getCanvas();
 	}
+
+	if (!canvas) {
+		return false;
+	}
+
 	return canvas.getContext('2d');
 }
 

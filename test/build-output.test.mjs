@@ -91,6 +91,11 @@ test('document provides a skip link to main content', async () => {
   assert.match(index, /<main id="main-content" class="app-shell" tabindex="-1">/);
 });
 
+test('document provides an accessible error region', async () => {
+  const index = await readFile(join(distDir, 'index.html'), 'utf8');
+  assert.match(index, /<div hidden id="app-error" class="error-panel" role="alert" tabindex="-1"><\/div>/);
+});
+
 test('release favicon folder excludes unused legacy assets', async () => {
   const files = await readdir(join(distDir, 'img/favicon'));
   assert.equal(files.some((file) => file.endsWith('.svg')), false);

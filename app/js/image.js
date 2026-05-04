@@ -8,13 +8,19 @@ function recalcImage() {
 		return false;
 	}
 
-	updatePreviewCanvas();
+	try {
+		updatePreviewCanvas();
 
-	var context = getContext();
-	cachePixels(context);
+		var context = getContext();
+		cachePixels(context);
+	} catch (error) {
+		showError(error.message);
+	}
 }
 
 function loadImagePreview() {
+	clearError();
+
 	var files = id('image_file').files;
 	var file = imageValidation(files[0]);
 
@@ -25,15 +31,36 @@ function loadImagePreview() {
 
 	cachedPixels = false;
 
-	reader = new FileReader();
+	var reader = new FileReader();
 	reader.onload = function(event) {
-		image.file = new Image;
-		image.file.onload = updatePreviewCanvas;
-		image.file.src = event.target.result;
-	}
-	reader.readAsDataURL(file);
+		var loadedImage = new Image();
 
-	showStep(2);
+		loadedImage.onload = function() {
+			image.file = loadedImage;
+			showStep(2);
+
+			try {
+				updatePreviewCanvas();
+			} catch (error) {
+				showStep(1);
+				showError(error.message);
+			}
+		};
+
+		loadedImage.onerror = function() {
+			showStep(1);
+			showError('The selected file could not be decoded as an image.');
+		};
+
+		loadedImage.src = event.target.result;
+	}
+
+	reader.onerror = function() {
+		showStep(1);
+		showError('The selected file could not be read. Please choose another image.');
+	};
+
+	reader.readAsDataURL(file);
 }
 
 function updatePreviewCanvas() {
@@ -42,7 +69,20 @@ function updatePreviewCanvas() {
 	var canvas = getCanvas();
 	var context = getContext();
 
+	if (!canvas || !context) {
+		throw new Error('Your browser could not initialize the image preview canvas.');
+	}
+
+	if (!image.file || !image.file.width || !image.file.height) {
+		throw new Error('No readable image is loaded yet.');
+	}
+
 	image.dimensions = scaleImage(canvas);
+
+	if (!image.dimensions.width || !image.dimensions.height) {
+		throw new Error('The selected image could not be sized for preview.');
+	}
+
 	canvas.width = canvas.offsetWidth;
 	canvas.height = image.dimensions.height;
 	context.clearRect(0, 0, canvas.width, canvas.height);
@@ -88,6 +128,10 @@ function resizePreviewFrame() {
 }
 
 function cachePixels(context) {
+	if (!context || !image.dimensions) {
+		throw new Error('The image preview is not ready yet.');
+	}
+
 	cachedPixels = context.getImageData(0, 0, image.dimensions.width, image.dimensions.height).data;
 }
 
@@ -103,12 +147,12 @@ function getCachedPixel(x, y) {
 
 function imageValidation(file) {
 	if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
-		alert('The File APIs are not fully supported in this browser.');
+		showError('This browser cannot read local image files.');
 		return false;
 	}
 
 	if (typeof FileReader === 'undefined') {
-		alert('Your browser does not support this.');
+		showError('This browser does not support image previews.');
 		return false;
 	}
 
@@ -117,7 +161,7 @@ function imageValidation(file) {
 	}
 
 	if( !(/image/i).test(file.type) ) {
-		alert('File is not an image.');
+		showError('Please choose an image file.');
 		return false;
 	}
 

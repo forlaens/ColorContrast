@@ -7,6 +7,8 @@
 		<div class="notice">For this tool to work, your browser must have JavaScript enabled.</div>
 	</noscript>
 
+	<div hidden id="app-error" class="error-panel" role="alert" tabindex="-1"></div>
+
 	<section class="hero" aria-labelledby="app-title">
 		<div>
 			<h1 id="app-title">Image contrast checker</h1>
