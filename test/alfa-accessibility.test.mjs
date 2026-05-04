@@ -2,10 +2,35 @@ import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
 import { createServer } from 'node:net';
 import { once } from 'node:events';
+import { mkdir, writeFile } from 'node:fs/promises';
 import { test } from 'node:test';
+import AxeBuilder from '@axe-core/playwright';
 import { chromium } from 'playwright';
 import { Playwright } from '@siteimprove/alfa-playwright';
 import { Audit, Outcomes, Rules } from '@siteimprove/alfa-test-utils';
+
+const renderedRoutes = [
+  { name: 'home', path: '/' }
+];
+
+const axeTags = [
+  'wcag2a',
+  'wcag2aa',
+  'wcag21a',
+  'wcag21aa',
+  'wcag22a',
+  'wcag22aa',
+  'best-practice'
+];
+
+function buildApp() {
+  const build = spawnSync('npm', ['run', 'build'], {
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'pipe']
+  });
+
+  assert.equal(build.status, 0, [build.stdout, build.stderr].join('\n'));
+}
 
 async function getFreePort() {
   const server = createServer();
@@ -58,13 +83,34 @@ async function startStaticServer() {
   };
 }
 
-test('built app passes Siteimprove Alfa WCAG AA checks', async () => {
-  const build = spawnSync('npm', ['run', 'build'], {
-    encoding: 'utf8',
-    stdio: ['ignore', 'pipe', 'pipe']
-  });
+function formatAxeViolations(route, violations) {
+  return violations.map((violation) => {
+    const nodes = violation.nodes.map((node, index) => [
+      `  ${index + 1}. ${node.target.join(', ')}`,
+      node.failureSummary ? `     ${node.failureSummary.replaceAll('\n', '\n     ')}` : ''
+    ].filter(Boolean).join('\n'));
 
-  assert.equal(build.status, 0, [build.stdout, build.stderr].join('\n'));
+    return [
+      `${violation.id}: ${violation.help}`,
+      `Route: ${route.path}`,
+      `Impact: ${violation.impact ?? 'unknown'}`,
+      `Tags: ${violation.tags.join(', ')}`,
+      `Help: ${violation.helpUrl}`,
+      `Elements:\n${nodes.join('\n')}`
+    ].join('\n');
+  }).join('\n\n');
+}
+
+async function writeAxeReport(route, results) {
+  await mkdir('test-results/accessibility', { recursive: true });
+  await writeFile(
+    `test-results/accessibility/axe-${route.name}.json`,
+    `${JSON.stringify(results, null, 2)}\n`
+  );
+}
+
+test('built app passes Siteimprove Alfa WCAG AA checks', async () => {
+  buildApp();
 
   const server = await startStaticServer();
   let browser;
@@ -83,6 +129,42 @@ test('built app passes Siteimprove Alfa WCAG AA checks', async () => {
 
     const failed = audit.resultAggregates.reduce((total, result) => total + result.failed, 0);
     assert.equal(failed, 0, `Expected no Alfa WCAG AA failures, found ${failed}.`);
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
+test('built app passes axe WCAG A, WCAG AA, and best-practice checks', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+
+    for (const route of renderedRoutes) {
+      const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+      const page = await context.newPage();
+      await page.goto(new URL(route.path, server.url).toString(), { waitUntil: 'networkidle' });
+
+      const results = await new AxeBuilder({ page })
+        .withTags(axeTags)
+        .analyze();
+
+      await writeAxeReport(route, results);
+
+      assert.equal(
+        results.violations.length,
+        0,
+        formatAxeViolations(route, results.violations)
+      );
+
+      await context.close();
+    }
   } finally {
     if (browser) {
       await browser.close();
