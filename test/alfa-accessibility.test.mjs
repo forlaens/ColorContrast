@@ -228,6 +228,7 @@ test('load image without a selected file opens an empty checker canvas', async (
 
     assert.equal(await page.locator('#step-2').isVisible(), true);
     assert.equal(await page.locator('#step-1').evaluate((element) => element.hidden), true);
+    assert.equal(await page.locator('#step-1').isHidden(), true);
     assert.equal(await page.locator('#app-error').evaluate((element) => element.hidden), true);
     assert.equal(await page.locator('#image_preview').evaluate((canvas) => canvas.height), 320);
 

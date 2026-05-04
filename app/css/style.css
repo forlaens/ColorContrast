@@ -47,6 +47,10 @@ select {
 	outline-offset: 3px;
 }
 
+[hidden] {
+	display: none !important;
+}
+
 .skip-link {
 	position: absolute;
 	top: 12px;
@@ -135,7 +139,6 @@ h2 {
 }
 
 .intro-panel {
-	margin-bottom: 18px;
 	padding: 18px;
 	box-shadow: none;
 }
@@ -182,7 +185,12 @@ h2 {
 	grid-template-columns: 1fr auto;
 	align-items: center;
 	gap: 16px;
+	margin-bottom: 18px;
 	padding: 16px;
+}
+
+.intro-panel {
+	margin-bottom: 18px;
 }
 
 .upload-dropzone {
