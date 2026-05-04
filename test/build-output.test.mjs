@@ -85,6 +85,12 @@ test('document avoids deprecated mobile app meta tags', async () => {
   assert.match(index, /<meta name="mobile-web-app-capable" content="yes">/);
 });
 
+test('document provides a skip link to main content', async () => {
+  const index = await readFile(join(distDir, 'index.html'), 'utf8');
+  assert.match(index, /<a class="skip-link" href="#main-content">Skip to main content<\/a>/);
+  assert.match(index, /<main id="main-content" class="app-shell" tabindex="-1">/);
+});
+
 test('release favicon folder excludes unused legacy assets', async () => {
   const files = await readdir(join(distDir, 'img/favicon'));
   assert.equal(files.some((file) => file.endsWith('.svg')), false);

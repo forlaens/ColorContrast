@@ -1,6 +1,8 @@
 <?php include($_SERVER['DOCUMENT_ROOT'] . '/include/layout/head.php'); ?>
 
-<main class="app-shell">
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<main id="main-content" class="app-shell" tabindex="-1">
 	<noscript>
 		<div class="notice">For this tool to work, your browser must have JavaScript enabled.</div>
 	</noscript>
