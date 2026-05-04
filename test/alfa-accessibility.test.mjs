@@ -3,6 +3,7 @@ import { spawn, spawnSync } from 'node:child_process';
 import { createServer } from 'node:net';
 import { once } from 'node:events';
 import { mkdir, writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 import { test } from 'node:test';
 import AxeBuilder from '@axe-core/playwright';
 import { chromium } from 'playwright';
@@ -231,6 +232,37 @@ test('load image without a selected file opens an empty checker canvas', async (
     assert.equal(await page.locator('#step-1').isHidden(), true);
     assert.equal(await page.locator('#app-error').evaluate((element) => element.hidden), true);
     assert.equal(await page.locator('#image_preview').evaluate((canvas) => canvas.height), 320);
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
+test('loading a selected image hides the image chooser in canvas view', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    await page.locator('#image_file').setInputFiles(resolve('dist/app/img/social-card.png'));
+    await page.locator('input[type="submit"][value="Load image"]').click();
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
+
+    assert.equal(await page.locator('#step-2').isVisible(), true);
+    assert.equal(await page.locator('#step-1').evaluate((element) => element.hidden), true);
+    assert.equal(await page.locator('#step-1').isHidden(), true);
+    assert.equal(await page.locator('#step-1').getAttribute('aria-hidden'), 'true');
+    assert.equal(await page.locator('#image_preview').evaluate((canvas) => canvas.height > 0), true);
 
     await context.close();
   } finally {

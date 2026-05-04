@@ -4,8 +4,11 @@ function showStep(stepNumber) {
 	var newStep = id('step-' + stepNumber);
 
 	step1.hidden = true;
+	step1.setAttribute('aria-hidden', 'true');
 	step2.hidden = true;
+	step2.setAttribute('aria-hidden', 'true');
 	newStep.hidden = false;
+	newStep.removeAttribute('aria-hidden');
 }
 
 function showError(message) {
