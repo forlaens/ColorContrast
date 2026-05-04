@@ -16,6 +16,15 @@
 		</div>
 	</section>
 
+	<form id="step-1" class="step upload-panel" action="" method="POST" enctype="multipart/form-data" onsubmit="loadImagePreview(); return false;">
+		<label class="upload-dropzone">
+			<span class="upload-title">Choose an image</span>
+			<span class="upload-copy">PNG, JPG, GIF, or SVG. The file stays in your browser.</span>
+			<input id="image_file" type="file" name="image" accept="image/*">
+		</label>
+		<input class="cta" type="submit" value="Load image">
+	</form>
+
 	<section class="intro-panel" aria-labelledby="intro-title">
 		<h2 id="intro-title">How to use it</h2>
 		<ol class="steps">
@@ -33,15 +42,6 @@
 			</li>
 		</ol>
 	</section>
-
-	<form id="step-1" class="step upload-panel" action="" method="POST" enctype="multipart/form-data" onsubmit="loadImagePreview(); return false;">
-		<label class="upload-dropzone">
-			<span class="upload-title">Choose an image</span>
-			<span class="upload-copy">PNG, JPG, GIF, or SVG. The file stays in your browser.</span>
-			<input id="image_file" type="file" name="image" accept="image/*">
-		</label>
-		<input class="cta" type="submit" value="Load image">
-	</form>
 
 	<section hidden id="step-2" class="step checker-stage" aria-labelledby="checker-title">
 		<div class="stage-header">

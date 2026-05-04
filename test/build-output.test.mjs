@@ -115,6 +115,7 @@ test('document explains purpose and basic use without eyebrow labels', async () 
   assert.match(index, /<h2 id="intro-title">How to use it<\/h2>/);
   assert.match(index, /Check whether text or UI colors have enough contrast/);
   assert.match(index, /The file stays in your browser/);
+  assert.ok(index.indexOf('id="step-1"') < index.indexOf('id="intro-title"'));
   assert.equal(index.includes('class="eyebrow"'), false);
 });
 
