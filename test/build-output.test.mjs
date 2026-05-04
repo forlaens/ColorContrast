@@ -79,6 +79,12 @@ test('document does not reference SVG or ICO favicons', async () => {
   assert.equal(index.includes('safari-pinned-tab.svg'), false);
 });
 
+test('document avoids deprecated mobile app meta tags', async () => {
+  const index = await readFile(join(distDir, 'index.html'), 'utf8');
+  assert.equal(index.includes('apple-mobile-web-app-capable'), false);
+  assert.match(index, /<meta name="mobile-web-app-capable" content="yes">/);
+});
+
 test('release favicon folder excludes unused legacy assets', async () => {
   const files = await readdir(join(distDir, 'img/favicon'));
   assert.equal(files.some((file) => file.endsWith('.svg')), false);

@@ -38,7 +38,7 @@
 	<link rel="icon" type="image/png" sizes="64x64" href="/img/favicon/favicon-64x64.png">
 	<link rel="manifest" href="/manifest.webmanifest">
 	<meta name="apple-mobile-web-app-title" content="Contrast">
-	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="default">
 	<meta name="application-name" content="Contrast">
 	<meta name="msapplication-TileColor" content="#ffffff">
