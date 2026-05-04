@@ -4,7 +4,7 @@ var image = {};
 window.onresize = recalcImage;
 
 function recalcImage() {
-	if (!image.dimensions.width) {
+	if (!image.dimensions || !image.dimensions.width) {
 		return false;
 	}
 
@@ -43,28 +43,48 @@ function updatePreviewCanvas() {
 	var context = getContext();
 
 	image.dimensions = scaleImage(canvas);
+	canvas.width = canvas.offsetWidth;
 	canvas.height = image.dimensions.height;
+	context.clearRect(0, 0, canvas.width, canvas.height);
 
 	renderImage(context, image.file);
 	cachePixels(context);
 }
 
 function scaleImage(canvas) {
-	canvas.width = canvas.offsetWidth;
-	canvas.height = canvas.offsetHeight;
+	resizePreviewFrame();
 
-	var scale = 1;
-	var widthDiff = 0;
-
-	if (image.file.width > canvas.width) {
-		widthDiff = image.file.width - canvas.width;
-		scale = canvas.width / image.file.width;
-	}
+	var canvasWidth = canvas.offsetWidth;
+	var scale = Math.min(1, canvasWidth / image.file.width);
 
 	var width = Math.floor(image.file.width * scale);
 	var height = Math.floor(image.file.height * scale);
 
 	return { width, height };
+}
+
+function resizePreviewFrame() {
+	var previewArea = selector('#preview_area');
+	var toolbar = selector('[role=toolbar]');
+	var scrollArea = selector('.checker-scroll');
+
+	if (!previewArea || !toolbar || !scrollArea || !image.file) {
+		return false;
+	}
+
+	var areaStyles = window.getComputedStyle(previewArea);
+	var horizontalSpacing =
+		parseFloat(areaStyles.paddingLeft) +
+		parseFloat(areaStyles.paddingRight) +
+		parseFloat(areaStyles.borderLeftWidth) +
+		parseFloat(areaStyles.borderRightWidth);
+	var minimumWidth = Math.ceil(toolbar.scrollWidth + horizontalSpacing);
+	var availableWidth = scrollArea.clientWidth;
+	var preferredWidth = Math.min(image.file.width, availableWidth);
+	var width = Math.max(preferredWidth, minimumWidth);
+
+	previewArea.style.setProperty('--checker-min-width', minimumWidth + 'px');
+	previewArea.style.width = width + 'px';
 }
 
 function cachePixels(context) {

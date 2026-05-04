@@ -35,6 +35,7 @@ test('build creates a static release artifact', async () => {
   assert.match(index, /<title>Image contrast checker<\/title>/);
   assert.match(index, /<meta property="og:image" content="https:\/\/example\.com\/img\/social-card\.png">/);
   assert.match(index, /<script src="\/js\/app\.js" defer><\/script>/);
+  assert.match(index, /<link rel="manifest" href="\/manifest\.webmanifest">/);
 
   const files = await listFiles(distDir);
   assert.equal(files.some((file) => extname(file) === '.php'), false);
@@ -51,4 +52,15 @@ test('social card asset has expected dimensions', async () => {
 
   assert.equal(width, 1200);
   assert.equal(height, 630);
+});
+
+test('build includes PWA files', async () => {
+  const manifest = JSON.parse(await readFile(join(distDir, 'manifest.webmanifest'), 'utf8'));
+  const serviceWorker = await readFile(join(distDir, 'sw.js'), 'utf8');
+
+  assert.equal(manifest.display, 'standalone');
+  assert.equal(manifest.start_url, '/');
+  assert.equal(manifest.icons.length >= 2, true);
+  assert.match(serviceWorker, /colorcontrast-v1/);
+  assert.match(serviceWorker, /\/css\/style\.css/);
 });

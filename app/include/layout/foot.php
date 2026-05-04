@@ -6,5 +6,6 @@
 	<script src="/js/contrast.js" defer></script>
 	<script src="/js/color.js" defer></script>
 	<script src="/js/util.js" defer></script>
+	<script src="/js/pwa.js" defer></script>
 </body>
 </html>
