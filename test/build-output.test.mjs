@@ -43,7 +43,7 @@ test('build creates a static release artifact', async () => {
 });
 
 test('build includes backup folder placeholder', async () => {
-  const files = await readdir(join(distDir, 'backups'));
+  const files = await readdir(join(distDir, 'backup'));
   assert.deepEqual(files, ['.gitkeep']);
 });
 
