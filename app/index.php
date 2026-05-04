@@ -7,7 +7,6 @@
 
 	<section class="hero" aria-labelledby="app-title">
 		<div>
-			<p class="eyebrow">WCAG image review</p>
 			<h1 id="app-title">Image contrast checker</h1>
 			<p class="lede">Upload an image, choose a foreground color, and highlight areas that miss your contrast target.</p>
 		</div>
