@@ -75,16 +75,7 @@ select {
 	display: flex;
 	justify-content: space-between;
 	gap: 32px;
-	margin-bottom: 24px;
-}
-
-.eyebrow {
-	margin: 0 0 8px;
-	color: var(--accent-dark);
-	font-size: 0.78rem;
-	font-weight: 800;
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
+	margin-bottom: 18px;
 }
 
 h1,
@@ -109,6 +100,7 @@ h2 {
 
 .notice,
 .error-panel,
+.intro-panel,
 .upload-panel,
 .checker-stage {
 	border: 1px solid var(--border);
@@ -130,6 +122,49 @@ h2 {
 	box-shadow: none;
 	color: #7a271a;
 	font-weight: 700;
+}
+
+.intro-panel {
+	margin-bottom: 18px;
+	padding: 18px;
+	box-shadow: none;
+}
+
+.intro-panel h2 {
+	font-size: 1.15rem;
+	line-height: 1.2;
+}
+
+.steps {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 12px;
+	margin: 14px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.steps li {
+	display: grid;
+	gap: 3px;
+	padding: 14px;
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	background: var(--panel-soft);
+}
+
+.steps strong {
+	color: var(--text);
+}
+
+.steps span,
+.stage-copy {
+	color: var(--text);
+}
+
+.stage-copy {
+	max-width: 620px;
+	margin: 8px 0 0;
 }
 
 .upload-panel {
@@ -385,11 +420,13 @@ input[type=color] {
 
 	.hero,
 	.stage-header,
-	.upload-panel {
+	.upload-panel,
+	.steps {
 		display: grid;
 	}
 
-	.upload-panel {
+	.upload-panel,
+	.steps {
 		grid-template-columns: 1fr;
 	}
 

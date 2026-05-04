@@ -96,6 +96,14 @@ test('document provides an accessible error region', async () => {
   assert.match(index, /<div hidden id="app-error" class="error-panel" role="alert" tabindex="-1"><\/div>/);
 });
 
+test('document explains purpose and basic use without eyebrow labels', async () => {
+  const index = await readFile(join(distDir, 'index.html'), 'utf8');
+  assert.match(index, /<h2 id="intro-title">How to use it<\/h2>/);
+  assert.match(index, /Check whether text or UI colors have enough contrast/);
+  assert.match(index, /The file stays in your browser/);
+  assert.equal(index.includes('class="eyebrow"'), false);
+});
+
 test('release favicon folder excludes unused legacy assets', async () => {
   const files = await readdir(join(distDir, 'img/favicon'));
   assert.equal(files.some((file) => file.endsWith('.svg')), false);

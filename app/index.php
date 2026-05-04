@@ -12,14 +12,32 @@
 	<section class="hero" aria-labelledby="app-title">
 		<div>
 			<h1 id="app-title">Image contrast checker</h1>
-			<p class="lede">Upload an image, choose a foreground color, and highlight areas that miss your contrast target.</p>
+			<p class="lede">Check whether text or UI colors have enough contrast when placed on top of an image.</p>
 		</div>
+	</section>
+
+	<section class="intro-panel" aria-labelledby="intro-title">
+		<h2 id="intro-title">How to use it</h2>
+		<ol class="steps">
+			<li>
+				<strong>Upload an image</strong>
+				<span>Use a screenshot, design export, or content image.</span>
+			</li>
+			<li>
+				<strong>Pick the foreground color</strong>
+				<span>Choose the text or UI color you want to test.</span>
+			</li>
+			<li>
+				<strong>Run the test</strong>
+				<span>The preview highlights image areas that do not meet the selected contrast target.</span>
+			</li>
+		</ol>
 	</section>
 
 	<form id="step-1" class="step upload-panel" action="" method="POST" enctype="multipart/form-data" onsubmit="loadImagePreview(); return false;">
 		<label class="upload-dropzone">
 			<span class="upload-title">Choose an image</span>
-			<span class="upload-copy">PNG, JPG, GIF, or SVG from your device.</span>
+			<span class="upload-copy">PNG, JPG, GIF, or SVG. The file stays in your browser.</span>
 			<input id="image_file" type="file" name="image" accept="image/*">
 		</label>
 		<input class="cta" type="submit" value="Load image">
@@ -28,8 +46,8 @@
 	<section hidden id="step-2" class="step checker-stage" aria-labelledby="checker-title">
 		<div class="stage-header">
 			<div>
-				<p class="eyebrow">Contrast workspace</p>
 				<h2 id="checker-title">Highlight contrast issues</h2>
+				<p class="stage-copy">Highlighted pixels are places where the chosen color does not meet the selected WCAG ratio.</p>
 			</div>
 			<div class="stage-actions">
 				<input type="button" class="cta secondary" onclick="resetFileInput(); showStep(1);" value="New image">
