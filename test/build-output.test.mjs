@@ -43,8 +43,8 @@ test('build creates a static release artifact', async () => {
 });
 
 test('social card asset has expected dimensions', async () => {
-  const file = await stat(join(distDir, 'img/social-card.png'));
-  assert.equal(file.size > 0, true);
+ const file = await stat(join(distDir, 'img/social-card.png'));
+ assert.equal(file.size > 0, true);
 
   const image = await readFile(join(distDir, 'img/social-card.png'));
   const width = image.readUInt32BE(16);
@@ -52,6 +52,39 @@ test('social card asset has expected dimensions', async () => {
 
   assert.equal(width, 1200);
   assert.equal(height, 630);
+});
+
+test('favicon assets use the expected PNG sizes', async () => {
+  const icons = new Map([
+    ['favicon-16x16.png', 16],
+    ['favicon-32x32.png', 32],
+    ['favicon-48x48.png', 48],
+    ['favicon-64x64.png', 64],
+    ['apple-touch-icon.png', 180],
+    ['android-chrome-192x192.png', 192],
+    ['android-chrome-512x512.png', 512]
+  ]);
+
+  for (const [fileName, size] of icons) {
+    const image = await readFile(join(distDir, 'img/favicon', fileName));
+    assert.equal(image.readUInt32BE(16), size, fileName);
+    assert.equal(image.readUInt32BE(20), size, fileName);
+  }
+});
+
+test('document does not reference SVG or ICO favicons', async () => {
+  const index = await readFile(join(distDir, 'index.html'), 'utf8');
+  assert.equal(index.includes('mask-icon'), false);
+  assert.equal(index.includes('favicon.ico'), false);
+  assert.equal(index.includes('safari-pinned-tab.svg'), false);
+});
+
+test('release favicon folder excludes unused legacy assets', async () => {
+  const files = await readdir(join(distDir, 'img/favicon'));
+  assert.equal(files.some((file) => file.endsWith('.svg')), false);
+  assert.equal(files.some((file) => file.endsWith('.ico')), false);
+  assert.equal(files.some((file) => file.startsWith('mstile-')), false);
+  assert.equal(files.includes('browserconfig.xml'), false);
 });
 
 test('build includes PWA files', async () => {

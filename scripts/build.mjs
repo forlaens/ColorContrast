@@ -1,4 +1,4 @@
-import { cp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readdir, rm, writeFile } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
 import { resolve } from 'node:path';
 
@@ -31,6 +31,22 @@ for (const path of ['css', 'img', 'js', '.htaccess', 'manifest.webmanifest', 'sw
     recursive: true,
     verbatimSymlinks: true
   });
+}
+
+for (const file of await readdir(resolve(distAppDir, 'img/favicon'))) {
+  const keep = [
+    'android-chrome-192x192.png',
+    'android-chrome-512x512.png',
+    'apple-touch-icon.png',
+    'favicon-16x16.png',
+    'favicon-32x32.png',
+    'favicon-48x48.png',
+    'favicon-64x64.png'
+  ].includes(file);
+
+  if (!keep) {
+    await rm(resolve(distAppDir, 'img/favicon', file), { force: true });
+  }
 }
 
 const rendered = spawnSync('php', ['scripts/render-page.php'], {
