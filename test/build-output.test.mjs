@@ -43,8 +43,17 @@ test('build creates a static release artifact', async () => {
 });
 
 test('build includes backup folder placeholder', async () => {
-  const files = await readdir(join(distDir, 'backups'));
+  const files = await readdir(join(distDir, 'backup'));
   assert.deepEqual(files, ['.gitkeep']);
+});
+
+test('release config forces HTTPS and removes www', async () => {
+  const htaccess = await readFile(join(distDir, '.htaccess'), 'utf8');
+
+  assert.match(htaccess, /RewriteEngine On/);
+  assert.match(htaccess, /RewriteCond %\{HTTPS\} off \[OR\]/);
+  assert.match(htaccess, /RewriteCond %\{HTTP_HOST\} \^www\\\. \[NC\]/);
+  assert.match(htaccess, /RewriteRule \^ https:\/\/%1%\{REQUEST_URI\} \[L,NE,R=301\]/);
 });
 
 test('social card asset has expected dimensions', async () => {

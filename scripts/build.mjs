@@ -26,7 +26,7 @@ const distAppDir = resolve('dist/app');
 await rm(distDir, { recursive: true, force: true });
 await mkdir(distDir, { recursive: true });
 
-for (const path of ['backups', 'css', 'img', 'js', '.htaccess', 'manifest.webmanifest', 'sw.js']) {
+for (const path of ['backup', 'css', 'img', 'js', '.htaccess', 'manifest.webmanifest', 'sw.js']) {
   await cp(resolve('app', path), resolve(distAppDir, path), {
     recursive: true,
     verbatimSymlinks: true
