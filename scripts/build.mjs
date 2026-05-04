@@ -1,4 +1,4 @@
-import { cp, mkdir, rm } from 'node:fs/promises';
+import { cp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
 import { resolve } from 'node:path';
 
@@ -18,15 +18,38 @@ function run(command, args) {
 }
 
 run(process.execPath, ['scripts/check.mjs']);
+run('php', ['scripts/generate-social-card.php']);
 
 const distDir = resolve('dist');
 const distAppDir = resolve('dist/app');
 
 await rm(distDir, { recursive: true, force: true });
 await mkdir(distDir, { recursive: true });
-await cp(resolve('app'), distAppDir, {
-  recursive: true,
-  verbatimSymlinks: true
+
+for (const path of ['css', 'img', 'js', '.htaccess']) {
+  await cp(resolve('app', path), resolve(distAppDir, path), {
+    recursive: true,
+    verbatimSymlinks: true
+  });
+}
+
+const rendered = spawnSync('php', ['scripts/render-page.php'], {
+  encoding: 'utf8',
+  env: {
+    ...process.env,
+    SITE_URL: process.env.SITE_URL ?? 'https://example.com'
+  }
 });
 
-console.log('Built app into dist/app.');
+if (rendered.error) {
+  throw rendered.error;
+}
+
+if (rendered.status !== 0) {
+  process.stderr.write(rendered.stderr);
+  process.exit(rendered.status ?? 1);
+}
+
+await writeFile(resolve(distAppDir, 'index.html'), rendered.stdout);
+
+console.log('Built static app into dist/app.');

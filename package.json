@@ -8,8 +8,9 @@
     "assets": "php scripts/generate-social-card.php",
     "dev": "php -S 127.0.0.1:8000 -t app",
     "check": "node scripts/check.mjs",
+    "test": "node --test",
     "clean": "node scripts/clean.mjs",
-    "build": "npm run assets && node scripts/build.mjs"
+    "build": "node scripts/build.mjs"
   },
   "engines": {
     "node": ">=18"

@@ -2,7 +2,7 @@ import { readdir } from 'node:fs/promises';
 import { extname, join, relative } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
-const sourceDirs = ['app', 'scripts'];
+const sourceDirs = ['app', 'scripts', 'test'];
 const jsFiles = [];
 const phpFiles = [];
 
