@@ -1,4 +1,5 @@
 	<script src="/js/script.js" defer></script>
+	<script src="/js/i18n.js" defer></script>
 	<script src="/js/app.js" defer></script>
 	<script src="/js/canvas.js" defer></script>
 	<script src="/js/toolbar.js" defer></script>

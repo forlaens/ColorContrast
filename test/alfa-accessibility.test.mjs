@@ -13,6 +13,8 @@ const renderedRoutes = [
   { name: 'home', path: '/' }
 ];
 
+const supportedLanguages = ['en', 'da', 'no', 'sv', 'fi', 'kl', 'is', 'fo', 'es', 'de', 'fr', 'pt', 'it'];
+
 const axeTags = [
   'wcag2a',
   'wcag2aa',
@@ -172,3 +174,44 @@ test('built app passes axe WCAG A, WCAG AA, and best-practice checks', async () 
     await server.stop();
   }
 });
+
+test('built app supports every language in the switcher', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    const languages = await page.locator('#language-switcher option').evaluateAll((options) => {
+      return options.map((option) => option.value);
+    });
+
+    assert.deepEqual(languages, supportedLanguages);
+
+    for (const language of supportedLanguages) {
+      await page.selectOption('#language-switcher', language);
+      await page.waitForFunction((expected) => document.documentElement.lang === expected, language);
+
+      const heading = await page.locator('#app-title').textContent();
+      assert.equal(await page.locator('#language-switcher').inputValue(), language);
+      assert.equal(await documentLanguage(page), language);
+      assert.equal((heading || '').trim().length > 0, true);
+    }
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
+async function documentLanguage(page) {
+  return page.evaluate(() => document.documentElement.lang);
+}

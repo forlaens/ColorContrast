@@ -74,8 +74,18 @@ select {
 .hero {
 	display: flex;
 	justify-content: space-between;
+	align-items: start;
 	gap: 32px;
 	margin-bottom: 18px;
+}
+
+.language-switcher {
+	display: grid;
+	gap: 6px;
+	min-width: 180px;
+	color: var(--muted);
+	font-size: 0.78rem;
+	font-weight: 750;
 }
 
 h1,
@@ -423,6 +433,11 @@ input[type=color] {
 	.upload-panel,
 	.steps {
 		display: grid;
+	}
+
+	.language-switcher {
+		min-width: 0;
+		max-width: 240px;
 	}
 
 	.upload-panel,

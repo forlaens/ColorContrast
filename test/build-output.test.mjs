@@ -101,7 +101,7 @@ test('document avoids deprecated mobile app meta tags', async () => {
 
 test('document provides a skip link to main content', async () => {
   const index = await readFile(join(distDir, 'index.html'), 'utf8');
-  assert.match(index, /<a class="skip-link" href="#main-content">Skip to main content<\/a>/);
+  assert.match(index, /<a class="skip-link" href="#main-content" data-i18n="skipLink">Skip to main content<\/a>/);
   assert.match(index, /<main id="main-content" class="app-shell" tabindex="-1">/);
 });
 
@@ -112,11 +112,21 @@ test('document provides an accessible error region', async () => {
 
 test('document explains purpose and basic use without eyebrow labels', async () => {
   const index = await readFile(join(distDir, 'index.html'), 'utf8');
-  assert.match(index, /<h2 id="intro-title">How to use it<\/h2>/);
+  assert.match(index, /<h2 id="intro-title" data-i18n="introTitle">How to use it<\/h2>/);
   assert.match(index, /Check whether text or UI colors have enough contrast/);
   assert.match(index, /The file stays in your browser/);
   assert.ok(index.indexOf('id="step-1"') < index.indexOf('id="intro-title"'));
   assert.equal(index.includes('class="eyebrow"'), false);
+});
+
+test('document includes language switcher support', async () => {
+  const index = await readFile(join(distDir, 'index.html'), 'utf8');
+  const i18n = await readFile(join(distDir, 'js/i18n.js'), 'utf8');
+
+  assert.match(index, /<select id="language-switcher" name="language" autocomplete="off"><\/select>/);
+  assert.match(index, /<script src="\/js\/i18n\.js" defer><\/script>/);
+  assert.match(i18n, /code: 'kl'/);
+  assert.match(i18n, /code: 'it'/);
 });
 
 test('release favicon folder excludes unused legacy assets', async () => {

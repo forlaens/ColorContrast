@@ -15,7 +15,7 @@ function showError(message) {
 		return false;
 	}
 
-	errorPanel.textContent = message || 'Something went wrong. Please try again.';
+	errorPanel.textContent = message || translate('genericError');
 	errorPanel.hidden = false;
 	errorPanel.focus();
 }
@@ -52,7 +52,7 @@ function setLoadingState(state, message) {
 	if (state === false) {
 		message = '';
 	} else if (!message) {
-		message = 'Please wait.';
+		message = translate('pleaseWait');
 	}
 
 	previewArea.setAttribute('aria-busy', state)
