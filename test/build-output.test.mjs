@@ -42,6 +42,11 @@ test('build creates a static release artifact', async () => {
   assert.equal(files.some((file) => file.includes('/include/')), false);
 });
 
+test('build includes backup folder placeholder', async () => {
+  const files = await readdir(join(distDir, 'backups'));
+  assert.deepEqual(files, ['.gitkeep']);
+});
+
 test('social card asset has expected dimensions', async () => {
  const file = await stat(join(distDir, 'img/social-card.png'));
  assert.equal(file.size > 0, true);
