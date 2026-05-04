@@ -1,0 +1,33 @@
+function showStep(stepNumber) {
+	var step1 = id('step-1');
+	var step2 = id('step-2');
+	var newStep = id('step-' + stepNumber);
+
+	step1.hidden = true;
+	step2.hidden = true;
+	newStep.hidden = false;
+}
+
+function setLoadingState(state, message) {
+	var loadingText = selector('[role=status].loading');
+	var previewArea = selector('#preview_area');
+	var toolbar = selector('[role=toolbar]');
+	var toolbarButtons = toolbar.querySelectorAll('button, input, select');
+
+	state = (state === true);
+
+	for (var i = 0; i < toolbarButtons.length; i++) {
+		var button = toolbarButtons[i];
+		button.disabled = state;
+	}
+
+	if (state === false) {
+		message = '';
+	} else if (!message) {
+		message = 'Please wait.';
+	}
+
+	previewArea.setAttribute('aria-busy', state)
+	loadingText.hidden = !state;
+	loadingText.textContent = message;
+}

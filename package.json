@@ -1,0 +1,17 @@
+{
+  "name": "color-contrast",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Image contrast checker web app.",
+  "type": "module",
+  "scripts": {
+    "assets": "php scripts/generate-social-card.php",
+    "dev": "php -S 127.0.0.1:8000 -t app",
+    "check": "node scripts/check.mjs",
+    "clean": "node scripts/clean.mjs",
+    "build": "npm run assets && node scripts/build.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
