@@ -25,7 +25,8 @@ function loadImagePreview() {
 	var file = imageValidation(files[0]);
 
 	if (!file) {
-		showStep(1);
+		showStep(2);
+		showEmptyPreviewCanvas();
 		return false;
 	}
 
@@ -61,6 +62,25 @@ function loadImagePreview() {
 	};
 
 	reader.readAsDataURL(file);
+}
+
+function showEmptyPreviewCanvas() {
+	cachedPixels = false;
+	image = {};
+	hideResetBtn();
+
+	var canvas = getCanvas();
+	var context = getContext(canvas);
+
+	if (!canvas || !context) {
+		showError(translate('canvasError'));
+		return false;
+	}
+
+	resizePreviewFrame();
+	canvas.width = canvas.offsetWidth;
+	canvas.height = 320;
+	context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function updatePreviewCanvas() {
@@ -108,7 +128,7 @@ function resizePreviewFrame() {
 	var toolbar = selector('[role=toolbar]');
 	var scrollArea = selector('.checker-scroll');
 
-	if (!previewArea || !toolbar || !scrollArea || !image.file) {
+	if (!previewArea || !toolbar || !scrollArea) {
 		return false;
 	}
 
@@ -120,7 +140,7 @@ function resizePreviewFrame() {
 		parseFloat(areaStyles.borderRightWidth);
 	var minimumWidth = Math.ceil(toolbar.scrollWidth + horizontalSpacing);
 	var availableWidth = scrollArea.clientWidth;
-	var preferredWidth = Math.min(image.file.width, availableWidth);
+	var preferredWidth = image.file ? Math.min(image.file.width, availableWidth) : availableWidth;
 	var width = Math.max(preferredWidth, minimumWidth);
 
 	previewArea.style.setProperty('--checker-min-width', minimumWidth + 'px');

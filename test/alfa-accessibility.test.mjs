@@ -212,6 +212,34 @@ test('built app supports every language in the switcher', async () => {
   }
 });
 
+test('load image without a selected file opens an empty checker canvas', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    await page.locator('input[type="submit"][value="Load image"]').click();
+
+    assert.equal(await page.locator('#step-2').isVisible(), true);
+    assert.equal(await page.locator('#step-1').evaluate((element) => element.hidden), true);
+    assert.equal(await page.locator('#app-error').evaluate((element) => element.hidden), true);
+    assert.equal(await page.locator('#image_preview').evaluate((canvas) => canvas.height), 320);
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
 async function documentLanguage(page) {
   return page.evaluate(() => document.documentElement.lang);
 }
