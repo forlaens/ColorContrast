@@ -8,11 +8,16 @@
     "assets": "php scripts/generate-social-card.php",
     "dev": "php -S 127.0.0.1:8000 -t app",
     "check": "node scripts/check.mjs",
-    "test": "node --test",
+    "test": "node --test --test-concurrency=1",
     "clean": "node scripts/clean.mjs",
     "build": "node scripts/build.mjs"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@siteimprove/alfa-playwright": "^0.82.1",
+    "@siteimprove/alfa-test-utils": "^0.82.1"
   }
 }

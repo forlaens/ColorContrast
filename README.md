@@ -21,6 +21,8 @@ npm run clean
 
 `npm run dev` serves `app/` at `http://127.0.0.1:8000`.
 
+`npm test` builds the static app and runs release checks, including a Siteimprove Alfa WCAG AA audit through Playwright.
+
 Set `SITE_URL` when building for production so social media card URLs use the deployed domain:
 
 ```sh
