@@ -152,6 +152,11 @@ select {
 	margin-bottom: 18px;
 }
 
+.hero > div:first-child {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
 .language-switcher {
 	display: grid;
 	gap: 6px;
@@ -235,7 +240,7 @@ h2 {
 }
 
 .lede {
-	max-width: 650px;
+	max-width: 920px;
 	margin: 18px 0 0;
 	color: var(--text);
 	font-size: 1.08rem;
