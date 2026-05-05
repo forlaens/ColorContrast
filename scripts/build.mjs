@@ -21,13 +21,12 @@ run(process.execPath, ['scripts/check.mjs']);
 run('php', ['scripts/generate-social-card.php']);
 
 const distDir = resolve('dist');
-const distAppDir = resolve('dist/app');
 
 await rm(distDir, { recursive: true, force: true });
 await mkdir(distDir, { recursive: true });
 
 for (const path of ['backup', 'css', 'img', 'js', '.htaccess', 'manifest.webmanifest', 'sw.js']) {
-  await cp(resolve('app', path), resolve(distAppDir, path), {
+  await cp(resolve('app', path), resolve(distDir, path), {
     recursive: true,
     verbatimSymlinks: true
   });
@@ -50,6 +49,6 @@ if (rendered.status !== 0) {
   process.exit(rendered.status ?? 1);
 }
 
-await writeFile(resolve(distAppDir, 'index.html'), rendered.stdout);
+await writeFile(resolve(distDir, 'index.html'), rendered.stdout);
 
-console.log('Built static app into dist/app.');
+console.log('Built static app into dist.');

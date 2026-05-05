@@ -59,7 +59,7 @@ async function getFreePort() {
 
 async function startStaticServer() {
   const port = await getFreePort();
-  const server = spawn('php', ['-S', `127.0.0.1:${port}`, '-t', 'dist/app'], {
+  const server = spawn('php', ['-S', `127.0.0.1:${port}`, '-t', 'dist'], {
     stdio: ['ignore', 'pipe', 'pipe']
   });
 
@@ -313,7 +313,7 @@ test('loading a selected image hides the image chooser in canvas view', async ()
     const page = await context.newPage();
     await page.goto(server.url, { waitUntil: 'networkidle' });
 
-    await page.locator('#image_file').setInputFiles(resolve('dist/app/img/social-card.png'));
+    await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
     await page.locator('input[type="submit"][value="Load image"]').click();
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
 
@@ -344,7 +344,7 @@ test('image chooser previews selected and dropped images', async () => {
     const page = await context.newPage();
     await page.goto(server.url, { waitUntil: 'networkidle' });
 
-    await page.locator('#image_file').setInputFiles(resolve('dist/app/img/social-card.png'));
+    await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
     await page.locator('#image_file').dispatchEvent('change');
     assert.equal(await page.locator('#image-thumbnail').isVisible(), true);
     assert.match(await page.locator('#image-thumbnail').getAttribute('src'), /^blob:/);
@@ -391,7 +391,7 @@ test('loaded image preview stays within the viewport on small screens and resize
     const page = await context.newPage();
     await page.goto(server.url, { waitUntil: 'networkidle' });
 
-    await page.locator('#image_file').setInputFiles(resolve('dist/app/img/social-card.png'));
+    await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
     await page.locator('input[type="submit"][value="Load image"]').click();
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
 
