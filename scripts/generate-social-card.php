@@ -3,7 +3,7 @@
 $width = 1200;
 $height = 630;
 $output = __DIR__ . '/../app/img/social-card.png';
-$text = 'Color contrast image checker';
+$lines = ['Color contrast', 'image checker'];
 
 $image = imagecreatetruecolor($width, $height);
 
@@ -28,22 +28,44 @@ foreach ($fontPaths as $candidate) {
 }
 
 if ($fontPath && function_exists('imagettftext')) {
-	$fontSize = 74;
-	$box = imagettfbbox($fontSize, 0, $fontPath, $text);
-	$textWidth = $box[2] - $box[0];
-	$textHeight = $box[1] - $box[7];
-	$x = (int) (($width - $textWidth) / 2);
-	$y = (int) (($height + $textHeight) / 2);
+	$fontSize = 96;
+	$lineGap = 28;
+	$maxTextWidth = $width - 180;
 
-	imagettftext($image, $fontSize, 0, $x, $y, $black, $fontPath, $text);
+	do {
+		$boxes = array_map(fn($line) => imagettfbbox($fontSize, 0, $fontPath, $line), $lines);
+		$lineWidths = array_map(fn($box) => $box[2] - $box[0], $boxes);
+		$lineHeights = array_map(fn($box) => $box[1] - $box[7], $boxes);
+		$widestLine = max($lineWidths);
+		$totalHeight = array_sum($lineHeights) + $lineGap;
+
+		if ($widestLine <= $maxTextWidth || $fontSize <= 48) {
+			break;
+		}
+
+		$fontSize -= 4;
+	} while (true);
+
+	$y = (int) (($height - $totalHeight) / 2);
+
+	foreach ($lines as $index => $line) {
+		$x = (int) (($width - $lineWidths[$index]) / 2);
+		$baseline = $y + $lineHeights[$index];
+		imagettftext($image, $fontSize, 0, $x, $baseline, $black, $fontPath, $line);
+		$y = $baseline + $lineGap;
+	}
 } else {
 	$font = 5;
-	$textWidth = imagefontwidth($font) * strlen($text);
 	$textHeight = imagefontheight($font);
-	$x = (int) (($width - $textWidth) / 2);
-	$y = (int) (($height - $textHeight) / 2);
+	$totalHeight = (count($lines) * $textHeight) + 12;
+	$y = (int) (($height - $totalHeight) / 2);
 
-	imagestring($image, $font, $x, $y, $text, $black);
+	foreach ($lines as $line) {
+		$textWidth = imagefontwidth($font) * strlen($line);
+		$x = (int) (($width - $textWidth) / 2);
+		imagestring($image, $font, $x, $y, $line, $black);
+		$y += $textHeight + 12;
+	}
 }
 
 imagepng($image, $output, 9);
