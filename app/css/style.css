@@ -207,18 +207,35 @@ select {
 
 .theme-toggle {
 	cursor: pointer;
+	display: inline-grid;
+	place-items: center;
+	width: 44px;
 	min-height: 44px;
-	padding: 0 14px;
+	padding: 0;
 	border: 1px solid var(--border-strong);
 	border-radius: 6px;
 	background: var(--panel);
 	color: var(--text);
 	font-weight: 750;
-	white-space: nowrap;
 }
 
 .theme-toggle:hover {
 	border-color: var(--text);
+}
+
+.theme-icon {
+	width: 24px;
+	height: 24px;
+}
+
+.theme-icon path {
+	fill: currentColor;
+}
+
+.theme-icon circle {
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 2;
 }
 
 h1,

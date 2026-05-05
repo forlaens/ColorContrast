@@ -133,9 +133,12 @@ function updateThemeToggle() {
 	var label = window.translate ? window.translate(labelKey) : toggle.textContent;
 
 	toggle.setAttribute('aria-pressed', activeTheme === 'dark' ? 'true' : 'false');
-	toggle.setAttribute('data-i18n', labelKey);
 	toggle.setAttribute('aria-label', label);
-	toggle.textContent = label;
+
+	var text = toggle.querySelector('[data-theme-toggle-label]');
+	if (text) {
+		text.textContent = label;
+	}
 
 	return true;
 }

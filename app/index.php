@@ -31,7 +31,13 @@
 			</label>
 			<div class="theme-control">
 				<span data-i18n="themeLabel">Theme</span>
-				<button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" data-i18n="themeDark">Dark mode</button>
+				<button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="Dark mode">
+					<svg class="theme-icon" aria-hidden="true" focusable="false" viewBox="0 0 32 32">
+						<path d="M16 2 A14 14 0 0 0 16 30 Z" />
+						<circle cx="16" cy="16" r="14" />
+					</svg>
+					<span class="sr-only" data-theme-toggle-label>Dark mode</span>
+				</button>
 			</div>
 		</div>
 	</section>
