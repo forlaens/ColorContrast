@@ -14,6 +14,8 @@ Image contrast checker web app.
 ```sh
 npm run dev
 npm run check
+npm run test:structure
+npm run test:accessibility
 npm test
 npm run build
 npm run clean
@@ -21,7 +23,11 @@ npm run clean
 
 `npm run dev` serves `app/` at `http://127.0.0.1:8000`.
 
-`npm test` builds the static app and runs release checks, including a Siteimprove Alfa WCAG AA audit through Playwright.
+`npm run test:structure` builds the static app and checks rendered HTML structure, including headings, landmarks, footer links, and PWA metadata.
+
+`npm run test:accessibility` builds the static app and runs Siteimprove Alfa plus axe-core checks through Playwright.
+
+`npm test` runs the full local test suite.
 
 Set `SITE_URL` when building for production so social media card URLs use the deployed domain:
 

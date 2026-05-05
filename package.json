@@ -8,6 +8,8 @@
     "assets": "php scripts/generate-social-card.php",
     "dev": "php -S 127.0.0.1:8000 -t app",
     "check": "node scripts/check.mjs",
+    "test:structure": "node --test test/build-output.test.mjs",
+    "test:accessibility": "node --test --test-concurrency=1 test/alfa-accessibility.test.mjs",
     "test": "node --test --test-concurrency=1",
     "clean": "node scripts/clean.mjs",
     "build": "node scripts/build.mjs"
