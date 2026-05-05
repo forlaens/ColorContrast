@@ -392,7 +392,9 @@ body.is-dragging-image #step-1:not([hidden]) .upload-dropzone,
 
 .upload-title {
 	align-self: end;
+	margin: 0;
 	font-size: 1.35rem;
+	line-height: 1.15;
 	font-weight: 750;
 }
 

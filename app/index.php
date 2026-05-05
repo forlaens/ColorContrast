@@ -43,9 +43,9 @@
 	</header>
 
 	<main id="main-content" class="app-main" tabindex="-1">
-		<form id="step-1" class="step upload-panel" action="" method="POST" enctype="multipart/form-data" onsubmit="loadImagePreview(); return false;">
+		<form id="step-1" class="step upload-panel" action="" method="POST" enctype="multipart/form-data" aria-labelledby="upload-title" onsubmit="loadImagePreview(); return false;">
 			<label class="upload-dropzone">
-				<span class="upload-title" data-i18n="chooseImage">Choose an image</span>
+				<h2 id="upload-title" class="upload-title" data-i18n="chooseImage">Choose an image</h2>
 				<span class="upload-copy" data-i18n="uploadCopy">PNG, JPG, GIF, or SVG. The file stays in your browser.</span>
 				<span class="upload-file-row">
 					<img hidden id="image-thumbnail" class="upload-thumbnail" src="" alt="">

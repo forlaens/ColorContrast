@@ -94,6 +94,8 @@ test('document explains purpose and basic use without eyebrow labels', async () 
 
   assert.match(index, /<details id="intro-panel" class="intro-panel" open>/);
   assert.match(index, /<summary>\s*<h2 id="intro-title" data-i18n="introTitle">How to use it<\/h2>\s*<\/summary>/);
+  assert.match(index, /<form id="step-1" class="step upload-panel"[^>]+aria-labelledby="upload-title"/);
+  assert.match(index, /<h2 id="upload-title" class="upload-title" data-i18n="chooseImage">Choose an image<\/h2>/);
   assert.match(index, /<h2 id="intro-title" data-i18n="introTitle">How to use it<\/h2>/);
   assert.match(index, /Check whether text or UI colors have enough contrast/);
   assert.match(index, /The file stays in your browser/);
