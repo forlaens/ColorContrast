@@ -87,11 +87,17 @@ test('document provides an accessible error region', async () => {
 
 test('document explains purpose and basic use without eyebrow labels', async () => {
   const index = await readFile(join(distDir, 'index.html'), 'utf8');
+  const app = await readFile(join(distDir, 'js/app.js'), 'utf8');
+
+  assert.match(index, /<details id="intro-panel" class="intro-panel" open>/);
+  assert.match(index, /<summary>\s*<h2 id="intro-title" data-i18n="introTitle">How to use it<\/h2>\s*<\/summary>/);
   assert.match(index, /<h2 id="intro-title" data-i18n="introTitle">How to use it<\/h2>/);
   assert.match(index, /Check whether text or UI colors have enough contrast/);
   assert.match(index, /The file stays in your browser/);
   assert.ok(index.indexOf('id="step-1"') < index.indexOf('id="intro-title"'));
   assert.equal(index.includes('class="eyebrow"'), false);
+  assert.match(app, /colorcontrast-intro-open/);
+  assert.match(app, /addEventListener\('toggle'/);
 });
 
 test('document includes language switcher support', async () => {
@@ -102,6 +108,21 @@ test('document includes language switcher support', async () => {
   assert.match(index, /<script src="\/js\/i18n\.js" defer><\/script>/);
   assert.match(i18n, /code: 'kl'/);
   assert.match(i18n, /code: 'it'/);
+});
+
+test('document includes dark mode support', async () => {
+  const index = await readFile(join(distDir, 'index.html'), 'utf8');
+  const styles = await readFile(join(distDir, 'css/style.css'), 'utf8');
+  const app = await readFile(join(distDir, 'js/app.js'), 'utf8');
+
+  assert.match(index, /<meta name="color-scheme" content="light dark">/);
+  assert.match(index, /<button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" data-i18n="themeDark">Dark mode<\/button>/);
+  assert.match(styles, /prefers-color-scheme: dark/);
+  assert.match(styles, /:focus-visible/);
+  assert.match(styles, /--focus-ring: #111827/);
+  assert.match(styles, /--focus-ring: #ffffff/);
+  assert.match(app, /colorcontrast-theme/);
+  assert.match(app, /prefers-color-scheme: dark/);
 });
 
 test('document includes step illustrations', async () => {

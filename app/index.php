@@ -14,10 +14,16 @@
 			<h1 id="app-title" data-i18n="title">Image contrast checker</h1>
 			<p class="lede" data-i18n="lede">Check whether text or UI colors have enough contrast when placed on top of an image.</p>
 		</div>
-		<label class="language-switcher">
-			<span data-i18n="languageLabel">Language</span>
-			<select id="language-switcher" name="language" autocomplete="off"></select>
-		</label>
+		<div class="header-controls">
+			<label class="language-switcher">
+				<span data-i18n="languageLabel">Language</span>
+				<select id="language-switcher" name="language" autocomplete="off"></select>
+			</label>
+			<div class="theme-control">
+				<span data-i18n="themeLabel">Theme</span>
+				<button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" data-i18n="themeDark">Dark mode</button>
+			</div>
+		</div>
 	</section>
 
 	<form id="step-1" class="step upload-panel" action="" method="POST" enctype="multipart/form-data" onsubmit="loadImagePreview(); return false;">
@@ -29,8 +35,10 @@
 		<input class="cta" type="submit" value="Load image" data-i18n-value="loadImage">
 	</form>
 
-	<section class="intro-panel" aria-labelledby="intro-title">
-		<h2 id="intro-title" data-i18n="introTitle">How to use it</h2>
+	<details id="intro-panel" class="intro-panel" open>
+		<summary>
+			<h2 id="intro-title" data-i18n="introTitle">How to use it</h2>
+		</summary>
 		<ol class="steps">
 			<li>
 				<strong data-i18n="stepUploadTitle">Upload an image</strong>
@@ -40,7 +48,7 @@
 			<li>
 				<strong data-i18n="stepColorTitle">Pick the foreground color</strong>
 				<span data-i18n="stepColorCopy">Choose the text or UI color you want to test.</span>
-				<img class="step-illustration" src="/img/steps/step-2-pick-color.png" width="875" height="628" alt="" loading="lazy" decoding="async">
+				<img class="step-illustration step-illustration-spaced" src="/img/steps/step-2-pick-color.png" width="875" height="628" alt="" loading="lazy" decoding="async">
 			</li>
 			<li>
 				<strong data-i18n="stepRunTitle">Run the test</strong>
@@ -48,7 +56,7 @@
 				<img class="step-illustration" src="/img/steps/step-3-result.png" width="852" height="745" alt="" loading="lazy" decoding="async">
 			</li>
 		</ol>
-	</section>
+	</details>
 
 	<section hidden id="step-2" class="step checker-stage" aria-labelledby="checker-title">
 		<div class="stage-header">

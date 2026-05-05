@@ -285,6 +285,55 @@ test('loading a selected image hides the image chooser in canvas view', async ()
   }
 });
 
+test('loaded image preview stays within the viewport on small screens and resize', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 390, height: 900 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    await page.locator('#image_file').setInputFiles(resolve('dist/app/img/social-card.png'));
+    await page.locator('input[type="submit"][value="Load image"]').click();
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
+
+    async function assertNoHorizontalOverflow() {
+      const dimensions = await page.evaluate(() => {
+        const preview = document.querySelector('#preview_area');
+        const canvas = document.querySelector('#image_preview');
+        return {
+          viewportWidth: window.innerWidth,
+          documentWidth: document.documentElement.scrollWidth,
+          previewWidth: Math.ceil(preview.getBoundingClientRect().width),
+          canvasWidth: Math.ceil(canvas.getBoundingClientRect().width),
+          canvasBufferWidth: canvas.width
+        };
+      });
+
+      assert.equal(dimensions.documentWidth <= dimensions.viewportWidth, true);
+      assert.equal(dimensions.previewWidth <= dimensions.viewportWidth, true);
+      assert.equal(dimensions.canvasWidth <= dimensions.viewportWidth, true);
+      assert.equal(dimensions.canvasBufferWidth <= dimensions.viewportWidth, true);
+    }
+
+    await assertNoHorizontalOverflow();
+    await page.setViewportSize({ width: 320, height: 900 });
+    await page.waitForTimeout(100);
+    await assertNoHorizontalOverflow();
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
 test('main focus outline is only shown from the skip link', async () => {
   buildApp();
 
@@ -309,6 +358,38 @@ test('main focus outline is only shown from the skip link', async () => {
     assert.equal(await page.locator('#main-content').evaluate((element) => {
       return window.getComputedStyle(element).outlineStyle;
     }), 'solid');
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
+test('theme toggle remembers the user preference', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await context.newPage();
+    await page.addInitScript(() => {
+      window.localStorage.setItem('colorcontrast-theme', 'dark');
+    });
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    assert.equal(await page.evaluate(() => document.documentElement.getAttribute('data-theme')), 'dark');
+    assert.equal(await page.locator('#theme-toggle').getAttribute('aria-pressed'), 'true');
+
+    await page.locator('#theme-toggle').click();
+    assert.equal(await page.evaluate(() => document.documentElement.getAttribute('data-theme')), 'light');
+    assert.equal(await page.evaluate(() => window.localStorage.getItem('colorcontrast-theme')), 'light');
+    assert.equal(await page.locator('#theme-toggle').getAttribute('aria-pressed'), 'false');
 
     await context.close();
   } finally {

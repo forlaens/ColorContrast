@@ -14,6 +14,7 @@
 	?>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="color-scheme" content="light dark">
 	<title><?php echo htmlspecialchars($title, ENT_QUOTES, 'UTF-8'); ?></title>
 	<meta name="description" content="<?php echo htmlspecialchars($description, ENT_QUOTES, 'UTF-8'); ?>">
 
@@ -43,8 +44,20 @@
 	<meta name="application-name" content="Contrast">
 	<meta name="msapplication-TileColor" content="#ffffff">
 	<meta name="msapplication-config" content="/img/favicon/browserconfig.xml">
-	<meta name="theme-color" content="#f6f7fb">
+	<meta name="theme-color" content="#f6f7fb" media="(prefers-color-scheme: light)">
+	<meta name="theme-color" content="#080d18" media="(prefers-color-scheme: dark)">
 
+	<script>
+		(function () {
+			try {
+				var theme = window.localStorage.getItem('colorcontrast-theme');
+
+				if (theme === 'dark' || theme === 'light') {
+					document.documentElement.setAttribute('data-theme', theme);
+				}
+			} catch (error) {}
+		}());
+	</script>
 	<link href="/css/style.css" rel="stylesheet">
 </head>
 <body>

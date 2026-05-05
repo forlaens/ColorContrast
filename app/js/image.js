@@ -138,12 +138,12 @@ function resizePreviewFrame() {
 		parseFloat(areaStyles.paddingRight) +
 		parseFloat(areaStyles.borderLeftWidth) +
 		parseFloat(areaStyles.borderRightWidth);
-	var minimumWidth = Math.ceil(toolbar.scrollWidth + horizontalSpacing);
-	var availableWidth = scrollArea.clientWidth;
-	var preferredWidth = image.file ? Math.min(image.file.width, availableWidth) : availableWidth;
-	var width = Math.max(preferredWidth, minimumWidth);
+	var availableWidth = Math.floor(scrollArea.getBoundingClientRect().width);
+	var contentWidth = Math.max(1, availableWidth - horizontalSpacing);
+	var preferredWidth = image.file ? Math.min(image.file.width, contentWidth) : contentWidth;
+	var width = Math.max(1, Math.min(preferredWidth + horizontalSpacing, availableWidth));
 
-	previewArea.style.setProperty('--checker-min-width', minimumWidth + 'px');
+	previewArea.style.setProperty('--checker-min-width', '0px');
 	previewArea.style.width = width + 'px';
 }
 
