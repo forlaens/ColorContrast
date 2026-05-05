@@ -1,98 +1,137 @@
 <?php include($_SERVER['DOCUMENT_ROOT'] . '/include/layout/head.php'); ?>
 
-<a class="skip-link" href="#main-content">Skip to main content</a>
+<a class="skip-link" href="#main-content" onclick="markSkipLinkTarget();" data-i18n="skipLink">Skip to main content</a>
 
-<main id="main-content" class="app-shell" tabindex="-1">
+<div class="app-shell">
 	<noscript>
 		<div class="notice">For this tool to work, your browser must have JavaScript enabled.</div>
 	</noscript>
 
 	<div hidden id="app-error" class="error-panel" role="alert" tabindex="-1"></div>
 
-	<section class="hero" aria-labelledby="app-title">
+	<header class="hero" aria-labelledby="app-title">
 		<div>
-			<h1 id="app-title">Image contrast checker</h1>
-			<p class="lede">Check whether text or UI colors have enough contrast when placed on top of an image.</p>
+			<h1 id="app-title" data-i18n="title">Image contrast checker</h1>
+			<p class="lede" data-i18n="lede">Check whether text or UI colors have enough contrast when placed on top of an image.</p>
 		</div>
-	</section>
+		<div class="header-controls">
+			<label class="language-switcher">
+				<span class="label-with-icon">
+					<svg class="label-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+						<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8" />
+						<ellipse cx="12" cy="12" rx="4.5" ry="9" fill="none" stroke="currentColor" stroke-width="1.4" />
+						<ellipse cx="12" cy="12" rx="2" ry="9" fill="none" stroke="currentColor" stroke-width="1.2" />
+						<path d="M3 12H21" fill="none" stroke="currentColor" stroke-width="1.4" />
+						<path d="M5 8H19" fill="none" stroke="currentColor" stroke-width="1.2" />
+						<path d="M5 16H19" fill="none" stroke="currentColor" stroke-width="1.2" />
+					</svg>
+					<span data-i18n="languageLabel">Language</span>
+				</span>
+				<select id="language-switcher" name="language" autocomplete="off"></select>
+			</label>
+			<div class="theme-control">
+				<label for="theme-toggle" data-i18n="themeLabel">Theme</label>
+				<button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="Dark mode" data-i18n-aria-label="themeDark">
+					<svg class="theme-icon" aria-hidden="true" focusable="false" viewBox="0 0 32 32">
+						<path d="M16 2 A14 14 0 0 0 16 30 Z" />
+						<circle cx="16" cy="16" r="14" />
+					</svg>
+					<span class="sr-only" data-i18n="themeDark">Dark mode</span>
+				</button>
+			</div>
+		</div>
+		<div id="settings-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+	</header>
 
-	<section class="intro-panel" aria-labelledby="intro-title">
-		<h2 id="intro-title">How to use it</h2>
-		<ol class="steps">
+	<main id="main-content" class="app-main" tabindex="-1">
+		<form id="step-1" class="step upload-panel" method="POST" enctype="multipart/form-data" aria-labelledby="upload-title" onsubmit="loadImagePreview(); return false;">
+			<div class="upload-dropzone">
+				<h2 id="upload-title" class="upload-title" data-i18n="chooseImage">Choose an image</h2>
+				<span class="upload-copy" data-i18n="uploadCopy">PNG, JPG, GIF, or SVG. The file stays in your browser.</span>
+				<span class="upload-file-row">
+					<img hidden id="image-thumbnail" class="upload-thumbnail" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" alt="">
+					<input id="image_file" class="file-input-native" type="file" name="image" accept="image/*" aria-describedby="selected-file-name" onchange="updateImageSelectionPreview();">
+					<label for="image_file" class="file-picker-button" data-i18n="chooseFile">Choose file</label>
+					<span id="selected-file-name" class="selected-file-name" data-i18n-file-empty="noFileChosen">No file chosen</span>
+				</span>
+			</div>
+			<button class="cta" type="submit" data-i18n="loadImage">Load image</button>
+		</form>
+
+	<section id="intro-panel" class="intro-panel" aria-labelledby="intro-title">
+		<div class="intro-header">
+			<h2 id="intro-title" data-i18n="introTitle">How to use it</h2>
+			<button id="intro-toggle" class="intro-toggle" type="button" aria-expanded="true" aria-controls="intro-steps" aria-labelledby="intro-title"></button>
+		</div>
+		<ol id="intro-steps" class="steps">
 			<li>
-				<strong>Upload an image</strong>
-				<span>Use a screenshot, design export, or content image.</span>
+				<h3 data-i18n="stepUploadTitle">Upload an image</h3>
+				<span data-i18n="stepUploadCopy">Use a screenshot, design export, or content image.</span>
+				<img class="step-illustration" src="/img/steps/step-1-upload.webp" width="807" height="715" alt="" fetchpriority="high" decoding="async">
 			</li>
 			<li>
-				<strong>Pick the foreground color</strong>
-				<span>Choose the text or UI color you want to test.</span>
+				<h3 data-i18n="stepColorTitle">Pick the foreground color</h3>
+				<span data-i18n="stepColorCopy">Choose the text or UI color you want to test.</span>
+				<img class="step-illustration step-illustration-spaced" src="/img/steps/step-2-pick-color.webp" width="875" height="628" alt="" loading="lazy" decoding="async">
 			</li>
 			<li>
-				<strong>Run the test</strong>
-				<span>The preview highlights image areas that do not meet the selected contrast target.</span>
+				<h3 data-i18n="stepRunTitle">Run the test</h3>
+				<span data-i18n="stepRunCopy">The preview highlights image areas that do not meet the selected contrast target.</span>
+				<img class="step-illustration" src="/img/steps/step-3-result.webp" width="852" height="745" alt="" loading="lazy" decoding="async">
 			</li>
 		</ol>
 	</section>
 
-	<form id="step-1" class="step upload-panel" action="" method="POST" enctype="multipart/form-data" onsubmit="loadImagePreview(); return false;">
-		<label class="upload-dropzone">
-			<span class="upload-title">Choose an image</span>
-			<span class="upload-copy">PNG, JPG, GIF, or SVG. The file stays in your browser.</span>
-			<input id="image_file" type="file" name="image" accept="image/*">
-		</label>
-		<input class="cta" type="submit" value="Load image">
-	</form>
-
 	<section hidden id="step-2" class="step checker-stage" aria-labelledby="checker-title">
 		<div class="stage-header">
 			<div>
-				<h2 id="checker-title">Highlight contrast issues</h2>
-				<p class="stage-copy">Highlighted pixels are places where the chosen color does not meet the selected WCAG ratio.</p>
+				<h2 id="checker-title" data-i18n="checkerTitle">Highlight contrast issues</h2>
+				<p class="stage-copy" data-i18n="checkerCopy">Highlighted pixels are places where the chosen color does not meet the selected WCAG ratio.</p>
 			</div>
 			<div class="stage-actions">
-				<input type="button" class="cta secondary" onclick="resetFileInput(); showStep(1);" value="New image">
-				<input hidden type="button" id="reset-image" class="cta ghost" onclick="updatePreviewCanvas();" value="Reset image">
+				<button type="button" class="cta secondary" onclick="resetFileInput(); showStep(1);" data-i18n="newImage">New image</button>
+				<button hidden type="button" id="reset-image" class="cta ghost" onclick="updatePreviewCanvas();" data-i18n="resetImage">Reset image</button>
 			</div>
 		</div>
 
 		<div hidden role="status" class="loading" aria-atomic="true"></div>
 
 		<div class="checker-scroll">
-			<section id="preview_area" class="checker" aria-label="Contrast checker">
-				<div role="toolbar" aria-label="Settings">
+			<section id="preview_area" class="checker" aria-label="Contrast checker" data-i18n-aria-label="checkerRegion">
+				<div role="toolbar" aria-label="Checker settings" data-i18n-aria-label="settingsToolbar">
 					<div class="toolbar-group">
-						<label class="field color-field">
-							<span id="testcolor-label">Color to test</span>
+						<div class="field color-field">
+							<span id="testcolor-label" data-i18n="colorLabel">Color to test</span>
 							<span class="control-row">
 								<input type="color" name="color" aria-labelledby="testcolor-label">
-								<button id="colorpicker" class="icon-button" type="button" aria-label="Pick a color from the image" aria-pressed="false" onclick="toggleColorPicker(this);">
+								<button id="colorpicker" class="icon-button" type="button" aria-label="Pick a color from the image" data-i18n-aria-label="pickColor" aria-pressed="false" onclick="toggleColorPicker(this);">
 									<svg role="presentation" focusable="false" version="1.1" viewBox="0 0 32 32" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 										<path d="M27.7,3.3c-1.5-1.5-3.9-1.5-5.4,0L17,8.6l-1.3-1.3c-0.4-0.4-1-0.4-1.4,0s-0.4,1,0,1.4l1.3,1.3L5,20.6  c-0.6,0.6-1,1.4-1.1,2.3C3.3,23.4,3,24.2,3,25c0,1.7,1.3,3,3,3c0.8,0,1.6-0.3,2.2-0.9C9,27,9.8,26.6,10.4,26L21,15.4l1.3,1.3  c0.2,0.2,0.5,0.3,0.7,0.3s0.5-0.1,0.7-0.3c0.4-0.4,0.4-1,0-1.4L22.4,14l5.3-5.3C29.2,7.2,29.2,4.8,27.7,3.3z M9,24.6  c-0.4,0.4-0.8,0.6-1.3,0.5c-0.4,0-0.7,0.2-0.9,0.5C6.7,25.8,6.3,26,6,26c-0.6,0-1-0.4-1-1c0-0.3,0.2-0.7,0.5-0.8  c0.3-0.2,0.5-0.5,0.5-0.9c0-0.5,0.2-1,0.5-1.3L17,11.4l2.6,2.6L9,24.6z" />
 									</svg>
 								</button>
 							</span>
-						</label>
+						</div>
 
 						<label class="field">
-							<span id="contrast-label">Conformance level</span>
+							<span id="contrast-label" data-i18n="contrastLabel">Conformance level</span>
 							<select name="contrast" aria-labelledby="contrast-label">
-								<optgroup label="WCAG level AA">
-									<option value="3">Non-text (3:1)</option>
-									<option value="3">Large text (3:1)</option>
-									<option value="4.5" selected>Small text (4.5:1)</option>
+								<optgroup label="WCAG level AA" data-i18n-label="wcagAA">
+									<option value="3" data-i18n="nonText">Non-text (3:1)</option>
+									<option value="3" data-i18n="largeTextAA">Large text (3:1)</option>
+									<option value="4.5" selected data-i18n="smallTextAA">Small text (4.5:1)</option>
 								</optgroup>
-								<optgroup label="WCAG level AAA">
-									<option value="4.5">Large text (4.5:1)</option>
-									<option value="7">Small text (7:1)</option>
+								<optgroup label="WCAG level AAA" data-i18n-label="wcagAAA">
+									<option value="4.5" data-i18n="largeTextAAA">Large text (4.5:1)</option>
+									<option value="7" data-i18n="smallTextAAA">Small text (7:1)</option>
 								</optgroup>
 							</select>
 						</label>
 					</div>
 
-					<button class="cta" type="button" onclick="initRenderContrast();">Run test</button>
+					<button class="cta" type="button" onclick="initRenderContrast();" data-i18n="runTest">Run test</button>
 				</div>
 
-				<canvas id="image_preview" class="preview" tabindex="0" aria-label="Image preview" onmousedown="setTestColorFromCanvas(event, this);" onfocus="placeCrosshairs(this);" onkeydown="canvasKeyDown(this, event);" onkeyup="canvasKeyUp(event);" onblur="canvasBlur();"></canvas>
+				<canvas id="image_preview" class="preview" tabindex="0" aria-label="Image preview" data-i18n-aria-label="imagePreview" onmousedown="setTestColorFromCanvas(event, this);" onfocus="placeCrosshairs(this);" onkeydown="canvasKeyDown(this, event);" onkeyup="canvasKeyUp(event);" onblur="canvasBlur();"></canvas>
 
 				<div id="crosshairs">
 					<svg aria-hidden="true" focusable="false" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1792 1792" xml:space="preserve">
@@ -129,6 +168,16 @@
 			</section>
 		</div>
 	</section>
-</main>
+	</main>
+
+	<footer class="site-footer">
+		<p>
+			<span data-i18n="footerCopyright">Copyright</span>
+			<a href="https://forlaens.com/">Forlæns</a>.
+			<span data-i18n="footerContact">For contact, questions, suggestions, etc. email</span>
+			<a href="mailto:tobias@forlaens.com">tobias@forlaens.com</a>.
+		</p>
+	</footer>
+</div>
 
 <?php include($_SERVER['DOCUMENT_ROOT'] . '/include/layout/foot.php'); ?>

@@ -39,6 +39,9 @@ jobs:
       - name: Build app
         run: npm run build
 
+      - name: Check rendered structure
+        run: npm run test:structure
+
       - name: Run tests
         run: npm test
 

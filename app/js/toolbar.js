@@ -1,6 +1,14 @@
 function resetFileInput() {
 	var files = id('image_file');
 	files.value = '';
+
+	if (window.clearImageThumbnail) {
+		window.clearImageThumbnail();
+	}
+
+	if (window.updateSelectedFileName) {
+		window.updateSelectedFileName();
+	}
 }
 
 function toggleColorPicker(button) {
