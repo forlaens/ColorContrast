@@ -298,6 +298,7 @@ test('image chooser previews selected and dropped images', async () => {
     await page.goto(server.url, { waitUntil: 'networkidle' });
 
     await page.locator('#image_file').setInputFiles(resolve('dist/app/img/social-card.png'));
+    await page.locator('#image_file').dispatchEvent('change');
     assert.equal(await page.locator('#image-thumbnail').isVisible(), true);
     assert.match(await page.locator('#image-thumbnail').getAttribute('src'), /^blob:/);
 

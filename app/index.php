@@ -49,7 +49,7 @@
 				<span class="upload-copy" data-i18n="uploadCopy">PNG, JPG, GIF, or SVG. The file stays in your browser.</span>
 				<span class="upload-file-row">
 					<img hidden id="image-thumbnail" class="upload-thumbnail" src="" alt="">
-					<input id="image_file" type="file" name="image" accept="image/*">
+					<input id="image_file" type="file" name="image" accept="image/*" onchange="updateImageSelectionPreview();">
 				</span>
 			</label>
 			<input class="cta" type="submit" value="Load image" data-i18n-value="loadImage">

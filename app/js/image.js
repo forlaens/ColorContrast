@@ -22,6 +22,7 @@ function recalcImage() {
 
 function loadImagePreview() {
 	clearError();
+	updateImageSelectionPreview();
 
 	var files = id('image_file').files;
 	var file = imageValidation(files[0]);
@@ -260,6 +261,24 @@ function showImageThumbnail(file) {
 	return true;
 }
 
+function updateImageSelectionPreview() {
+	var fileInput = id('image_file');
+
+	if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+		clearImageThumbnail();
+		return false;
+	}
+
+	var file = imageValidation(fileInput.files[0]);
+
+	if (!file) {
+		clearImageThumbnail();
+		return false;
+	}
+
+	return showImageThumbnail(file);
+}
+
 function clearImageThumbnail() {
 	var thumbnail = id('image-thumbnail');
 
@@ -287,15 +306,7 @@ function initImageChooser() {
 	var fileInput = id('image_file');
 
 	if (fileInput) {
-		fileInput.addEventListener('change', function () {
-			var file = imageValidation(fileInput.files[0]);
-
-			if (file) {
-				showImageThumbnail(file);
-			} else {
-				clearImageThumbnail();
-			}
-		});
+		fileInput.addEventListener('change', updateImageSelectionPreview);
 	}
 
 	document.addEventListener('dragenter', function (event) {
