@@ -362,6 +362,13 @@ h2 {
 	background: var(--panel-soft);
 }
 
+body.is-dragging-image #step-1:not([hidden]) .upload-dropzone,
+.upload-dropzone.is-drag-target {
+	border-color: var(--focus-ring);
+	background: color-mix(in srgb, var(--accent) 10%, var(--panel-soft));
+	box-shadow: inset 0 0 0 2px var(--focus-ring);
+}
+
 .upload-title {
 	align-self: end;
 	font-size: 1.35rem;
@@ -376,6 +383,27 @@ input[type=file] {
 	margin-top: 10px;
 	max-width: 100%;
 	color: var(--muted);
+}
+
+.upload-file-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+	margin-top: 10px;
+}
+
+.upload-file-row input[type=file] {
+	margin-top: 0;
+}
+
+.upload-thumbnail {
+	width: 64px;
+	height: 64px;
+	object-fit: cover;
+	border: 1px solid var(--border-strong);
+	border-radius: 6px;
+	background: var(--panel);
 }
 
 .cta {

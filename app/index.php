@@ -35,7 +35,10 @@
 		<label class="upload-dropzone">
 			<span class="upload-title" data-i18n="chooseImage">Choose an image</span>
 			<span class="upload-copy" data-i18n="uploadCopy">PNG, JPG, GIF, or SVG. The file stays in your browser.</span>
-			<input id="image_file" type="file" name="image" accept="image/*">
+			<span class="upload-file-row">
+				<img hidden id="image-thumbnail" class="upload-thumbnail" src="" alt="">
+				<input id="image_file" type="file" name="image" accept="image/*">
+			</span>
 		</label>
 		<input class="cta" type="submit" value="Load image" data-i18n-value="loadImage">
 	</form>

@@ -285,6 +285,50 @@ test('loading a selected image hides the image chooser in canvas view', async ()
   }
 });
 
+test('image chooser previews selected and dropped images', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    await page.locator('#image_file').setInputFiles(resolve('dist/app/img/social-card.png'));
+    assert.equal(await page.locator('#image-thumbnail').isVisible(), true);
+    assert.match(await page.locator('#image-thumbnail').getAttribute('src'), /^blob:/);
+
+    const dragData = await createImageDataTransfer(page);
+    await page.dispatchEvent('body', 'dragenter', { dataTransfer: dragData });
+    assert.equal(await page.locator('body').evaluate((body) => body.classList.contains('is-dragging-image')), true);
+    assert.equal(await page.locator('.upload-dropzone').evaluate((dropzone) => dropzone.classList.contains('is-drag-target')), true);
+    await page.dispatchEvent('body', 'drop', { dataTransfer: dragData });
+
+    assert.equal(await page.locator('#step-1').isVisible(), true);
+    assert.equal(await page.locator('#image_file').evaluate((input) => input.files[0].name), 'dropped-social-card.png');
+    assert.equal(await page.locator('#image-thumbnail').isVisible(), true);
+
+    await page.locator('input[type="submit"][value="Load image"]').click();
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
+    assert.equal(await page.locator('#step-2').isVisible(), true);
+
+    const secondDragData = await createImageDataTransfer(page);
+    await page.dispatchEvent('body', 'drop', { dataTransfer: secondDragData });
+    assert.equal(await page.locator('#step-1').isVisible(), true);
+    assert.equal(await page.locator('#step-2').isHidden(), true);
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
 test('loaded image preview stays within the viewport on small screens and resize', async () => {
   buildApp();
 
@@ -402,4 +446,15 @@ test('theme toggle remembers the user preference', async () => {
 
 async function documentLanguage(page) {
   return page.evaluate(() => document.documentElement.lang);
+}
+
+async function createImageDataTransfer(page) {
+  return page.evaluateHandle(async () => {
+    const response = await fetch('/img/social-card.png');
+    const bytes = await response.arrayBuffer();
+    const file = new File([bytes], 'dropped-social-card.png', { type: 'image/png' });
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    return dataTransfer;
+  });
 }

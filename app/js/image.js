@@ -1,5 +1,7 @@
 var cachedPixels = false;
 var image = {};
+var imageDragDepth = 0;
+var imageThumbnailUrl = null;
 
 window.onresize = recalcImage;
 
@@ -186,4 +188,166 @@ function imageValidation(file) {
 	}
 
 	return file;
+}
+
+function getImageFileFromTransfer(dataTransfer) {
+	if (!dataTransfer || !dataTransfer.files) {
+		return false;
+	}
+
+	for (var i = 0; i < dataTransfer.files.length; i++) {
+		var file = dataTransfer.files[i];
+
+		if (file && (/image/i).test(file.type)) {
+			return file;
+		}
+	}
+
+	return false;
+}
+
+function hasImageDrag(dataTransfer) {
+	if (!dataTransfer) {
+		return false;
+	}
+
+	if (dataTransfer.items) {
+		for (var i = 0; i < dataTransfer.items.length; i++) {
+			var item = dataTransfer.items[i];
+
+			if (item.kind === 'file' && (/image/i).test(item.type)) {
+				return true;
+			}
+		}
+	}
+
+	return dataTransfer.types && Array.prototype.indexOf.call(dataTransfer.types, 'Files') !== -1;
+}
+
+function setImageFile(file) {
+	var fileInput = id('image_file');
+
+	if (!fileInput || !imageValidation(file)) {
+		return false;
+	}
+
+	try {
+		var transfer = new DataTransfer();
+		transfer.items.add(file);
+		fileInput.files = transfer.files;
+	} catch (error) {
+		showError('Your browser could not add the dropped image to the file picker.');
+		return false;
+	}
+
+	showImageThumbnail(file);
+	showStep(1);
+	clearError();
+	return true;
+}
+
+function showImageThumbnail(file) {
+	var thumbnail = id('image-thumbnail');
+
+	if (!thumbnail) {
+		return false;
+	}
+
+	clearImageThumbnail();
+	imageThumbnailUrl = URL.createObjectURL(file);
+	thumbnail.src = imageThumbnailUrl;
+	thumbnail.hidden = false;
+	return true;
+}
+
+function clearImageThumbnail() {
+	var thumbnail = id('image-thumbnail');
+
+	if (imageThumbnailUrl) {
+		URL.revokeObjectURL(imageThumbnailUrl);
+		imageThumbnailUrl = null;
+	}
+
+	if (thumbnail) {
+		thumbnail.hidden = true;
+		thumbnail.removeAttribute('src');
+	}
+}
+
+function setImageDragState(active) {
+	var dropzone = selector('.upload-dropzone');
+	document.body.classList.toggle('is-dragging-image', active);
+
+	if (dropzone) {
+		dropzone.classList.toggle('is-drag-target', active);
+	}
+}
+
+function initImageChooser() {
+	var fileInput = id('image_file');
+
+	if (fileInput) {
+		fileInput.addEventListener('change', function () {
+			var file = imageValidation(fileInput.files[0]);
+
+			if (file) {
+				showImageThumbnail(file);
+			} else {
+				clearImageThumbnail();
+			}
+		});
+	}
+
+	document.addEventListener('dragenter', function (event) {
+		if (!hasImageDrag(event.dataTransfer)) {
+			return;
+		}
+
+		event.preventDefault();
+		imageDragDepth++;
+		setImageDragState(true);
+	});
+
+	document.addEventListener('dragover', function (event) {
+		if (!hasImageDrag(event.dataTransfer)) {
+			return;
+		}
+
+		event.preventDefault();
+		event.dataTransfer.dropEffect = 'copy';
+		setImageDragState(true);
+	});
+
+	document.addEventListener('dragleave', function (event) {
+		if (!hasImageDrag(event.dataTransfer)) {
+			return;
+		}
+
+		imageDragDepth = Math.max(0, imageDragDepth - 1);
+
+		if (imageDragDepth === 0) {
+			setImageDragState(false);
+		}
+	});
+
+	document.addEventListener('drop', function (event) {
+		if (!hasImageDrag(event.dataTransfer)) {
+			return;
+		}
+
+		event.preventDefault();
+		imageDragDepth = 0;
+		setImageDragState(false);
+
+		var file = getImageFileFromTransfer(event.dataTransfer);
+		if (file) {
+			setImageFile(file);
+		}
+	});
+}
+
+if (document.readyState === 'loading') {
+	document.addEventListener('DOMContentLoaded', initImageChooser);
+} else {
+	initImageChooser();
 }
