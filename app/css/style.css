@@ -411,7 +411,7 @@ h2 {
 }
 
 .upload-dropzone {
-	cursor: pointer;
+	cursor: default;
 	display: grid;
 	gap: 6px;
 	min-height: 132px;
@@ -466,6 +466,7 @@ input[type=file] {
 }
 
 .file-picker-button {
+	cursor: pointer;
 	display: inline-flex;
 	align-items: center;
 	min-height: 44px;
