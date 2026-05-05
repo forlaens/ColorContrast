@@ -2,21 +2,21 @@ function initRenderContrast() {
 	clearError();
 
 	if (!image.file || !image.dimensions) {
-		showError('Load an image before running a contrast test.');
+		showError(translate('loadBeforeTest'));
 		return false;
 	}
 
 	if (!cachedPixels) {
-		setLoadingState(true, 'Caching image and highlighting conflicting contrasts.');
+		setLoadingState(true, translate('caching'));
 	} else {
-		setLoadingState(true, 'Highlighting conflicting contrasts.');
+		setLoadingState(true, translate('highlighting'));
 	}
 
 	var context = getContext();
 
 	if (!context) {
 		setLoadingState(false);
-		showError('Your browser could not initialize the image preview canvas.');
+		showError(translate('canvasError'));
 		return false;
 	}
 

@@ -1,95 +1,73 @@
 <?php
 
-$brandDir = __DIR__ . '/../app/img/brand';
-$faviconDir = __DIR__ . '/../app/img/favicon';
+$width = 1200;
+$height = 630;
+$output = __DIR__ . '/../app/img/social-card.png';
+$lines = ['Color contrast', 'image checker'];
 
-$logoSource = $brandDir . '/logo.png';
-$smallFaviconSource = $brandDir . '/favicon-16.png';
+$image = imagecreatetruecolor($width, $height);
 
-function loadPng(string $path)
-{
-	$image = imagecreatefrompng($path);
-	if (!$image) {
-		throw new RuntimeException('Could not read ' . $path);
+$white = imagecolorallocate($image, 255, 255, 255);
+$black = imagecolorallocate($image, 17, 24, 39);
+
+imagefilledrectangle($image, 0, 0, $width, $height, $white);
+
+$fontPaths = [
+	'/System/Library/Fonts/Supplemental/Arial Bold.ttf',
+	'/System/Library/Fonts/Supplemental/Arial.ttf',
+	'/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
+	'/usr/share/fonts/truetype/liberation2/LiberationSans-Bold.ttf',
+];
+
+$fontPath = null;
+foreach ($fontPaths as $candidate) {
+	if (is_readable($candidate)) {
+		$fontPath = $candidate;
+		break;
 	}
-	return $image;
 }
 
-function saveScaledPng(string $source, string $target, int $size): void
-{
-	$sourceImage = loadPng($source);
-	$sourceWidth = imagesx($sourceImage);
-	$sourceHeight = imagesy($sourceImage);
+if ($fontPath && function_exists('imagettftext')) {
+	$fontSize = 96;
+	$lineGap = 28;
+	$maxTextWidth = $width - 180;
 
-	$targetImage = imagecreatetruecolor($size, $size);
-	imagealphablending($targetImage, false);
-	imagesavealpha($targetImage, true);
-	$transparent = imagecolorallocatealpha($targetImage, 0, 0, 0, 127);
-	imagefilledrectangle($targetImage, 0, 0, $size, $size, $transparent);
+	do {
+		$boxes = array_map(fn($line) => imagettfbbox($fontSize, 0, $fontPath, $line), $lines);
+		$lineWidths = array_map(fn($box) => $box[2] - $box[0], $boxes);
+		$lineHeights = array_map(fn($box) => $box[1] - $box[7], $boxes);
+		$widestLine = max($lineWidths);
+		$totalHeight = array_sum($lineHeights) + $lineGap;
 
-	imagecopyresampled(
-		$targetImage,
-		$sourceImage,
-		0,
-		0,
-		0,
-		0,
-		$size,
-		$size,
-		$sourceWidth,
-		$sourceHeight
-	);
+		if ($widestLine <= $maxTextWidth || $fontSize <= 48) {
+			break;
+		}
 
-	imagepng($targetImage, $target, 9);
+		$fontSize -= 4;
+	} while (true);
+
+	$y = (int) (($height - $totalHeight) / 2);
+
+	foreach ($lines as $index => $line) {
+		$x = (int) (($width - $lineWidths[$index]) / 2);
+		$baseline = $y + $lineHeights[$index];
+		imagettftext($image, $fontSize, 0, $x, $baseline, $black, $fontPath, $line);
+		$y = $baseline + $lineGap;
+	}
+} else {
+	$font = 5;
+	$textHeight = imagefontheight($font);
+	$totalHeight = (count($lines) * $textHeight) + 12;
+	$y = (int) (($height - $totalHeight) / 2);
+
+	foreach ($lines as $line) {
+		$textWidth = imagefontwidth($font) * strlen($line);
+		$x = (int) (($width - $textWidth) / 2);
+		imagestring($image, $font, $x, $y, $line, $black);
+		$y += $textHeight + 12;
+	}
 }
 
-function drawCenteredLogo($targetImage, string $source, int $x, int $y, int $size): void
-{
-	$sourceImage = loadPng($source);
-	imagecopyresampled(
-		$targetImage,
-		$sourceImage,
-		$x,
-		$y,
-		0,
-		0,
-		$size,
-		$size,
-		imagesx($sourceImage),
-		imagesy($sourceImage)
-	);
-}
+imagepng($image, $output, 9);
 
-function saveSocialCard(string $logoSource, string $target): void
-{
-	$width = 1200;
-	$height = 630;
-	$image = imagecreatetruecolor($width, $height);
-
-	$background = imagecolorallocate($image, 246, 247, 251);
-	$panel = imagecolorallocate($image, 255, 255, 255);
-	$border = imagecolorallocate($image, 222, 226, 234);
-
-	imagefilledrectangle($image, 0, 0, $width, $height, $background);
-	imagefilledrectangle($image, 220, 76, 980, 554, $panel);
-	imagerectangle($image, 220, 76, 980, 554, $border);
-
-	drawCenteredLogo($image, $logoSource, 420, 135, 360);
-
-	imagepng($image, $target, 9);
-}
-
-if (!is_file($logoSource) || !is_file($smallFaviconSource)) {
-	throw new RuntimeException('Missing brand image sources in app/img/brand.');
-}
-
-copy($smallFaviconSource, $faviconDir . '/favicon-16x16.png');
-saveScaledPng($logoSource, $faviconDir . '/favicon-32x32.png', 32);
-saveScaledPng($logoSource, $faviconDir . '/favicon-48x48.png', 48);
-saveScaledPng($logoSource, $faviconDir . '/favicon-64x64.png', 64);
-saveScaledPng($logoSource, $faviconDir . '/apple-touch-icon.png', 180);
-saveScaledPng($logoSource, $faviconDir . '/android-chrome-192x192.png', 192);
-saveScaledPng($logoSource, $faviconDir . '/android-chrome-512x512.png', 512);
-saveSocialCard($logoSource, __DIR__ . '/../app/img/social-card.png');
-
-echo "Generated favicon and social assets\n";
+echo "Generated app/img/social-card.png\n";

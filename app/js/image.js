@@ -1,5 +1,7 @@
 var cachedPixels = false;
 var image = {};
+var imageDragDepth = 0;
+var imageThumbnailUrl = null;
 
 window.onresize = recalcImage;
 
@@ -20,12 +22,14 @@ function recalcImage() {
 
 function loadImagePreview() {
 	clearError();
+	updateImageSelectionPreview();
 
 	var files = id('image_file').files;
 	var file = imageValidation(files[0]);
 
 	if (!file) {
-		showStep(1);
+		showStep(2);
+		showEmptyPreviewCanvas();
 		return false;
 	}
 
@@ -49,7 +53,7 @@ function loadImagePreview() {
 
 		loadedImage.onerror = function() {
 			showStep(1);
-			showError('The selected file could not be decoded as an image.');
+			showError(translate('decodeImageError'));
 		};
 
 		loadedImage.src = event.target.result;
@@ -57,10 +61,29 @@ function loadImagePreview() {
 
 	reader.onerror = function() {
 		showStep(1);
-		showError('The selected file could not be read. Please choose another image.');
+		showError(translate('readImageError'));
 	};
 
 	reader.readAsDataURL(file);
+}
+
+function showEmptyPreviewCanvas() {
+	cachedPixels = false;
+	image = {};
+	hideResetBtn();
+
+	var canvas = getCanvas();
+	var context = getContext(canvas);
+
+	if (!canvas || !context) {
+		showError(translate('canvasError'));
+		return false;
+	}
+
+	resizePreviewFrame();
+	canvas.width = canvas.offsetWidth;
+	canvas.height = 320;
+	context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function updatePreviewCanvas() {
@@ -70,17 +93,17 @@ function updatePreviewCanvas() {
 	var context = getContext();
 
 	if (!canvas || !context) {
-		throw new Error('Your browser could not initialize the image preview canvas.');
+		throw new Error(translate('canvasError'));
 	}
 
 	if (!image.file || !image.file.width || !image.file.height) {
-		throw new Error('No readable image is loaded yet.');
+		throw new Error(translate('noReadableImageError'));
 	}
 
 	image.dimensions = scaleImage(canvas);
 
 	if (!image.dimensions.width || !image.dimensions.height) {
-		throw new Error('The selected image could not be sized for preview.');
+		throw new Error(translate('imageSizeError'));
 	}
 
 	canvas.width = canvas.offsetWidth;
@@ -108,7 +131,7 @@ function resizePreviewFrame() {
 	var toolbar = selector('[role=toolbar]');
 	var scrollArea = selector('.checker-scroll');
 
-	if (!previewArea || !toolbar || !scrollArea || !image.file) {
+	if (!previewArea || !toolbar || !scrollArea) {
 		return false;
 	}
 
@@ -118,18 +141,18 @@ function resizePreviewFrame() {
 		parseFloat(areaStyles.paddingRight) +
 		parseFloat(areaStyles.borderLeftWidth) +
 		parseFloat(areaStyles.borderRightWidth);
-	var minimumWidth = Math.ceil(toolbar.scrollWidth + horizontalSpacing);
-	var availableWidth = scrollArea.clientWidth;
-	var preferredWidth = Math.min(image.file.width, availableWidth);
-	var width = Math.max(preferredWidth, minimumWidth);
+	var availableWidth = Math.floor(scrollArea.getBoundingClientRect().width);
+	var contentWidth = Math.max(1, availableWidth - horizontalSpacing);
+	var preferredWidth = image.file ? Math.min(image.file.width, contentWidth) : contentWidth;
+	var width = Math.max(1, Math.min(preferredWidth + horizontalSpacing, availableWidth));
 
-	previewArea.style.setProperty('--checker-min-width', minimumWidth + 'px');
+	previewArea.style.setProperty('--checker-min-width', '0px');
 	previewArea.style.width = width + 'px';
 }
 
 function cachePixels(context) {
 	if (!context || !image.dimensions) {
-		throw new Error('The image preview is not ready yet.');
+		throw new Error(translate('imagePreviewNotReady'));
 	}
 
 	cachedPixels = context.getImageData(0, 0, image.dimensions.width, image.dimensions.height).data;
@@ -147,12 +170,12 @@ function getCachedPixel(x, y) {
 
 function imageValidation(file) {
 	if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
-		showError('This browser cannot read local image files.');
+		showError(translate('browserFileError'));
 		return false;
 	}
 
 	if (typeof FileReader === 'undefined') {
-		showError('This browser does not support image previews.');
+		showError(translate('browserPreviewError'));
 		return false;
 	}
 
@@ -161,9 +184,203 @@ function imageValidation(file) {
 	}
 
 	if( !(/image/i).test(file.type) ) {
-		showError('Please choose an image file.');
+		showError(translate('imageTypeError'));
 		return false;
 	}
 
 	return file;
+}
+
+function getImageFileFromTransfer(dataTransfer) {
+	if (!dataTransfer || !dataTransfer.files) {
+		return false;
+	}
+
+	for (var i = 0; i < dataTransfer.files.length; i++) {
+		var file = dataTransfer.files[i];
+
+		if (file && (/image/i).test(file.type)) {
+			return file;
+		}
+	}
+
+	return false;
+}
+
+function hasImageDrag(dataTransfer) {
+	if (!dataTransfer) {
+		return false;
+	}
+
+	if (dataTransfer.items) {
+		for (var i = 0; i < dataTransfer.items.length; i++) {
+			var item = dataTransfer.items[i];
+
+			if (item.kind === 'file' && (/image/i).test(item.type)) {
+				return true;
+			}
+		}
+	}
+
+	return dataTransfer.types && Array.prototype.indexOf.call(dataTransfer.types, 'Files') !== -1;
+}
+
+function setImageFile(file) {
+	var fileInput = id('image_file');
+
+	if (!fileInput || !imageValidation(file)) {
+		return false;
+	}
+
+	try {
+		var transfer = new DataTransfer();
+		transfer.items.add(file);
+		fileInput.files = transfer.files;
+	} catch (error) {
+		showError(translate('droppedFilePickerError'));
+		return false;
+	}
+
+	showImageThumbnail(file);
+	updateSelectedFileName();
+	showStep(1);
+	clearError();
+	return true;
+}
+
+function showImageThumbnail(file) {
+	var thumbnail = id('image-thumbnail');
+
+	if (!thumbnail) {
+		return false;
+	}
+
+	clearImageThumbnail();
+	imageThumbnailUrl = URL.createObjectURL(file);
+	thumbnail.src = imageThumbnailUrl;
+	thumbnail.hidden = false;
+	return true;
+}
+
+function updateImageSelectionPreview() {
+	var fileInput = id('image_file');
+	updateSelectedFileName();
+
+	if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+		clearImageThumbnail();
+		return false;
+	}
+
+	var file = imageValidation(fileInput.files[0]);
+
+	if (!file) {
+		clearImageThumbnail();
+		return false;
+	}
+
+	return showImageThumbnail(file);
+}
+
+function updateSelectedFileName() {
+	var fileInput = id('image_file');
+	var fileName = id('selected-file-name');
+
+	if (!fileName) {
+		return false;
+	}
+
+	if (fileInput && fileInput.files && fileInput.files[0]) {
+		fileName.textContent = fileInput.files[0].name;
+	} else {
+		fileName.textContent = translate('noFileChosen');
+	}
+
+	return true;
+}
+
+function clearImageThumbnail() {
+	var thumbnail = id('image-thumbnail');
+
+	if (imageThumbnailUrl) {
+		URL.revokeObjectURL(imageThumbnailUrl);
+		imageThumbnailUrl = null;
+	}
+
+	if (thumbnail) {
+		thumbnail.hidden = true;
+		thumbnail.removeAttribute('src');
+	}
+}
+
+window.updateSelectedFileName = updateSelectedFileName;
+window.clearImageThumbnail = clearImageThumbnail;
+
+function setImageDragState(active) {
+	var dropzone = selector('.upload-dropzone');
+	document.body.classList.toggle('is-dragging-image', active);
+
+	if (dropzone) {
+		dropzone.classList.toggle('is-drag-target', active);
+	}
+}
+
+function initImageChooser() {
+	var fileInput = id('image_file');
+
+	if (fileInput) {
+		fileInput.addEventListener('change', updateImageSelectionPreview);
+	}
+
+	document.addEventListener('dragenter', function (event) {
+		if (!hasImageDrag(event.dataTransfer)) {
+			return;
+		}
+
+		event.preventDefault();
+		imageDragDepth++;
+		setImageDragState(true);
+	});
+
+	document.addEventListener('dragover', function (event) {
+		if (!hasImageDrag(event.dataTransfer)) {
+			return;
+		}
+
+		event.preventDefault();
+		event.dataTransfer.dropEffect = 'copy';
+		setImageDragState(true);
+	});
+
+	document.addEventListener('dragleave', function (event) {
+		if (!hasImageDrag(event.dataTransfer)) {
+			return;
+		}
+
+		imageDragDepth = Math.max(0, imageDragDepth - 1);
+
+		if (imageDragDepth === 0) {
+			setImageDragState(false);
+		}
+	});
+
+	document.addEventListener('drop', function (event) {
+		if (!hasImageDrag(event.dataTransfer)) {
+			return;
+		}
+
+		event.preventDefault();
+		imageDragDepth = 0;
+		setImageDragState(false);
+
+		var file = getImageFileFromTransfer(event.dataTransfer);
+		if (file) {
+			setImageFile(file);
+		}
+	});
+}
+
+if (document.readyState === 'loading') {
+	document.addEventListener('DOMContentLoaded', initImageChooser);
+} else {
+	initImageChooser();
 }
