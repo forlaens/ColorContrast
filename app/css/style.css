@@ -335,7 +335,7 @@ input[type=file] {
 
 select,
 input[type=color] {
-	height: 36px;
+	min-height: 44px;
 	border: 1px solid var(--border-strong);
 	border-radius: 6px;
 	background: #ffffff;
@@ -348,7 +348,7 @@ select {
 }
 
 input[type=color] {
-	width: 48px;
+	width: 56px;
 	padding: 3px;
 }
 
@@ -356,8 +356,8 @@ input[type=color] {
 	cursor: pointer;
 	display: inline-grid;
 	place-items: center;
-	width: 36px;
-	height: 36px;
+	width: 44px;
+	height: 44px;
 	padding: 0;
 	border: 1px solid var(--border-strong);
 	border-radius: 6px;
