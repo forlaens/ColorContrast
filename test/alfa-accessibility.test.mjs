@@ -7,8 +7,12 @@ import { resolve } from 'node:path';
 import { test } from 'node:test';
 import AxeBuilder from '@axe-core/playwright';
 import { chromium } from 'playwright';
+import { Refinement } from '@siteimprove/alfa-refinement';
 import { Playwright } from '@siteimprove/alfa-playwright';
 import { Audit, Outcomes, Rules } from '@siteimprove/alfa-test-utils';
+import { Conformance, Criterion } from '@siteimprove/alfa-wcag';
+
+const { and } = Refinement;
 
 const renderedRoutes = [
   { name: 'home', path: '/' }
@@ -19,12 +23,20 @@ const supportedLanguages = ['en', 'da', 'no', 'sv', 'fi', 'kl', 'is', 'fo', 'es'
 const axeTags = [
   'wcag2a',
   'wcag2aa',
+  'wcag2aaa',
   'wcag21a',
   'wcag21aa',
+  'wcag21aaa',
   'wcag22a',
   'wcag22aa',
+  'wcag22aaa',
   'best-practice'
 ];
+
+const alfaAAAAndBestPracticeFilter = (rule) => {
+  return rule.hasRequirement(and(Criterion.isCriterion, Conformance.isAAA()))
+    || Rules.bestPracticesFilter(rule);
+};
 
 function buildApp() {
   const build = spawnSync('npm', ['run', 'build'], {
@@ -112,7 +124,7 @@ async function writeAxeReport(route, results) {
   );
 }
 
-test('built app passes Siteimprove Alfa WCAG AA checks', async () => {
+test('built app passes Siteimprove Alfa WCAG AAA and best-practice checks', async () => {
   buildApp();
 
   const server = await startStaticServer();
@@ -126,12 +138,12 @@ test('built app passes Siteimprove Alfa WCAG AA checks', async () => {
     const document = await page.evaluateHandle(() => window.document);
     const alfaPage = await Playwright.toPage(document);
     const audit = await Audit.run(alfaPage, {
-      rules: { include: Rules.aaFilter },
+      rules: { include: alfaAAAAndBestPracticeFilter },
       outcomes: { include: Outcomes.failedFilter }
     });
 
     const failed = audit.resultAggregates.reduce((total, result) => total + result.failed, 0);
-    assert.equal(failed, 0, `Expected no Alfa WCAG AA failures, found ${failed}.`);
+    assert.equal(failed, 0, `Expected no Alfa WCAG AAA or best-practice failures, found ${failed}.`);
   } finally {
     if (browser) {
       await browser.close();
@@ -140,7 +152,7 @@ test('built app passes Siteimprove Alfa WCAG AA checks', async () => {
   }
 });
 
-test('built app passes axe WCAG A, WCAG AA, and best-practice checks', async () => {
+test('built app passes axe WCAG AAA and best-practice checks', async () => {
   buildApp();
 
   const server = await startStaticServer();
