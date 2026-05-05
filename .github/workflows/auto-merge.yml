@@ -16,7 +16,12 @@ jobs:
   enable:
     name: Enable auto-merge
     runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == false
+    if: >
+      github.event.pull_request.draft == false &&
+      (
+        github.event.pull_request.user.login != 'renovate[bot]' ||
+        contains(github.event.pull_request.labels.*.name, 'automerge')
+      )
 
     steps:
       - name: Enable auto-merge

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    "group:recommended",
+    "group:monorepos"
+  ],
+  "timezone": "Europe/Copenhagen",
+  "labels": ["dependencies"],
+  "schedule": ["before 6am every weekday"],
+  "prHourlyLimit": 2,
+  "prConcurrentLimit": 10,
+  "rangeStrategy": "bump",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on monday"],
+    "automerge": true,
+    "automergeType": "pr",
+    "platformAutomerge": true,
+    "addLabels": ["automerge"]
+  },
+  "packageRules": [
+    {
+      "description": "Automerge safe non-major updates after CI passes.",
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "matchCurrentVersion": "!/^0/",
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true,
+      "addLabels": ["automerge"]
+    },
+    {
+      "description": "Automerge patch updates for 0.x packages only.",
+      "matchUpdateTypes": ["patch"],
+      "matchCurrentVersion": "/^0/",
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true,
+      "addLabels": ["automerge"]
+    },
+    {
+      "description": "Keep major updates visible for manual review.",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "dependencyDashboardApproval": true,
+      "addLabels": ["major"]
+    }
+  ]
+}
