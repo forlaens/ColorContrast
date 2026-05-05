@@ -13,6 +13,8 @@
 	--button-strong-text: #ffffff;
 	--focus-ring: #111827;
 	--focus-gap: #ffffff;
+	--skip-link-bg: #111827;
+	--skip-link-text: #ffffff;
 	--error-bg: #fff4f2;
 	--error-border: #b42318;
 	--error-text: #7a271a;
@@ -44,6 +46,8 @@
 		--button-strong-text: #111827;
 		--focus-ring: #ffffff;
 		--focus-gap: #080d18;
+		--skip-link-bg: #f9fafb;
+		--skip-link-text: #080d18;
 		--error-bg: #3b1110;
 		--error-border: #fca5a5;
 		--error-text: #fee2e2;
@@ -68,6 +72,8 @@
 	--button-strong-text: #111827;
 	--focus-ring: #ffffff;
 	--focus-gap: #080d18;
+	--skip-link-bg: #f9fafb;
+	--skip-link-text: #080d18;
 	--error-bg: #3b1110;
 	--error-border: #fca5a5;
 	--error-text: #fee2e2;
@@ -127,8 +133,8 @@ select {
 	z-index: 10;
 	padding: 10px 14px;
 	border-radius: 6px;
-	background: var(--text);
-	color: #ffffff;
+	background: var(--skip-link-bg);
+	color: var(--skip-link-text);
 	font-weight: 750;
 	text-decoration: none;
 	transform: translateY(-180%);
