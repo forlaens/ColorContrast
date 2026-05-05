@@ -3,57 +3,48 @@
 $width = 1200;
 $height = 630;
 $output = __DIR__ . '/../app/img/social-card.png';
+$text = 'Color contrast image checker';
 
 $image = imagecreatetruecolor($width, $height);
 
 $white = imagecolorallocate($image, 255, 255, 255);
-$black = imagecolorallocate($image, 0, 0, 0);
-$gray = imagecolorallocate($image, 240, 240, 240);
-$midGray = imagecolorallocate($image, 176, 176, 176);
-$purple = imagecolorallocate($image, 119, 40, 237);
-$red = imagecolorallocate($image, 225, 31, 31);
+$black = imagecolorallocate($image, 17, 24, 39);
 
 imagefilledrectangle($image, 0, 0, $width, $height, $white);
 
-$tile = 52;
-$checkerX = 720;
-$checkerY = 118;
-$checkerW = 340;
-$checkerH = 340;
+$fontPaths = [
+	'/System/Library/Fonts/Supplemental/Arial Bold.ttf',
+	'/System/Library/Fonts/Supplemental/Arial.ttf',
+	'/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
+	'/usr/share/fonts/truetype/liberation2/LiberationSans-Bold.ttf',
+];
 
-imagefilledrectangle($image, $checkerX, $checkerY, $checkerX + $checkerW, $checkerY + $checkerH, $gray);
-
-for ($y = $checkerY; $y < $checkerY + $checkerH; $y += $tile) {
-	for ($x = $checkerX; $x < $checkerX + $checkerW; $x += $tile) {
-		$column = intdiv($x - $checkerX, $tile);
-		$row = intdiv($y - $checkerY, $tile);
-
-		if (($column + $row) % 2 === 0) {
-			imagefilledrectangle($image, $x, $y, $x + $tile - 1, $y + $tile - 1, $midGray);
-		}
+$fontPath = null;
+foreach ($fontPaths as $candidate) {
+	if (is_readable($candidate)) {
+		$fontPath = $candidate;
+		break;
 	}
 }
 
-imagefilledellipse($image, 890, 288, 170, 170, $black);
-imagefilledellipse($image, 890, 288, 112, 112, $white);
-imagefilledellipse($image, 890, 288, 46, 46, $purple);
-imageline($image, 890, 174, 890, 402, $black);
-imageline($image, 776, 288, 1004, 288, $black);
+if ($fontPath && function_exists('imagettftext')) {
+	$fontSize = 74;
+	$box = imagettfbbox($fontSize, 0, $fontPath, $text);
+	$textWidth = $box[2] - $box[0];
+	$textHeight = $box[1] - $box[7];
+	$x = (int) (($width - $textWidth) / 2);
+	$y = (int) (($height + $textHeight) / 2);
 
-imagefilledrectangle($image, 138, 414, 524, 468, $black);
-imagefilledrectangle($image, 524, 414, 612, 468, $red);
+	imagettftext($image, $fontSize, 0, $x, $y, $black, $fontPath, $text);
+} else {
+	$font = 5;
+	$textWidth = imagefontwidth($font) * strlen($text);
+	$textHeight = imagefontheight($font);
+	$x = (int) (($width - $textWidth) / 2);
+	$y = (int) (($height - $textHeight) / 2);
 
-$fontLarge = 5;
-$fontMedium = 4;
-$fontSmall = 3;
-
-imagestring($image, $fontLarge, 140, 150, 'Image contrast checker', $black);
-imagestring($image, $fontMedium, 142, 204, 'Find WCAG contrast issues', $black);
-imagestring($image, $fontMedium, 142, 230, 'directly in uploaded images.', $black);
-imagestring($image, $fontSmall, 142, 432, '4.5:1', $white);
-imagestring($image, $fontSmall, 536, 432, 'fail', $white);
-
-imagerectangle($image, 32, 32, $width - 33, $height - 33, $black);
+	imagestring($image, $font, $x, $y, $text, $black);
+}
 
 imagepng($image, $output, 9);
 
