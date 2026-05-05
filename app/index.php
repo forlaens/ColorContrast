@@ -9,7 +9,7 @@
 
 	<div hidden id="app-error" class="error-panel" role="alert" tabindex="-1"></div>
 
-	<section class="hero" aria-labelledby="app-title">
+	<header class="hero" aria-labelledby="app-title">
 		<div>
 			<h1 id="app-title" data-i18n="title">Image contrast checker</h1>
 			<p class="lede" data-i18n="lede">Check whether text or UI colors have enough contrast when placed on top of an image.</p>
@@ -40,7 +40,7 @@
 				</button>
 			</div>
 		</div>
-	</section>
+	</header>
 
 	<main id="main-content" class="app-main" tabindex="-1">
 		<form id="step-1" class="step upload-panel" action="" method="POST" enctype="multipart/form-data" onsubmit="loadImagePreview(); return false;">
