@@ -104,6 +104,20 @@ test('document includes language switcher support', async () => {
   assert.match(i18n, /code: 'it'/);
 });
 
+test('document includes step illustrations', async () => {
+  const index = await readFile(join(distDir, 'index.html'), 'utf8');
+  const illustrations = [
+    'step-1-upload.png',
+    'step-2-pick-color.png',
+    'step-3-result.png'
+  ];
+
+  for (const fileName of illustrations) {
+    assert.match(index, new RegExp(`/img/steps/${fileName}`));
+    assert.equal((await stat(join(distDir, 'img/steps', fileName))).size > 0, true);
+  }
+});
+
 test('build includes PWA files', async () => {
   const manifest = JSON.parse(await readFile(join(distDir, 'manifest.webmanifest'), 'utf8'));
   const serviceWorker = await readFile(join(distDir, 'sw.js'), 'utf8');
