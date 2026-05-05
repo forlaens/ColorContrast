@@ -133,7 +133,7 @@ test('document includes language switcher support', async () => {
   const i18n = await readFile(join(distDir, 'js/app.bundle.js'), 'utf8');
 
   assert.match(index, /<select id="language-switcher" name="language" autocomplete="off"><\/select>/);
-  assert.match(index, /data-i18n-aria-label="chooseFile"/);
+  assert.match(index, /<label for="image_file" class="file-picker-button" data-i18n="chooseFile">Choose file<\/label>/);
   assert.match(index, /data-i18n-file-empty="noFileChosen"/);
   assert.match(index, /data-i18n-aria-label="checkerRegion"/);
   assert.match(index, /data-i18n-aria-label="settingsToolbar"/);
