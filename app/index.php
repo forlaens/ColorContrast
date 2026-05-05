@@ -16,7 +16,12 @@
 		</div>
 		<div class="header-controls">
 			<label class="language-switcher">
-				<span data-i18n="languageLabel">Language</span>
+				<span class="label-with-icon">
+					<svg class="label-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+						<path d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20Zm0-2c.8 0 1.7-1 2.3-2.8.2-.7.4-1.4.5-2.2H9.2c.1.8.3 1.5.5 2.2C10.3 19 11.2 20 12 20Zm-4.8-5H4.6a8 8 0 0 0 3.2 4c-.3-.8-.5-1.7-.6-2.7L7.2 15Zm12.2 0h-2.6c-.1 1-.3 1.9-.6 2.7a8 8 0 0 0 3.2-4ZM15 13c.1-1.3.1-2.7 0-4H9c-.1 1.3-.1 2.7 0 4h6Zm-8 0a19 19 0 0 1 0-4H4.6a8.2 8.2 0 0 0 0 4H7Zm12.4 0a8.2 8.2 0 0 0 0-4H17a19 19 0 0 1 0 4h2.4ZM9.2 7h5.6c-.1-.8-.3-1.5-.5-2.2C13.7 3 12.8 2 12 2s-1.7 1-2.3 2.8C9.5 5.5 9.3 6.2 9.2 7Zm-1.4-2a8 8 0 0 0-3.2 4h2.6c.1-1 .3-1.9.6-2.7L7.8 5Zm8.4 0c.3.8.5 1.7.6 2.7h2.6a8 8 0 0 0-3.2-4Z" />
+					</svg>
+					<span data-i18n="languageLabel">Language</span>
+				</span>
 				<select id="language-switcher" name="language" autocomplete="off"></select>
 			</label>
 			<div class="theme-control">
