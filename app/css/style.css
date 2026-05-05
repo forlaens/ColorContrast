@@ -183,7 +183,7 @@ select {
 }
 
 .theme-control label {
-	cursor: pointer;
+	cursor: default;
 }
 
 .label-with-icon {
