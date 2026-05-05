@@ -2,7 +2,7 @@
 
 <a class="skip-link" href="#main-content" onclick="markSkipLinkTarget();" data-i18n="skipLink">Skip to main content</a>
 
-<main id="main-content" class="app-shell" tabindex="-1">
+<div class="app-shell">
 	<noscript>
 		<div class="notice">For this tool to work, your browser must have JavaScript enabled.</div>
 	</noscript>
@@ -42,17 +42,18 @@
 		</div>
 	</section>
 
-	<form id="step-1" class="step upload-panel" action="" method="POST" enctype="multipart/form-data" onsubmit="loadImagePreview(); return false;">
-		<label class="upload-dropzone">
-			<span class="upload-title" data-i18n="chooseImage">Choose an image</span>
-			<span class="upload-copy" data-i18n="uploadCopy">PNG, JPG, GIF, or SVG. The file stays in your browser.</span>
-			<span class="upload-file-row">
-				<img hidden id="image-thumbnail" class="upload-thumbnail" src="" alt="">
-				<input id="image_file" type="file" name="image" accept="image/*">
-			</span>
-		</label>
-		<input class="cta" type="submit" value="Load image" data-i18n-value="loadImage">
-	</form>
+	<main id="main-content" class="app-main" tabindex="-1">
+		<form id="step-1" class="step upload-panel" action="" method="POST" enctype="multipart/form-data" onsubmit="loadImagePreview(); return false;">
+			<label class="upload-dropzone">
+				<span class="upload-title" data-i18n="chooseImage">Choose an image</span>
+				<span class="upload-copy" data-i18n="uploadCopy">PNG, JPG, GIF, or SVG. The file stays in your browser.</span>
+				<span class="upload-file-row">
+					<img hidden id="image-thumbnail" class="upload-thumbnail" src="" alt="">
+					<input id="image_file" type="file" name="image" accept="image/*">
+				</span>
+			</label>
+			<input class="cta" type="submit" value="Load image" data-i18n-value="loadImage">
+		</form>
 
 	<details id="intro-panel" class="intro-panel" open>
 		<summary>
@@ -163,6 +164,7 @@
 			</section>
 		</div>
 	</section>
-</main>
+	</main>
+</div>
 
 <?php include($_SERVER['DOCUMENT_ROOT'] . '/include/layout/foot.php'); ?>
