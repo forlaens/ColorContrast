@@ -428,11 +428,13 @@ test('theme toggle remembers the user preference', async () => {
     await page.goto(server.url, { waitUntil: 'networkidle' });
 
     assert.equal(await page.evaluate(() => document.documentElement.getAttribute('data-theme')), 'dark');
+    assert.equal(await page.locator('#theme-toggle').getAttribute('aria-label'), 'Dark mode');
     assert.equal(await page.locator('#theme-toggle').getAttribute('aria-pressed'), 'true');
 
     await page.locator('#theme-toggle').click();
     assert.equal(await page.evaluate(() => document.documentElement.getAttribute('data-theme')), 'light');
     assert.equal(await page.evaluate(() => window.localStorage.getItem('colorcontrast-theme')), 'light');
+    assert.equal(await page.locator('#theme-toggle').getAttribute('aria-label'), 'Dark mode');
     assert.equal(await page.locator('#theme-toggle').getAttribute('aria-pressed'), 'false');
 
     await context.close();

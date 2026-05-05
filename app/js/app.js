@@ -129,16 +129,8 @@ function updateThemeToggle() {
 	}
 
 	var activeTheme = getActiveTheme();
-	var labelKey = activeTheme === 'dark' ? 'themeLight' : 'themeDark';
-	var label = window.translate ? window.translate(labelKey) : toggle.textContent;
 
 	toggle.setAttribute('aria-pressed', activeTheme === 'dark' ? 'true' : 'false');
-	toggle.setAttribute('aria-label', label);
-
-	var text = toggle.querySelector('[data-theme-toggle-label]');
-	if (text) {
-		text.textContent = label;
-	}
 
 	return true;
 }
