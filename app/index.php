@@ -18,12 +18,12 @@
 			<label class="language-switcher">
 				<span class="label-with-icon">
 					<svg class="label-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
-						<circle cx="12" cy="12" r="9" />
-						<ellipse cx="12" cy="12" rx="4.5" ry="9" />
-						<ellipse cx="12" cy="12" rx="2" ry="9" />
-						<path d="M3 12H21" />
-						<path d="M5 8H19" />
-						<path d="M5 16H19" />
+						<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8" />
+						<ellipse cx="12" cy="12" rx="4.5" ry="9" fill="none" stroke="currentColor" stroke-width="1.4" />
+						<ellipse cx="12" cy="12" rx="2" ry="9" fill="none" stroke="currentColor" stroke-width="1.2" />
+						<path d="M3 12H21" fill="none" stroke="currentColor" stroke-width="1.4" />
+						<path d="M5 8H19" fill="none" stroke="currentColor" stroke-width="1.2" />
+						<path d="M5 16H19" fill="none" stroke="currentColor" stroke-width="1.2" />
 					</svg>
 					<span data-i18n="languageLabel">Language</span>
 				</span>

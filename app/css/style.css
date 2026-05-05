@@ -186,23 +186,6 @@ select {
 .label-icon {
 	width: 1rem;
 	height: 1rem;
-	fill: none;
-	stroke: currentColor;
-	stroke-linecap: round;
-}
-
-.label-icon circle {
-	stroke-width: 1.8;
-}
-
-.label-icon ellipse:first-of-type,
-.label-icon path:first-of-type {
-	stroke-width: 1.4;
-}
-
-.label-icon ellipse:last-of-type,
-.label-icon path {
-	stroke-width: 1.2;
 }
 
 .theme-toggle {
