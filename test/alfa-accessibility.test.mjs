@@ -287,6 +287,11 @@ test('intro heading remains a heading when collapsed', async () => {
     assert.equal(await page.locator('#intro-steps').isHidden(), true);
     assert.equal(await page.getByRole('heading', { name: 'How to use it', level: 2 }).isVisible(), true);
 
+    await page.locator('#intro-toggle').click();
+    assert.equal(await page.getByRole('heading', { name: 'Upload an image', level: 3 }).isVisible(), true);
+    assert.equal(await page.getByRole('heading', { name: 'Pick the foreground color', level: 3 }).isVisible(), true);
+    assert.equal(await page.getByRole('heading', { name: 'Run the test', level: 3 }).isVisible(), true);
+
     await context.close();
   } finally {
     if (browser) {
