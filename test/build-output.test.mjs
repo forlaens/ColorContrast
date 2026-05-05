@@ -76,7 +76,7 @@ test('document avoids deprecated mobile app meta tags', async () => {
 
 test('document provides a skip link to main content', async () => {
   const index = await readFile(join(distDir, 'index.html'), 'utf8');
-  assert.match(index, /<a class="skip-link" href="#main-content" data-i18n="skipLink">Skip to main content<\/a>/);
+  assert.match(index, /<a class="skip-link" href="#main-content" onclick="markSkipLinkTarget\(\);" data-i18n="skipLink">Skip to main content<\/a>/);
   assert.match(index, /<main id="main-content" class="app-shell" tabindex="-1">/);
 });
 

@@ -285,6 +285,40 @@ test('loading a selected image hides the image chooser in canvas view', async ()
   }
 });
 
+test('main focus outline is only shown from the skip link', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    await page.locator('#main-content').focus();
+    assert.equal(await page.locator('#main-content').evaluate((element) => {
+      return window.getComputedStyle(element).outlineStyle;
+    }), 'none');
+
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+    await page.keyboard.press('Tab');
+    assert.equal(await page.evaluate(() => document.activeElement.classList.contains('skip-link')), true);
+    await page.keyboard.press('Enter');
+    assert.equal(await page.locator('#main-content').evaluate((element) => {
+      return window.getComputedStyle(element).outlineStyle;
+    }), 'solid');
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
 async function documentLanguage(page) {
   return page.evaluate(() => document.documentElement.lang);
 }

@@ -11,6 +11,16 @@ function showStep(stepNumber) {
 	newStep.removeAttribute('aria-hidden');
 }
 
+function markSkipLinkTarget() {
+	var main = id('main-content');
+
+	if (!main) {
+		return false;
+	}
+
+	main.setAttribute('data-skip-link-focus', 'true');
+}
+
 function showError(message) {
 	var errorPanel = selector('#app-error');
 

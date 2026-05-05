@@ -47,6 +47,15 @@ select {
 	outline-offset: 3px;
 }
 
+#main-content:focus {
+	outline: 0;
+}
+
+#main-content[data-skip-link-focus=true]:focus {
+	outline: 3px solid rgba(15, 118, 110, 0.35);
+	outline-offset: 8px;
+}
+
 [hidden] {
 	display: none !important;
 }
