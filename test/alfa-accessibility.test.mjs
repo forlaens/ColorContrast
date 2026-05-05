@@ -211,10 +211,25 @@ test('built app supports every language in the switcher', async () => {
       await page.waitForFunction((expected) => document.documentElement.lang === expected, language);
 
       const heading = await page.locator('#app-title').textContent();
+      const fileLabel = await page.locator('#image_file').getAttribute('aria-label');
+      const fileName = await page.locator('#selected-file-name').textContent();
+      const checkerLabel = await page.locator('#preview_area').getAttribute('aria-label');
+      const toolbarLabel = await page.locator('[role="toolbar"]').getAttribute('aria-label');
       assert.equal(await page.locator('#language-switcher').inputValue(), language);
       assert.equal(await documentLanguage(page), language);
       assert.equal((heading || '').trim().length > 0, true);
+      assert.equal((fileLabel || '').trim().length > 0, true);
+      assert.equal((fileName || '').trim().length > 0, true);
+      assert.equal((checkerLabel || '').trim().length > 0, true);
+      assert.equal((toolbarLabel || '').trim().length > 0, true);
     }
+
+    await page.selectOption('#language-switcher', 'da');
+    await page.waitForFunction(() => document.documentElement.lang === 'da');
+    assert.equal(await page.locator('#image_file').getAttribute('aria-label'), 'Vælg fil');
+    assert.equal(await page.locator('#selected-file-name').textContent(), 'Ingen fil valgt');
+    assert.equal(await page.locator('#preview_area').getAttribute('aria-label'), 'Kontrasttjek');
+    assert.equal(await page.locator('[role="toolbar"]').getAttribute('aria-label'), 'Indstillinger for tjek');
 
     await context.close();
   } finally {
@@ -301,6 +316,7 @@ test('image chooser previews selected and dropped images', async () => {
     await page.locator('#image_file').dispatchEvent('change');
     assert.equal(await page.locator('#image-thumbnail').isVisible(), true);
     assert.match(await page.locator('#image-thumbnail').getAttribute('src'), /^blob:/);
+    assert.equal(await page.locator('#selected-file-name').textContent(), 'social-card.png');
 
     const dragData = await createImageDataTransfer(page);
     await page.dispatchEvent('body', 'dragenter', { dataTransfer: dragData });
@@ -310,6 +326,7 @@ test('image chooser previews selected and dropped images', async () => {
 
     assert.equal(await page.locator('#step-1').isVisible(), true);
     assert.equal(await page.locator('#image_file').evaluate((input) => input.files[0].name), 'dropped-social-card.png');
+    assert.equal(await page.locator('#selected-file-name').textContent(), 'dropped-social-card.png');
     assert.equal(await page.locator('#image-thumbnail').isVisible(), true);
 
     await page.locator('input[type="submit"][value="Load image"]').click();

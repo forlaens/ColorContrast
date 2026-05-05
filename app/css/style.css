@@ -401,6 +401,17 @@ input[type=file] {
 	color: var(--muted);
 }
 
+.file-input-native {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
 .upload-file-row {
 	display: flex;
 	flex-wrap: wrap;
@@ -409,8 +420,26 @@ input[type=file] {
 	margin-top: 10px;
 }
 
-.upload-file-row input[type=file] {
-	margin-top: 0;
+.file-picker-button {
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
+	padding: 0 14px;
+	border: 1px solid var(--border-strong);
+	border-radius: 6px;
+	background: var(--panel);
+	color: var(--text);
+	font-weight: 700;
+}
+
+.file-input-native:focus-visible + .file-picker-button {
+	outline: 4px solid var(--focus-ring);
+	outline-offset: 4px;
+}
+
+.selected-file-name {
+	color: var(--muted);
+	overflow-wrap: anywhere;
 }
 
 .upload-thumbnail {

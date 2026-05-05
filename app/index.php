@@ -49,7 +49,9 @@
 				<span class="upload-copy" data-i18n="uploadCopy">PNG, JPG, GIF, or SVG. The file stays in your browser.</span>
 				<span class="upload-file-row">
 					<img hidden id="image-thumbnail" class="upload-thumbnail" src="" alt="">
-					<input id="image_file" type="file" name="image" accept="image/*" onchange="updateImageSelectionPreview();">
+					<input id="image_file" class="file-input-native" type="file" name="image" accept="image/*" aria-label="Choose file" data-i18n-aria-label="chooseFile" aria-describedby="selected-file-name" onchange="updateImageSelectionPreview();">
+					<span class="file-picker-button" aria-hidden="true" data-i18n="chooseFile">Choose file</span>
+					<span id="selected-file-name" class="selected-file-name" data-i18n-file-empty="noFileChosen">No file chosen</span>
 				</span>
 			</label>
 			<input class="cta" type="submit" value="Load image" data-i18n-value="loadImage">
@@ -93,8 +95,8 @@
 		<div hidden role="status" class="loading" aria-atomic="true"></div>
 
 		<div class="checker-scroll">
-			<section id="preview_area" class="checker" aria-label="Contrast checker">
-				<div role="toolbar" aria-label="Settings">
+			<section id="preview_area" class="checker" aria-label="Contrast checker" data-i18n-aria-label="checkerRegion">
+				<div role="toolbar" aria-label="Checker settings" data-i18n-aria-label="settingsToolbar">
 					<div class="toolbar-group">
 						<label class="field color-field">
 							<span id="testcolor-label" data-i18n="colorLabel">Color to test</span>

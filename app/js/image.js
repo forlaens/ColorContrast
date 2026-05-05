@@ -53,7 +53,7 @@ function loadImagePreview() {
 
 		loadedImage.onerror = function() {
 			showStep(1);
-			showError('The selected file could not be decoded as an image.');
+			showError(translate('decodeImageError'));
 		};
 
 		loadedImage.src = event.target.result;
@@ -61,7 +61,7 @@ function loadImagePreview() {
 
 	reader.onerror = function() {
 		showStep(1);
-		showError('The selected file could not be read. Please choose another image.');
+		showError(translate('readImageError'));
 	};
 
 	reader.readAsDataURL(file);
@@ -93,17 +93,17 @@ function updatePreviewCanvas() {
 	var context = getContext();
 
 	if (!canvas || !context) {
-		throw new Error('Your browser could not initialize the image preview canvas.');
+		throw new Error(translate('canvasError'));
 	}
 
 	if (!image.file || !image.file.width || !image.file.height) {
-		throw new Error('No readable image is loaded yet.');
+		throw new Error(translate('noReadableImageError'));
 	}
 
 	image.dimensions = scaleImage(canvas);
 
 	if (!image.dimensions.width || !image.dimensions.height) {
-		throw new Error('The selected image could not be sized for preview.');
+		throw new Error(translate('imageSizeError'));
 	}
 
 	canvas.width = canvas.offsetWidth;
@@ -152,7 +152,7 @@ function resizePreviewFrame() {
 
 function cachePixels(context) {
 	if (!context || !image.dimensions) {
-		throw new Error('The image preview is not ready yet.');
+		throw new Error(translate('imagePreviewNotReady'));
 	}
 
 	cachedPixels = context.getImageData(0, 0, image.dimensions.width, image.dimensions.height).data;
@@ -170,12 +170,12 @@ function getCachedPixel(x, y) {
 
 function imageValidation(file) {
 	if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
-		showError('This browser cannot read local image files.');
+		showError(translate('browserFileError'));
 		return false;
 	}
 
 	if (typeof FileReader === 'undefined') {
-		showError('This browser does not support image previews.');
+		showError(translate('browserPreviewError'));
 		return false;
 	}
 
@@ -184,7 +184,7 @@ function imageValidation(file) {
 	}
 
 	if( !(/image/i).test(file.type) ) {
-		showError('Please choose an image file.');
+		showError(translate('imageTypeError'));
 		return false;
 	}
 
@@ -237,11 +237,12 @@ function setImageFile(file) {
 		transfer.items.add(file);
 		fileInput.files = transfer.files;
 	} catch (error) {
-		showError('Your browser could not add the dropped image to the file picker.');
+		showError(translate('droppedFilePickerError'));
 		return false;
 	}
 
 	showImageThumbnail(file);
+	updateSelectedFileName();
 	showStep(1);
 	clearError();
 	return true;
@@ -263,6 +264,7 @@ function showImageThumbnail(file) {
 
 function updateImageSelectionPreview() {
 	var fileInput = id('image_file');
+	updateSelectedFileName();
 
 	if (!fileInput || !fileInput.files || !fileInput.files[0]) {
 		clearImageThumbnail();
@@ -279,6 +281,23 @@ function updateImageSelectionPreview() {
 	return showImageThumbnail(file);
 }
 
+function updateSelectedFileName() {
+	var fileInput = id('image_file');
+	var fileName = id('selected-file-name');
+
+	if (!fileName) {
+		return false;
+	}
+
+	if (fileInput && fileInput.files && fileInput.files[0]) {
+		fileName.textContent = fileInput.files[0].name;
+	} else {
+		fileName.textContent = translate('noFileChosen');
+	}
+
+	return true;
+}
+
 function clearImageThumbnail() {
 	var thumbnail = id('image-thumbnail');
 
@@ -292,6 +311,9 @@ function clearImageThumbnail() {
 		thumbnail.removeAttribute('src');
 	}
 }
+
+window.updateSelectedFileName = updateSelectedFileName;
+window.clearImageThumbnail = clearImageThumbnail;
 
 function setImageDragState(active) {
 	var dropzone = selector('.upload-dropzone');

@@ -107,9 +107,15 @@ test('document includes language switcher support', async () => {
   const i18n = await readFile(join(distDir, 'js/i18n.js'), 'utf8');
 
   assert.match(index, /<select id="language-switcher" name="language" autocomplete="off"><\/select>/);
+  assert.match(index, /data-i18n-aria-label="chooseFile"/);
+  assert.match(index, /data-i18n-file-empty="noFileChosen"/);
+  assert.match(index, /data-i18n-aria-label="checkerRegion"/);
+  assert.match(index, /data-i18n-aria-label="settingsToolbar"/);
   assert.match(index, /<script src="\/js\/i18n\.js" defer><\/script>/);
   assert.match(i18n, /code: 'kl'/);
   assert.match(i18n, /code: 'it'/);
+  assert.match(i18n, /chooseFile:/);
+  assert.match(i18n, /droppedFilePickerError:/);
 });
 
 test('document includes dark mode support', async () => {

@@ -5,6 +5,10 @@ function resetFileInput() {
 	if (window.clearImageThumbnail) {
 		window.clearImageThumbnail();
 	}
+
+	if (window.updateSelectedFileName) {
+		window.updateSelectedFileName();
+	}
 }
 
 function toggleColorPicker(button) {
