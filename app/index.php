@@ -40,21 +40,22 @@
 				</button>
 			</div>
 		</div>
+		<div id="settings-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
 	</header>
 
 	<main id="main-content" class="app-main" tabindex="-1">
-		<form id="step-1" class="step upload-panel" action="" method="POST" enctype="multipart/form-data" aria-labelledby="upload-title" onsubmit="loadImagePreview(); return false;">
-			<label class="upload-dropzone">
+		<form id="step-1" class="step upload-panel" method="POST" enctype="multipart/form-data" aria-labelledby="upload-title" onsubmit="loadImagePreview(); return false;">
+			<div class="upload-dropzone">
 				<h2 id="upload-title" class="upload-title" data-i18n="chooseImage">Choose an image</h2>
 				<span class="upload-copy" data-i18n="uploadCopy">PNG, JPG, GIF, or SVG. The file stays in your browser.</span>
 				<span class="upload-file-row">
-					<img hidden id="image-thumbnail" class="upload-thumbnail" src="" alt="">
-					<input id="image_file" class="file-input-native" type="file" name="image" accept="image/*" aria-label="Choose file" data-i18n-aria-label="chooseFile" aria-describedby="selected-file-name" onchange="updateImageSelectionPreview();">
-					<span class="file-picker-button" aria-hidden="true" data-i18n="chooseFile">Choose file</span>
+					<img hidden id="image-thumbnail" class="upload-thumbnail" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" alt="">
+					<input id="image_file" class="file-input-native" type="file" name="image" accept="image/*" aria-describedby="selected-file-name" onchange="updateImageSelectionPreview();">
+					<label for="image_file" class="file-picker-button" data-i18n="chooseFile">Choose file</label>
 					<span id="selected-file-name" class="selected-file-name" data-i18n-file-empty="noFileChosen">No file chosen</span>
 				</span>
-			</label>
-			<input class="cta" type="submit" value="Load image" data-i18n-value="loadImage">
+			</div>
+			<button class="cta" type="submit" data-i18n="loadImage">Load image</button>
 		</form>
 
 	<section id="intro-panel" class="intro-panel" aria-labelledby="intro-title">
@@ -66,17 +67,17 @@
 			<li>
 				<h3 data-i18n="stepUploadTitle">Upload an image</h3>
 				<span data-i18n="stepUploadCopy">Use a screenshot, design export, or content image.</span>
-				<img class="step-illustration" src="/img/steps/step-1-upload.png" width="807" height="715" alt="" loading="lazy" decoding="async">
+				<img class="step-illustration" src="/img/steps/step-1-upload.webp" width="807" height="715" alt="" fetchpriority="high" decoding="async">
 			</li>
 			<li>
 				<h3 data-i18n="stepColorTitle">Pick the foreground color</h3>
 				<span data-i18n="stepColorCopy">Choose the text or UI color you want to test.</span>
-				<img class="step-illustration step-illustration-spaced" src="/img/steps/step-2-pick-color.png" width="875" height="628" alt="" loading="lazy" decoding="async">
+				<img class="step-illustration step-illustration-spaced" src="/img/steps/step-2-pick-color.webp" width="875" height="628" alt="" loading="lazy" decoding="async">
 			</li>
 			<li>
 				<h3 data-i18n="stepRunTitle">Run the test</h3>
 				<span data-i18n="stepRunCopy">The preview highlights image areas that do not meet the selected contrast target.</span>
-				<img class="step-illustration" src="/img/steps/step-3-result.png" width="852" height="745" alt="" loading="lazy" decoding="async">
+				<img class="step-illustration" src="/img/steps/step-3-result.webp" width="852" height="745" alt="" loading="lazy" decoding="async">
 			</li>
 		</ol>
 	</section>
@@ -88,8 +89,8 @@
 				<p class="stage-copy" data-i18n="checkerCopy">Highlighted pixels are places where the chosen color does not meet the selected WCAG ratio.</p>
 			</div>
 			<div class="stage-actions">
-				<input type="button" class="cta secondary" onclick="resetFileInput(); showStep(1);" value="New image" data-i18n-value="newImage">
-				<input hidden type="button" id="reset-image" class="cta ghost" onclick="updatePreviewCanvas();" value="Reset image" data-i18n-value="resetImage">
+				<button type="button" class="cta secondary" onclick="resetFileInput(); showStep(1);" data-i18n="newImage">New image</button>
+				<button hidden type="button" id="reset-image" class="cta ghost" onclick="updatePreviewCanvas();" data-i18n="resetImage">Reset image</button>
 			</div>
 		</div>
 
@@ -99,7 +100,7 @@
 			<section id="preview_area" class="checker" aria-label="Contrast checker" data-i18n-aria-label="checkerRegion">
 				<div role="toolbar" aria-label="Checker settings" data-i18n-aria-label="settingsToolbar">
 					<div class="toolbar-group">
-						<label class="field color-field">
+						<div class="field color-field">
 							<span id="testcolor-label" data-i18n="colorLabel">Color to test</span>
 							<span class="control-row">
 								<input type="color" name="color" aria-labelledby="testcolor-label">
@@ -109,7 +110,7 @@
 									</svg>
 								</button>
 							</span>
-						</label>
+						</div>
 
 						<label class="field">
 							<span id="contrast-label" data-i18n="contrastLabel">Conformance level</span>

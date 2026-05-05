@@ -143,13 +143,17 @@ function updateThemeToggle() {
 	return true;
 }
 
-function setThemePreference(theme) {
+function setThemePreference(theme, shouldAnnounce) {
 	try {
 		window.localStorage.setItem('colorcontrast-theme', theme);
 	} catch (error) {}
 
 	document.documentElement.setAttribute('data-theme', theme);
 	updateThemeToggle();
+
+	if (shouldAnnounce) {
+		announceStatus(translate('themeChanged').replace('{theme}', translate(theme === 'dark' ? 'themeDark' : 'themeLight')));
+	}
 }
 
 function initThemeToggle() {
@@ -164,7 +168,7 @@ function initThemeToggle() {
 	}
 
 	toggle.addEventListener('click', function () {
-		setThemePreference(getActiveTheme() === 'dark' ? 'light' : 'dark');
+		setThemePreference(getActiveTheme() === 'dark' ? 'light' : 'dark', true);
 	});
 
 	if (window.matchMedia) {

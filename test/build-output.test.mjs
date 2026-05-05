@@ -34,7 +34,9 @@ test('build creates a static release artifact', async () => {
   const index = await readFile(join(distDir, 'index.html'), 'utf8');
   assert.match(index, /<title>Image contrast checker<\/title>/);
   assert.match(index, /<meta property="og:image" content="https:\/\/example\.com\/img\/social-card\.png">/);
-  assert.match(index, /<script src="\/js\/app\.js" defer><\/script>/);
+  assert.match(index, /<style>/);
+  assert.match(index, /<script src="\/js\/app\.bundle\.js" defer><\/script>/);
+  assert.equal(index.includes('<link href="/css/style.css" rel="stylesheet">'), false);
   assert.match(index, /<link rel="manifest" href="\/manifest\.webmanifest">/);
 
   const rootEntries = await readdir('dist');
@@ -57,6 +59,8 @@ test('release config forces HTTPS and removes www', async () => {
   assert.match(htaccess, /RewriteCond %\{HTTPS\} off \[OR\]/);
   assert.match(htaccess, /RewriteCond %\{HTTP_HOST\} \^www\\\. \[NC\]/);
   assert.match(htaccess, /RewriteRule \^ https:\/\/%1%\{REQUEST_URI\} \[L,NE,R=301\]/);
+  assert.match(htaccess, /ExpiresByType image\/webp "access plus 1 year"/);
+  assert.match(htaccess, /Cache-Control "public, max-age=31536000, immutable"/);
 });
 
 test('social card asset has expected dimensions', async () => {
@@ -93,7 +97,7 @@ test('document provides an accessible error region', async () => {
 
 test('document includes contact footer', async () => {
   const index = await readFile(join(distDir, 'index.html'), 'utf8');
-  const i18n = await readFile(join(distDir, 'js/i18n.js'), 'utf8');
+  const i18n = await readFile(join(distDir, 'js/app.bundle.js'), 'utf8');
 
   assert.match(index, /<footer class="site-footer">/);
   assert.match(index, /<span data-i18n="footerCopyright">Copyright<\/span>/);
@@ -106,7 +110,7 @@ test('document includes contact footer', async () => {
 
 test('document explains purpose and basic use without eyebrow labels', async () => {
   const index = await readFile(join(distDir, 'index.html'), 'utf8');
-  const app = await readFile(join(distDir, 'js/app.js'), 'utf8');
+  const app = await readFile(join(distDir, 'js/app.bundle.js'), 'utf8');
 
   assert.match(index, /<section id="intro-panel" class="intro-panel" aria-labelledby="intro-title">/);
   assert.match(index, /<h2 id="intro-title" data-i18n="introTitle">How to use it<\/h2>/);
@@ -126,24 +130,27 @@ test('document explains purpose and basic use without eyebrow labels', async () 
 
 test('document includes language switcher support', async () => {
   const index = await readFile(join(distDir, 'index.html'), 'utf8');
-  const i18n = await readFile(join(distDir, 'js/i18n.js'), 'utf8');
+  const i18n = await readFile(join(distDir, 'js/app.bundle.js'), 'utf8');
 
   assert.match(index, /<select id="language-switcher" name="language" autocomplete="off"><\/select>/);
-  assert.match(index, /data-i18n-aria-label="chooseFile"/);
+  assert.match(index, /<div id="settings-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"><\/div>/);
+  assert.match(index, /<label for="image_file" class="file-picker-button" data-i18n="chooseFile">Choose file<\/label>/);
   assert.match(index, /data-i18n-file-empty="noFileChosen"/);
   assert.match(index, /data-i18n-aria-label="checkerRegion"/);
   assert.match(index, /data-i18n-aria-label="settingsToolbar"/);
-  assert.match(index, /<script src="\/js\/i18n\.js" defer><\/script>/);
+  assert.match(index, /<script src="\/js\/app\.bundle\.js" defer><\/script>/);
   assert.match(i18n, /code: 'kl'/);
   assert.match(i18n, /code: 'it'/);
   assert.match(i18n, /chooseFile:/);
   assert.match(i18n, /droppedFilePickerError:/);
+  assert.match(i18n, /languageChanged:/);
+  assert.match(i18n, /themeChanged:/);
 });
 
 test('document includes dark mode support', async () => {
   const index = await readFile(join(distDir, 'index.html'), 'utf8');
   const styles = await readFile(join(distDir, 'css/style.css'), 'utf8');
-  const app = await readFile(join(distDir, 'js/app.js'), 'utf8');
+  const app = await readFile(join(distDir, 'js/app.bundle.js'), 'utf8');
 
   assert.match(index, /<meta name="color-scheme" content="light dark">/);
   assert.match(index, /<label for="theme-toggle" data-i18n="themeLabel">Theme<\/label>/);
@@ -160,15 +167,18 @@ test('document includes dark mode support', async () => {
 test('document includes step illustrations', async () => {
   const index = await readFile(join(distDir, 'index.html'), 'utf8');
   const illustrations = [
-    'step-1-upload.png',
-    'step-2-pick-color.png',
-    'step-3-result.png'
+    'step-1-upload.webp',
+    'step-2-pick-color.webp',
+    'step-3-result.webp'
   ];
 
   for (const fileName of illustrations) {
     assert.match(index, new RegExp(`/img/steps/${fileName}`));
     assert.equal((await stat(join(distDir, 'img/steps', fileName))).size > 0, true);
   }
+
+  assert.match(index, /step-1-upload\.webp" width="807" height="715" alt="" fetchpriority="high" decoding="async"/);
+  assert.equal(index.includes('step-1-upload.webp" width="807" height="715" alt="" loading="lazy"'), false);
 });
 
 test('build includes PWA files', async () => {
@@ -179,5 +189,5 @@ test('build includes PWA files', async () => {
   assert.equal(manifest.start_url, '/');
   assert.equal(manifest.icons.length >= 2, true);
   assert.match(serviceWorker, /colorcontrast-v1/);
-  assert.match(serviceWorker, /\/css\/style\.css/);
+  assert.match(serviceWorker, /\/js\/app\.bundle\.js/);
 });

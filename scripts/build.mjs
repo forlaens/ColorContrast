@@ -1,4 +1,4 @@
-import { cp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
 import { resolve } from 'node:path';
 
@@ -21,6 +21,59 @@ run(process.execPath, ['scripts/check.mjs']);
 run('php', ['scripts/generate-social-card.php']);
 
 const distDir = resolve('dist');
+const scriptFiles = [
+  'script.js',
+  'util.js',
+  'i18n.js',
+  'app.js',
+  'canvas.js',
+  'toolbar.js',
+  'image.js',
+  'contrast.js',
+  'color.js',
+  'pwa.js'
+];
+
+async function inlineStyles(html) {
+  const css = await readFile(resolve('app/css/style.css'), 'utf8');
+
+  return html.replace(
+    '<link href="/css/style.css" rel="stylesheet">',
+    `<style>\n${css}\n\t</style>`
+  );
+}
+
+async function bundleScripts(html) {
+  const bundle = await Promise.all(scriptFiles.map(async (file) => {
+    const code = await readFile(resolve('app/js', file), 'utf8');
+    return `/* ${file} */\n${code.trim()}\n`;
+  }));
+
+  await writeFile(resolve(distDir, 'js/app.bundle.js'), `${bundle.join('\n')}\n`);
+
+  return html.replace(
+    /(?:\n\t<script src="\/js\/[^"]+" defer><\/script>)+/,
+    '\n\t<script src="/js/app.bundle.js" defer></script>'
+  );
+}
+
+async function optimizeServiceWorker() {
+  const serviceWorkerPath = resolve(distDir, 'sw.js');
+  const serviceWorker = await readFile(serviceWorkerPath, 'utf8');
+  const optimized = serviceWorker
+    .replace('/css/style.css', '/js/app.bundle.js')
+    .replace(/,\n\t'\/js\/(?:app|canvas|color|contrast|i18n|image|pwa|script|toolbar|util)\.js'/g, '');
+
+  await writeFile(serviceWorkerPath, optimized);
+}
+
+async function removeUnusedReleaseImages() {
+  await Promise.all([
+    rm(resolve(distDir, 'img/steps/step-1-upload.png'), { force: true }),
+    rm(resolve(distDir, 'img/steps/step-2-pick-color.png'), { force: true }),
+    rm(resolve(distDir, 'img/steps/step-3-result.png'), { force: true })
+  ]);
+}
 
 await rm(distDir, { recursive: true, force: true });
 await mkdir(distDir, { recursive: true });
@@ -49,6 +102,11 @@ if (rendered.status !== 0) {
   process.exit(rendered.status ?? 1);
 }
 
-await writeFile(resolve(distDir, 'index.html'), rendered.stdout);
+let html = await inlineStyles(rendered.stdout);
+html = await bundleScripts(html);
+
+await optimizeServiceWorker();
+await removeUnusedReleaseImages();
+await writeFile(resolve(distDir, 'index.html'), html);
 
 console.log('Built static app into dist.');

@@ -211,7 +211,7 @@ test('built app supports every language in the switcher', async () => {
       await page.waitForFunction((expected) => document.documentElement.lang === expected, language);
 
       const heading = await page.locator('#app-title').textContent();
-      const fileLabel = await page.locator('#image_file').getAttribute('aria-label');
+      const fileLabel = await page.locator('label[for="image_file"]').textContent();
       const fileName = await page.locator('#selected-file-name').textContent();
       const checkerLabel = await page.locator('#preview_area').getAttribute('aria-label');
       const toolbarLabel = await page.locator('[role="toolbar"]').getAttribute('aria-label');
@@ -226,7 +226,8 @@ test('built app supports every language in the switcher', async () => {
 
     await page.selectOption('#language-switcher', 'da');
     await page.waitForFunction(() => document.documentElement.lang === 'da');
-    assert.equal(await page.locator('#image_file').getAttribute('aria-label'), 'Vælg fil');
+    await page.waitForFunction(() => document.querySelector('#settings-status').textContent === 'Sprog ændret til Dansk.');
+    assert.equal(await page.locator('label[for="image_file"]').textContent(), 'Vælg fil');
     assert.equal(await page.locator('#selected-file-name').textContent(), 'Ingen fil valgt');
     assert.equal(await page.locator('#preview_area').getAttribute('aria-label'), 'Kontrasttjek');
     assert.equal(await page.locator('[role="toolbar"]').getAttribute('aria-label'), 'Indstillinger for tjek');
@@ -252,7 +253,7 @@ test('load image without a selected file opens an empty checker canvas', async (
     const page = await context.newPage();
     await page.goto(server.url, { waitUntil: 'networkidle' });
 
-    await page.locator('input[type="submit"][value="Load image"]').click();
+    await page.getByRole('button', { name: 'Load image' }).click();
 
     assert.equal(await page.locator('#step-2').isVisible(), true);
     assert.equal(await page.locator('#step-1').evaluate((element) => element.hidden), true);
@@ -314,7 +315,7 @@ test('loading a selected image hides the image chooser in canvas view', async ()
     await page.goto(server.url, { waitUntil: 'networkidle' });
 
     await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
-    await page.locator('input[type="submit"][value="Load image"]').click();
+    await page.getByRole('button', { name: 'Load image' }).click();
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
 
     assert.equal(await page.locator('#step-2').isVisible(), true);
@@ -361,7 +362,7 @@ test('image chooser previews selected and dropped images', async () => {
     assert.equal(await page.locator('#selected-file-name').textContent(), 'dropped-social-card.png');
     assert.equal(await page.locator('#image-thumbnail').isVisible(), true);
 
-    await page.locator('input[type="submit"][value="Load image"]').click();
+    await page.getByRole('button', { name: 'Load image' }).click();
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
     assert.equal(await page.locator('#step-2').isVisible(), true);
 
@@ -392,7 +393,7 @@ test('loaded image preview stays within the viewport on small screens and resize
     await page.goto(server.url, { waitUntil: 'networkidle' });
 
     await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
-    await page.locator('input[type="submit"][value="Load image"]').click();
+    await page.getByRole('button', { name: 'Load image' }).click();
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
 
     async function assertNoHorizontalOverflow() {
@@ -486,10 +487,12 @@ test('theme toggle remembers the user preference', async () => {
     assert.equal(await page.evaluate(() => window.localStorage.getItem('colorcontrast-theme')), 'light');
     assert.equal(await page.locator('#theme-toggle').getAttribute('aria-label'), 'Dark mode');
     assert.equal(await page.locator('#theme-toggle').getAttribute('aria-pressed'), 'false');
+    await page.waitForFunction(() => document.querySelector('#settings-status').textContent === 'Theme changed to Light mode.');
 
     await page.locator('label[for="theme-toggle"]').click();
     assert.equal(await page.evaluate(() => document.documentElement.getAttribute('data-theme')), 'dark');
     assert.equal(await page.locator('#theme-toggle').getAttribute('aria-pressed'), 'true');
+    await page.waitForFunction(() => document.querySelector('#settings-status').textContent === 'Theme changed to Dark mode.');
 
     await context.close();
   } finally {
