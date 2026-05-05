@@ -30,7 +30,7 @@
 				<select id="language-switcher" name="language" autocomplete="off"></select>
 			</label>
 			<div class="theme-control">
-				<span data-i18n="themeLabel">Theme</span>
+				<label for="theme-toggle" data-i18n="themeLabel">Theme</label>
 				<button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="Dark mode" data-i18n-aria-label="themeDark">
 					<svg class="theme-icon" aria-hidden="true" focusable="false" viewBox="0 0 32 32">
 						<path d="M16 2 A14 14 0 0 0 16 30 Z" />

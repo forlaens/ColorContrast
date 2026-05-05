@@ -182,6 +182,10 @@ select {
 	font-weight: 750;
 }
 
+.theme-control label {
+	cursor: pointer;
+}
+
 .label-with-icon {
 	display: inline-flex;
 	align-items: center;

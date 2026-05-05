@@ -455,6 +455,10 @@ test('theme toggle remembers the user preference', async () => {
     assert.equal(await page.locator('#theme-toggle').getAttribute('aria-label'), 'Dark mode');
     assert.equal(await page.locator('#theme-toggle').getAttribute('aria-pressed'), 'false');
 
+    await page.locator('label[for="theme-toggle"]').click();
+    assert.equal(await page.evaluate(() => document.documentElement.getAttribute('data-theme')), 'dark');
+    assert.equal(await page.locator('#theme-toggle').getAttribute('aria-pressed'), 'true');
+
     await context.close();
   } finally {
     if (browser) {

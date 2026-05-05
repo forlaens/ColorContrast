@@ -140,6 +140,7 @@ test('document includes dark mode support', async () => {
   const app = await readFile(join(distDir, 'js/app.js'), 'utf8');
 
   assert.match(index, /<meta name="color-scheme" content="light dark">/);
+  assert.match(index, /<label for="theme-toggle" data-i18n="themeLabel">Theme<\/label>/);
   assert.match(index, /<button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="Dark mode" data-i18n-aria-label="themeDark">/);
   assert.match(index, /<svg class="theme-icon" aria-hidden="true" focusable="false" viewBox="0 0 32 32">/);
   assert.match(styles, /prefers-color-scheme: dark/);
