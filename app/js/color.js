@@ -23,14 +23,14 @@ function rgbToHex(color) {
 	var b = color.b;
 	var a = color.a;
 
-	if ( a === 0 ) {
+	if (a === 0) {
 		return 'transparent';
-	} else {
-		return ('#') +
-			   ('0'  + parseInt(r, 10).toString(16)).slice(-2) +
-			   ('0'  + parseInt(g, 10).toString(16)).slice(-2) +
-			   ('0'  + parseInt(b, 10).toString(16)).slice(-2);
 	}
+
+	return '#' +
+		   ('0' + parseInt(r, 10).toString(16)).slice(-2) +
+		   ('0' + parseInt(g, 10).toString(16)).slice(-2) +
+		   ('0' + parseInt(b, 10).toString(16)).slice(-2);
 }
 
 function hexToRgb(hex) {
