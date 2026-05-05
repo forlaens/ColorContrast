@@ -66,17 +66,17 @@
 			<li>
 				<h3 data-i18n="stepUploadTitle">Upload an image</h3>
 				<span data-i18n="stepUploadCopy">Use a screenshot, design export, or content image.</span>
-				<img class="step-illustration" src="/img/steps/step-1-upload.png" width="807" height="715" alt="" loading="lazy" decoding="async">
+				<img class="step-illustration" src="/img/steps/step-1-upload.webp" width="807" height="715" alt="" fetchpriority="high" decoding="async">
 			</li>
 			<li>
 				<h3 data-i18n="stepColorTitle">Pick the foreground color</h3>
 				<span data-i18n="stepColorCopy">Choose the text or UI color you want to test.</span>
-				<img class="step-illustration step-illustration-spaced" src="/img/steps/step-2-pick-color.png" width="875" height="628" alt="" loading="lazy" decoding="async">
+				<img class="step-illustration step-illustration-spaced" src="/img/steps/step-2-pick-color.webp" width="875" height="628" alt="" loading="lazy" decoding="async">
 			</li>
 			<li>
 				<h3 data-i18n="stepRunTitle">Run the test</h3>
 				<span data-i18n="stepRunCopy">The preview highlights image areas that do not meet the selected contrast target.</span>
-				<img class="step-illustration" src="/img/steps/step-3-result.png" width="852" height="745" alt="" loading="lazy" decoding="async">
+				<img class="step-illustration" src="/img/steps/step-3-result.webp" width="852" height="745" alt="" loading="lazy" decoding="async">
 			</li>
 		</ol>
 	</section>
