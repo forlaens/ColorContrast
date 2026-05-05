@@ -7,7 +7,8 @@ function selector(selector) {
 }
 
 function announceStatus(message) {
-	var status = id('settings-status');
+	var statusId = 'settings-status';
+	var status = id(statusId);
 
 	if (!status || !message) {
 		return false;
