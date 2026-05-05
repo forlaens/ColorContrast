@@ -40,6 +40,7 @@
 				</button>
 			</div>
 		</div>
+		<div id="settings-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
 	</header>
 
 	<main id="main-content" class="app-main" tabindex="-1">

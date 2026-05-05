@@ -226,6 +226,7 @@ test('built app supports every language in the switcher', async () => {
 
     await page.selectOption('#language-switcher', 'da');
     await page.waitForFunction(() => document.documentElement.lang === 'da');
+    await page.waitForFunction(() => document.querySelector('#settings-status').textContent === 'Sprog ændret til Dansk.');
     assert.equal(await page.locator('label[for="image_file"]').textContent(), 'Vælg fil');
     assert.equal(await page.locator('#selected-file-name').textContent(), 'Ingen fil valgt');
     assert.equal(await page.locator('#preview_area').getAttribute('aria-label'), 'Kontrasttjek');
@@ -486,10 +487,12 @@ test('theme toggle remembers the user preference', async () => {
     assert.equal(await page.evaluate(() => window.localStorage.getItem('colorcontrast-theme')), 'light');
     assert.equal(await page.locator('#theme-toggle').getAttribute('aria-label'), 'Dark mode');
     assert.equal(await page.locator('#theme-toggle').getAttribute('aria-pressed'), 'false');
+    await page.waitForFunction(() => document.querySelector('#settings-status').textContent === 'Theme changed to Light mode.');
 
     await page.locator('label[for="theme-toggle"]').click();
     assert.equal(await page.evaluate(() => document.documentElement.getAttribute('data-theme')), 'dark');
     assert.equal(await page.locator('#theme-toggle').getAttribute('aria-pressed'), 'true');
+    await page.waitForFunction(() => document.querySelector('#settings-status').textContent === 'Theme changed to Dark mode.');
 
     await context.close();
   } finally {

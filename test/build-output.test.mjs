@@ -133,6 +133,7 @@ test('document includes language switcher support', async () => {
   const i18n = await readFile(join(distDir, 'js/app.bundle.js'), 'utf8');
 
   assert.match(index, /<select id="language-switcher" name="language" autocomplete="off"><\/select>/);
+  assert.match(index, /<div id="settings-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"><\/div>/);
   assert.match(index, /<label for="image_file" class="file-picker-button" data-i18n="chooseFile">Choose file<\/label>/);
   assert.match(index, /data-i18n-file-empty="noFileChosen"/);
   assert.match(index, /data-i18n-aria-label="checkerRegion"/);
@@ -142,6 +143,8 @@ test('document includes language switcher support', async () => {
   assert.match(i18n, /code: 'it'/);
   assert.match(i18n, /chooseFile:/);
   assert.match(i18n, /droppedFilePickerError:/);
+  assert.match(i18n, /languageChanged:/);
+  assert.match(i18n, /themeChanged:/);
 });
 
 test('document includes dark mode support', async () => {

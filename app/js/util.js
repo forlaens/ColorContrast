@@ -6,6 +6,20 @@ function selector(selector) {
 	return document.querySelector(selector);
 }
 
+function announceStatus(message) {
+	var status = id('settings-status');
+
+	if (!status || !message) {
+		return false;
+	}
+
+	status.textContent = '';
+	window.setTimeout(function () {
+		status.textContent = message;
+	}, 10);
+	return true;
+}
+
 function round(value, precision) {
 	var multiplier = Math.pow(10, precision || 0);
 	return Math.floor(value * multiplier) / multiplier;
