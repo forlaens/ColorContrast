@@ -105,17 +105,17 @@ test('document explains purpose and basic use without eyebrow labels', async () 
   const index = await readFile(join(distDir, 'index.html'), 'utf8');
   const app = await readFile(join(distDir, 'js/app.js'), 'utf8');
 
-  assert.match(index, /<details id="intro-panel" class="intro-panel" open>/);
-  assert.match(index, /<summary>\s*<h2 id="intro-title" data-i18n="introTitle">How to use it<\/h2>\s*<\/summary>/);
+  assert.match(index, /<section id="intro-panel" class="intro-panel" aria-labelledby="intro-title">/);
+  assert.match(index, /<h2 id="intro-title" data-i18n="introTitle">How to use it<\/h2>/);
+  assert.match(index, /<button id="intro-toggle" class="intro-toggle" type="button" aria-expanded="true" aria-controls="intro-steps" aria-labelledby="intro-title"><\/button>/);
   assert.match(index, /<form id="step-1" class="step upload-panel"[^>]+aria-labelledby="upload-title"/);
   assert.match(index, /<h2 id="upload-title" class="upload-title" data-i18n="chooseImage">Choose an image<\/h2>/);
-  assert.match(index, /<h2 id="intro-title" data-i18n="introTitle">How to use it<\/h2>/);
   assert.match(index, /Check whether text or UI colors have enough contrast/);
   assert.match(index, /The file stays in your browser/);
   assert.ok(index.indexOf('id="step-1"') < index.indexOf('id="intro-title"'));
   assert.equal(index.includes('class="eyebrow"'), false);
   assert.match(app, /colorcontrast-intro-open/);
-  assert.match(app, /addEventListener\('toggle'/);
+  assert.match(app, /addEventListener\('click'/);
 });
 
 test('document includes language switcher support', async () => {

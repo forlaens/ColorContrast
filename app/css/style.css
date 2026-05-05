@@ -298,32 +298,39 @@ h2 {
 	box-shadow: none;
 }
 
-.intro-panel summary {
-	cursor: pointer;
+.intro-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	gap: 16px;
-	list-style: none;
 }
 
-.intro-panel summary::-webkit-details-marker {
-	display: none;
-}
-
-.intro-panel summary::after {
-	content: "";
+.intro-toggle {
+	cursor: pointer;
+	display: inline-grid;
+	place-items: center;
 	flex: 0 0 auto;
+	width: 44px;
+	min-height: 44px;
+	padding: 0;
+	border: 0;
+	border-radius: 6px;
+	background: transparent;
+	color: var(--text);
+}
+
+.intro-toggle::before {
+	content: "";
 	width: 10px;
 	height: 10px;
 	border-right: 2px solid currentColor;
 	border-bottom: 2px solid currentColor;
-	transform: rotate(45deg);
+	transform: rotate(225deg) translate(-3px, -3px);
 	transition: transform 0.18s ease;
 }
 
-.intro-panel[open] summary::after {
-	transform: rotate(225deg) translate(-3px, -3px);
+.intro-toggle[aria-expanded="false"]::before {
+	transform: rotate(45deg);
 }
 
 .intro-panel h2 {

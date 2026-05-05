@@ -269,6 +269,33 @@ test('load image without a selected file opens an empty checker canvas', async (
   }
 });
 
+test('intro heading remains a heading when collapsed', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    await page.locator('#intro-toggle').click();
+
+    assert.equal(await page.locator('#intro-toggle').getAttribute('aria-expanded'), 'false');
+    assert.equal(await page.locator('#intro-steps').isHidden(), true);
+    assert.equal(await page.getByRole('heading', { name: 'How to use it', level: 2 }).isVisible(), true);
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
 test('loading a selected image hides the image chooser in canvas view', async () => {
   buildApp();
 

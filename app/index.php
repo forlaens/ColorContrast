@@ -57,11 +57,12 @@
 			<input class="cta" type="submit" value="Load image" data-i18n-value="loadImage">
 		</form>
 
-	<details id="intro-panel" class="intro-panel" open>
-		<summary>
+	<section id="intro-panel" class="intro-panel" aria-labelledby="intro-title">
+		<div class="intro-header">
 			<h2 id="intro-title" data-i18n="introTitle">How to use it</h2>
-		</summary>
-		<ol class="steps">
+			<button id="intro-toggle" class="intro-toggle" type="button" aria-expanded="true" aria-controls="intro-steps" aria-labelledby="intro-title"></button>
+		</div>
+		<ol id="intro-steps" class="steps">
 			<li>
 				<strong data-i18n="stepUploadTitle">Upload an image</strong>
 				<span data-i18n="stepUploadCopy">Use a screenshot, design export, or content image.</span>
@@ -78,7 +79,7 @@
 				<img class="step-illustration" src="/img/steps/step-3-result.png" width="852" height="745" alt="" loading="lazy" decoding="async">
 			</li>
 		</ol>
-	</details>
+	</section>
 
 	<section hidden id="step-2" class="step checker-stage" aria-labelledby="checker-title">
 		<div class="stage-header">

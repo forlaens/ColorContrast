@@ -75,23 +75,31 @@ function setLoadingState(state, message) {
 
 function initIntroPanel() {
 	var introPanel = id('intro-panel');
+	var introToggle = id('intro-toggle');
+	var introSteps = id('intro-steps');
 	var storageKey = 'colorcontrast-intro-open';
 
-	if (!introPanel) {
+	if (!introPanel || !introToggle || !introSteps) {
 		return false;
 	}
 
 	try {
+		function setIntroOpen(isOpen) {
+			introToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+			introSteps.hidden = !isOpen;
+			window.localStorage.setItem(storageKey, isOpen ? 'true' : 'false');
+		}
+
 		var savedState = window.localStorage.getItem(storageKey);
 
 		if (savedState === 'false') {
-			introPanel.open = false;
+			setIntroOpen(false);
 		} else if (savedState === 'true') {
-			introPanel.open = true;
+			setIntroOpen(true);
 		}
 
-		introPanel.addEventListener('toggle', function () {
-			window.localStorage.setItem(storageKey, introPanel.open ? 'true' : 'false');
+		introToggle.addEventListener('click', function () {
+			setIntroOpen(introToggle.getAttribute('aria-expanded') !== 'true');
 		});
 	} catch (error) {
 		return false;
