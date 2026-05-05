@@ -167,6 +167,15 @@
 		</div>
 	</section>
 	</main>
+
+	<footer class="site-footer">
+		<p>
+			<span data-i18n="footerCopyright">Copyright</span>
+			<a href="https://forlaens.com/">Forlæns</a>.
+			<span data-i18n="footerContact">For contact, questions, suggestions, etc. email</span>
+			<a href="mailto:tobias@forlaens.com">tobias@forlaens.com</a>.
+		</p>
+	</footer>
 </div>
 
 <?php include($_SERVER['DOCUMENT_ROOT'] . '/include/layout/foot.php'); ?>

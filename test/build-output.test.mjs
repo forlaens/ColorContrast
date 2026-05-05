@@ -88,6 +88,19 @@ test('document provides an accessible error region', async () => {
   assert.match(index, /<div hidden id="app-error" class="error-panel" role="alert" tabindex="-1"><\/div>/);
 });
 
+test('document includes contact footer', async () => {
+  const index = await readFile(join(distDir, 'index.html'), 'utf8');
+  const i18n = await readFile(join(distDir, 'js/i18n.js'), 'utf8');
+
+  assert.match(index, /<footer class="site-footer">/);
+  assert.match(index, /<span data-i18n="footerCopyright">Copyright<\/span>/);
+  assert.match(index, /<a href="https:\/\/forlaens\.com\/">Forlæns<\/a>/);
+  assert.match(index, /<span data-i18n="footerContact">For contact, questions, suggestions, etc\. email<\/span>/);
+  assert.match(index, /<a href="mailto:tobias@forlaens\.com">tobias@forlaens\.com<\/a>/);
+  assert.match(i18n, /footerCopyright:/);
+  assert.match(i18n, /footerContact:/);
+});
+
 test('document explains purpose and basic use without eyebrow labels', async () => {
   const index = await readFile(join(distDir, 'index.html'), 'utf8');
   const app = await readFile(join(distDir, 'js/app.js'), 'utf8');

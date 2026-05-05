@@ -69,7 +69,9 @@
 			browserFileError: 'This browser cannot read local image files.',
 			browserPreviewError: 'This browser does not support image previews.',
 			imageTypeError: 'Please choose an image file.',
-			droppedFilePickerError: 'Your browser could not add the dropped image to the file picker.'
+			droppedFilePickerError: 'Your browser could not add the dropped image to the file picker.',
+			footerCopyright: 'Copyright',
+			footerContact: 'For contact, questions, suggestions, etc. email'
 		},
 		da: {
 			description: 'Upload et billede, og markér områder, der ikke opfylder WCAG-kontrastkrav.',
@@ -124,7 +126,9 @@
 			browserFileError: 'Denne browser kan ikke læse lokale billedfiler.',
 			browserPreviewError: 'Denne browser understøtter ikke billedforhåndsvisning.',
 			imageTypeError: 'Vælg en billedfil.',
-			droppedFilePickerError: 'Din browser kunne ikke føje det droppede billede til filvælgeren.'
+			droppedFilePickerError: 'Din browser kunne ikke føje det droppede billede til filvælgeren.',
+			footerCopyright: 'Ophavsret',
+			footerContact: 'Ved kontakt, spørgsmål, forslag osv. kan du skrive til'
 		},
 		no: {
 			description: 'Last opp et bilde og marker områder som ikke oppfyller WCAG-kontrastkrav.',
@@ -179,7 +183,9 @@
 			browserFileError: 'Denne nettleseren kan ikke lese lokale bildefiler.',
 			browserPreviewError: 'Denne nettleseren støtter ikke bildeforhåndsvisning.',
 			imageTypeError: 'Velg en bildefil.',
-			droppedFilePickerError: 'Nettleseren kunne ikke legge det sluppede bildet til i filvelgeren.'
+			droppedFilePickerError: 'Nettleseren kunne ikke legge det sluppede bildet til i filvelgeren.',
+			footerCopyright: 'Opphavsrett',
+			footerContact: 'For kontakt, spørsmål, forslag osv. kan du skrive til'
 		},
 		sv: {
 			description: 'Ladda upp en bild och markera områden som inte uppfyller WCAG:s kontrastmål.',
@@ -234,7 +240,9 @@
 			browserFileError: 'Den här webbläsaren kan inte läsa lokala bildfiler.',
 			browserPreviewError: 'Den här webbläsaren stöder inte bildförhandsvisning.',
 			imageTypeError: 'Välj en bildfil.',
-			droppedFilePickerError: 'Webbläsaren kunde inte lägga till den släppta bilden i filväljaren.'
+			droppedFilePickerError: 'Webbläsaren kunde inte lägga till den släppta bilden i filväljaren.',
+			footerCopyright: 'Upphovsrätt',
+			footerContact: 'För kontakt, frågor, förslag osv. kan du skriva till'
 		},
 		fi: {
 			description: 'Lataa kuva ja korosta alueet, jotka eivät täytä WCAG-kontrastitavoitteita.',
@@ -289,7 +297,9 @@
 			browserFileError: 'Tämä selain ei voi lukea paikallisia kuvatiedostoja.',
 			browserPreviewError: 'Tämä selain ei tue kuvien esikatselua.',
 			imageTypeError: 'Valitse kuvatiedosto.',
-			droppedFilePickerError: 'Selain ei voinut lisätä pudotettua kuvaa tiedostovalitsimeen.'
+			droppedFilePickerError: 'Selain ei voinut lisätä pudotettua kuvaa tiedostovalitsimeen.',
+			footerCopyright: 'Tekijänoikeus',
+			footerContact: 'Yhteydenottoja, kysymyksiä, ehdotuksia ym. varten sähköposti'
 		},
 		kl: {
 			description: 'Assi upload-eruk, WCAG-imi contrast-imut piumasaqaatinik naammassinninngitsut ersersillugit.',
@@ -344,7 +354,9 @@
 			browserFileError: 'Browseri una local image file-inik atuarsinnaanngilaq.',
 			browserPreviewError: 'Browseri una image preview-mik support-erinanngilaq.',
 			imageTypeError: 'Image file toqqaruk.',
-			droppedFilePickerError: 'Browserit assi drop-erneqartoq file picker-imut ilanngussinnaanngilaq.'
+			droppedFilePickerError: 'Browserit assi drop-erneqartoq file picker-imut ilanngussinnaanngilaq.',
+			footerCopyright: 'Copyright',
+			footerContact: 'Attaveqarneq, apeqqutit, siunnersuutit il.il. pillugit email'
 		},
 		is: {
 			description: 'Hladdu upp mynd og merktu svæði sem uppfylla ekki WCAG birtuskilamarkmið.',
@@ -399,7 +411,9 @@
 			browserFileError: 'Þessi vafri getur ekki lesið staðbundnar myndskrár.',
 			browserPreviewError: 'Þessi vafri styður ekki myndforskoðun.',
 			imageTypeError: 'Veldu myndskrá.',
-			droppedFilePickerError: 'Vafrinn gat ekki bætt slepptu myndinni við skráarvalið.'
+			droppedFilePickerError: 'Vafrinn gat ekki bætt slepptu myndinni við skráarvalið.',
+			footerCopyright: 'Höfundarréttur',
+			footerContact: 'Fyrir samband, spurningar, tillögur o.s.frv. sendu tölvupóst á'
 		},
 		fo: {
 			description: 'Legg eina mynd inn og markera øki, sum ikki lúka WCAG-krøvini til kontrast.',
@@ -454,7 +468,9 @@
 			browserFileError: 'Hesin kagin kann ikki lesa lokalar myndafílur.',
 			browserPreviewError: 'Hesin kagin stuðlar ikki myndaforsýning.',
 			imageTypeError: 'Vel eina myndafílu.',
-			droppedFilePickerError: 'Kagin kundi ikki leggja sleptu myndina í fíluveljaran.'
+			droppedFilePickerError: 'Kagin kundi ikki leggja sleptu myndina í fíluveljaran.',
+			footerCopyright: 'Upphavsrættur',
+			footerContact: 'Til samband, spurningar, uppskot o.s.fr. skriva til'
 		},
 		es: {
 			description: 'Sube una imagen y resalta las zonas que no cumplen los objetivos de contraste WCAG.',
@@ -509,7 +525,9 @@
 			browserFileError: 'Este navegador no puede leer archivos de imagen locales.',
 			browserPreviewError: 'Este navegador no admite vistas previas de imágenes.',
 			imageTypeError: 'Elige un archivo de imagen.',
-			droppedFilePickerError: 'Tu navegador no pudo añadir la imagen soltada al selector de archivos.'
+			droppedFilePickerError: 'Tu navegador no pudo añadir la imagen soltada al selector de archivos.',
+			footerCopyright: 'Copyright',
+			footerContact: 'Para contacto, preguntas, sugerencias, etc., escribe a'
 		},
 		de: {
 			description: 'Lade ein Bild hoch und markiere Bereiche, die die WCAG-Kontrastziele nicht erfüllen.',
@@ -564,7 +582,9 @@
 			browserFileError: 'Dieser Browser kann keine lokalen Bilddateien lesen.',
 			browserPreviewError: 'Dieser Browser unterstützt keine Bildvorschau.',
 			imageTypeError: 'Wähle bitte eine Bilddatei.',
-			droppedFilePickerError: 'Dein Browser konnte das abgelegte Bild nicht zum Dateiauswähler hinzufügen.'
+			droppedFilePickerError: 'Dein Browser konnte das abgelegte Bild nicht zum Dateiauswähler hinzufügen.',
+			footerCopyright: 'Urheberrecht',
+			footerContact: 'Für Kontakt, Fragen, Vorschläge usw. schreibe an'
 		},
 		fr: {
 			description: 'Importez une image et mettez en évidence les zones qui ne respectent pas les objectifs de contraste WCAG.',
@@ -619,7 +639,9 @@
 			browserFileError: 'Ce navigateur ne peut pas lire les fichiers image locaux.',
 			browserPreviewError: 'Ce navigateur ne prend pas en charge les aperçus d’image.',
 			imageTypeError: 'Choisissez un fichier image.',
-			droppedFilePickerError: 'Votre navigateur n’a pas pu ajouter l’image déposée au sélecteur de fichier.'
+			droppedFilePickerError: 'Votre navigateur n’a pas pu ajouter l’image déposée au sélecteur de fichier.',
+			footerCopyright: 'Droit d’auteur',
+			footerContact: 'Pour tout contact, question, suggestion, etc., écrivez à'
 		},
 		pt: {
 			description: 'Carregue uma imagem e destaque áreas que não cumprem os objetivos de contraste WCAG.',
@@ -674,7 +696,9 @@
 			browserFileError: 'Este navegador não consegue ler ficheiros de imagem locais.',
 			browserPreviewError: 'Este navegador não suporta pré-visualizações de imagem.',
 			imageTypeError: 'Escolha um ficheiro de imagem.',
-			droppedFilePickerError: 'O seu navegador não conseguiu adicionar a imagem largada ao seletor de ficheiros.'
+			droppedFilePickerError: 'O seu navegador não conseguiu adicionar a imagem largada ao seletor de ficheiros.',
+			footerCopyright: 'Direitos de autor',
+			footerContact: 'Para contactos, perguntas, sugestões, etc., escreva para'
 		},
 		it: {
 			description: 'Carica un’immagine ed evidenzia le aree che non rispettano gli obiettivi di contrasto WCAG.',
@@ -729,7 +753,9 @@
 			browserFileError: 'Questo browser non può leggere file immagine locali.',
 			browserPreviewError: 'Questo browser non supporta le anteprime delle immagini.',
 			imageTypeError: 'Scegli un file immagine.',
-			droppedFilePickerError: 'Il browser non è riuscito ad aggiungere l’immagine rilasciata al selettore di file.'
+			droppedFilePickerError: 'Il browser non è riuscito ad aggiungere l’immagine rilasciata al selettore di file.',
+			footerCopyright: 'Copyright',
+			footerContact: 'Per contatti, domande, suggerimenti, ecc. scrivi a'
 		}
 	};
 
