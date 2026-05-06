@@ -10,7 +10,7 @@
 		$pageUrl = $baseUrl . '/';
 		$socialImageUrl = $baseUrl . '/img/social-card.png';
 		$title = 'Image contrast checker';
-		$description = 'Upload an image and highlight areas that do not meet WCAG contrast targets.';
+		$description = 'Choose a color from an image and check whether it stays readable or visible.';
 	?>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">

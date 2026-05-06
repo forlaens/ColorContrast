@@ -12,7 +12,7 @@
 	<header class="hero" aria-labelledby="app-title">
 		<div>
 			<h1 id="app-title" data-i18n="title">Image contrast checker</h1>
-			<p class="lede" data-i18n="lede">Check whether text or UI colors have enough contrast when placed on top of an image.</p>
+			<p class="lede" data-i18n="lede">Choose a color from the image, run the test, then check whether that color would still be readable or visible on the highlighted areas.</p>
 		</div>
 		<div class="header-controls">
 			<label class="language-switcher">
@@ -71,13 +71,13 @@
 				<img class="step-illustration" src="/img/steps/step-1-upload.webp" width="807" height="715" alt="" fetchpriority="high" decoding="async">
 			</li>
 			<li>
-				<h3 data-i18n="stepColorTitle">Pick the foreground color</h3>
-				<span data-i18n="stepColorCopy">Choose the text or UI color you want to test.</span>
+				<h3 data-i18n="stepColorTitle">Choose the color to check</h3>
+				<span data-i18n="stepColorCopy">Pick the text, icon, or background color people need to read or see.</span>
 				<img class="step-illustration step-illustration-spaced" src="/img/steps/step-2-pick-color.webp" width="875" height="628" alt="" loading="lazy" decoding="async">
 			</li>
 			<li>
 				<h3 data-i18n="stepRunTitle">Run the test</h3>
-				<span data-i18n="stepRunCopy">The preview highlights image areas that do not meet the selected contrast target.</span>
+				<span data-i18n="stepRunCopy">The preview marks places where that color may disappear into the image. Ask: can I still read it or see what I am supposed to see?</span>
 				<img class="step-illustration" src="/img/steps/step-3-result.webp" width="852" height="745" alt="" loading="lazy" decoding="async">
 			</li>
 		</ol>
@@ -87,7 +87,7 @@
 		<div class="stage-header">
 			<div>
 				<h2 id="checker-title" data-i18n="checkerTitle">Highlight contrast issues</h2>
-				<p class="stage-copy" data-i18n="checkerCopy">Highlighted pixels are places where the chosen color does not meet the selected WCAG ratio.</p>
+				<p class="stage-copy" data-i18n="checkerCopy">Highlighted pixels are places where the chosen color may be hard to read or see against the image.</p>
 			</div>
 			<div class="stage-actions">
 				<button type="button" class="cta secondary" onclick="resetFileInput(); showStep(1);" data-i18n="newImage">New image</button>
@@ -102,7 +102,7 @@
 				<div role="toolbar" aria-label="Checker settings" data-i18n-aria-label="settingsToolbar">
 					<div class="toolbar-group">
 						<div class="field color-field">
-							<span id="testcolor-label" data-i18n="colorLabel">Color to test</span>
+							<span id="testcolor-label" data-i18n="colorLabel">Color to check</span>
 							<span class="control-row">
 								<input type="color" name="color" aria-labelledby="testcolor-label">
 								<button id="colorpicker" class="icon-button" type="button" aria-label="Pick a color from the image" data-i18n-aria-label="pickColor" aria-pressed="false" onclick="toggleColorPicker(this);">
