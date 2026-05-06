@@ -100,12 +100,19 @@ test('document includes contact footer', async () => {
   const i18n = await readFile(join(distDir, 'js/app.bundle.js'), 'utf8');
 
   assert.match(index, /<footer class="site-footer">/);
+  assert.match(index, /<section class="accessibility-statement" aria-labelledby="accessibility-statement-title">/);
+  assert.match(index, /<h2 id="accessibility-statement-title" data-i18n="accessibilityTitle">Accessibility statement<\/h2>/);
+  assert.match(index, /<p data-i18n="accessibilityCopy">We aim to make this tool accessible and test it against WCAG AAA and accessibility best practices\.<\/p>/);
+  assert.match(index, /<span data-i18n="accessibilityContact">For accessibility issues or requests, email<\/span>/);
   assert.match(index, /<span data-i18n="footerCopyright">Copyright<\/span>/);
   assert.match(index, /<a href="https:\/\/forlaens\.com\/">Forlæns<\/a>/);
   assert.match(index, /<span data-i18n="footerContact">For contact, questions, suggestions, etc\. email<\/span>/);
   assert.match(index, /<a href="mailto:tobias@forlaens\.com">tobias@forlaens\.com<\/a>/);
   assert.match(i18n, /footerCopyright:/);
   assert.match(i18n, /footerContact:/);
+  assert.match(i18n, /accessibilityTitle:/);
+  assert.match(i18n, /accessibilityCopy:/);
+  assert.match(i18n, /accessibilityContact:/);
 });
 
 test('document explains purpose and basic use without eyebrow labels', async () => {

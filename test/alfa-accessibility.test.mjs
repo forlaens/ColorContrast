@@ -215,6 +215,7 @@ test('built app supports every language in the switcher', async () => {
       const fileName = await page.locator('#selected-file-name').textContent();
       const checkerLabel = await page.locator('#preview_area').getAttribute('aria-label');
       const toolbarLabel = await page.locator('[role="toolbar"]').getAttribute('aria-label');
+      const accessibilityTitle = await page.locator('#accessibility-statement-title').textContent();
       assert.equal(await page.locator('#language-switcher').inputValue(), language);
       assert.equal(await documentLanguage(page), language);
       assert.equal((heading || '').trim().length > 0, true);
@@ -222,6 +223,7 @@ test('built app supports every language in the switcher', async () => {
       assert.equal((fileName || '').trim().length > 0, true);
       assert.equal((checkerLabel || '').trim().length > 0, true);
       assert.equal((toolbarLabel || '').trim().length > 0, true);
+      assert.equal((accessibilityTitle || '').trim().length > 0, true);
     }
 
     await page.selectOption('#language-switcher', 'da');
@@ -231,6 +233,7 @@ test('built app supports every language in the switcher', async () => {
     assert.equal(await page.locator('#selected-file-name').textContent(), 'Ingen fil valgt');
     assert.equal(await page.locator('#preview_area').getAttribute('aria-label'), 'Kontrasttjek');
     assert.equal(await page.locator('[role="toolbar"]').getAttribute('aria-label'), 'Indstillinger for tjek');
+    assert.equal(await page.locator('#accessibility-statement-title').textContent(), 'Tilgængelighedserklæring');
 
     await context.close();
   } finally {
