@@ -171,6 +171,14 @@
 	</main>
 
 	<footer class="site-footer">
+		<section class="accessibility-statement" aria-labelledby="accessibility-statement-title">
+			<h2 id="accessibility-statement-title" data-i18n="accessibilityTitle">Accessibility statement</h2>
+			<p data-i18n="accessibilityCopy">We aim to make this tool accessible and test it against WCAG AAA and accessibility best practices.</p>
+			<p>
+				<span data-i18n="accessibilityContact">For accessibility issues or requests, email</span>
+				<a href="mailto:tobias@forlaens.com">tobias@forlaens.com</a>.
+			</p>
+		</section>
 		<p>
 			<span data-i18n="footerCopyright">Copyright</span>
 			<a href="https://forlaens.com/">Forlæns</a>.
