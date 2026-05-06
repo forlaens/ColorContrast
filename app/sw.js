@@ -1,4 +1,4 @@
-const CACHE_NAME = 'colorcontrast-v1';
+const CACHE_NAME = 'colorcontrast-v2';
 const CORE_ASSETS = [
 	'/',
 	'/css/style.css',
@@ -46,8 +46,18 @@ self.addEventListener('fetch', function(event) {
 	}
 
 	event.respondWith(
-		caches.match(event.request).then(function(cached) {
-			return cached || fetch(event.request);
+		fetch(event.request).then(function(response) {
+			if (response.ok && new URL(event.request.url).origin === self.location.origin) {
+				const responseCopy = response.clone();
+
+				caches.open(CACHE_NAME).then(function(cache) {
+					cache.put(event.request, responseCopy);
+				});
+			}
+
+			return response;
+		}).catch(function() {
+			return caches.match(event.request);
 		})
 	);
 });

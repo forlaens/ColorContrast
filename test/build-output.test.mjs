@@ -195,6 +195,8 @@ test('build includes PWA files', async () => {
   assert.equal(manifest.display, 'standalone');
   assert.equal(manifest.start_url, '/');
   assert.equal(manifest.icons.length >= 2, true);
-  assert.match(serviceWorker, /colorcontrast-v1/);
+  assert.match(serviceWorker, /colorcontrast-v2/);
   assert.match(serviceWorker, /\/js\/app\.bundle\.js/);
+  assert.match(serviceWorker, /fetch\(event\.request\)/);
+  assert.match(serviceWorker, /caches\.match\(event\.request\)/);
 });
