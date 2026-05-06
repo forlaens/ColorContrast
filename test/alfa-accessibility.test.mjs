@@ -417,6 +417,132 @@ test('image chooser previews selected and dropped images', async () => {
   }
 });
 
+test('image chooser rejects non-image files with a useful error', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    await page.locator('#image_file').setInputFiles({
+      name: 'not-an-image.txt',
+      mimeType: 'text/plain',
+      buffer: Buffer.from('This is not an image.')
+    });
+    await page.locator('#image_file').dispatchEvent('change');
+
+    assert.equal(await page.locator('#step-1').isVisible(), true);
+    assert.equal(await page.locator('#app-error').isVisible(), true);
+    assert.equal(await page.locator('#app-error').textContent(), 'Please choose an image file.');
+    assert.equal(await page.locator('#image-thumbnail').isHidden(), true);
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
+test('color picker supports keyboard placement and selection', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
+    await page.getByRole('button', { name: 'Load image' }).click();
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
+
+    await page.locator('#colorpicker').click();
+    assert.equal(await page.evaluate(() => document.activeElement.id), 'image_preview');
+
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Shift+ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const pickerState = await page.evaluate(() => {
+      const crosshairs = document.querySelector('#crosshairs');
+      const x = Number(crosshairs.getAttribute('data-posx'));
+      const y = Number(crosshairs.getAttribute('data-posy'));
+
+      return {
+        pressed: document.querySelector('#colorpicker').getAttribute('aria-pressed'),
+        x,
+        y,
+        expected: pixelToHex(getContext(), x, y),
+        actual: document.querySelector('[name=color]').value
+      };
+    });
+
+    assert.equal(pickerState.pressed, 'true');
+    assert.deepEqual({ x: pickerState.x, y: pickerState.y }, { x: 21, y: 30 });
+    assert.equal(pickerState.actual, pickerState.expected);
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
+test('contrast rendering changes the canvas and reset restores the source image', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
+    await page.getByRole('button', { name: 'Load image' }).click();
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
+
+    const originalCanvas = await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL());
+    await page.locator('[name=color]').evaluate((input) => {
+      input.value = '#ffffff';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    await page.locator('[name=contrast]').selectOption('7');
+    await page.getByRole('button', { name: 'Run test' }).click();
+    await page.waitForFunction(() => !document.querySelector('#reset-image').hidden);
+
+    const highlightedCanvas = await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL());
+    assert.notEqual(highlightedCanvas, originalCanvas);
+    assert.equal(await page.locator('#reset-image').isVisible(), true);
+
+    await page.locator('#reset-image').click();
+    const resetCanvas = await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL());
+    assert.equal(resetCanvas, originalCanvas);
+    assert.equal(await page.locator('#reset-image').isHidden(), true);
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
 test('loaded image preview stays within the viewport on small screens and resize', async () => {
   buildApp();
 
