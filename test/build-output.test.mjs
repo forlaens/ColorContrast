@@ -41,6 +41,7 @@ test('build creates a static release artifact', async () => {
 
   const rootEntries = await readdir('dist');
   assert.equal(rootEntries.includes('app'), false);
+  assert.deepEqual((await readdir(join(distDir, 'js'))).sort(), ['app.bundle.js']);
 
   const files = await listFiles(distDir);
   assert.equal(files.some((file) => extname(file) === '.php'), false);
@@ -202,7 +203,7 @@ test('build includes PWA files', async () => {
   assert.equal(manifest.display, 'standalone');
   assert.equal(manifest.start_url, '/');
   assert.equal(manifest.icons.length >= 2, true);
-  assert.match(serviceWorker, /colorcontrast-v2/);
+  assert.match(serviceWorker, /colorcontrast-v3/);
   assert.match(serviceWorker, /\/js\/app\.bundle\.js/);
   assert.match(serviceWorker, /fetch\(event\.request\)/);
   assert.match(serviceWorker, /caches\.match\(event\.request\)/);

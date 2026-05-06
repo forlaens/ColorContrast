@@ -60,14 +60,7 @@ function renderContrastIssue(context, contrast, color1, x, y) {
 		return false;
 	}
 
-	var color1Luminance = luminance(color1.r, color1.g, color1.b);
-	var color2Luminance = luminance(color2.r, color2.g, color2.b);
-
-	var ratio = color1Luminance > color2Luminance
-		? ((color2Luminance + 0.05) / (color1Luminance + 0.05))
-		: ((color1Luminance + 0.05) / (color2Luminance + 0.05));
-
-	ratio = round(1 / ratio, 2);
+	var ratio = contrastRatio(color1, color2);
 
 	if (ratio < contrast) {
 		drawPixel(context, color1, x, y);

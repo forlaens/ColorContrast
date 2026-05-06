@@ -57,6 +57,7 @@ function updateAppView(shouldFocus) {
 	return true;
 }
 
+// Hash-based routing keeps this static app deployable without server rewrites.
 function initViewRouting() {
 	window.updateAppView = updateAppView;
 	window.addEventListener('hashchange', function () {
@@ -127,11 +128,12 @@ function setLoadingState(state, message) {
 	loadingText.textContent = message;
 }
 
+// The intro panel can be collapsed, but its heading remains in the document
+// outline so assistive technology users keep a stable page structure.
 function initIntroPanel() {
 	var introPanel = id('intro-panel');
 	var introToggle = id('intro-toggle');
 	var introSteps = id('intro-steps');
-	var storageKey = 'colorcontrast-intro-open';
 
 	if (!introPanel || !introToggle || !introSteps) {
 		return false;
@@ -141,10 +143,10 @@ function initIntroPanel() {
 		function setIntroOpen(isOpen) {
 			introToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
 			introSteps.hidden = !isOpen;
-			window.localStorage.setItem(storageKey, isOpen ? 'true' : 'false');
+			setStoredValue(STORAGE_KEYS.introOpen, isOpen ? 'true' : 'false');
 		}
 
-		var savedState = window.localStorage.getItem(storageKey);
+		var savedState = getStoredValue(STORAGE_KEYS.introOpen);
 
 		if (savedState === 'false') {
 			setIntroOpen(false);
@@ -171,12 +173,8 @@ function getSystemTheme() {
 }
 
 function getStoredTheme() {
-	try {
-		var theme = window.localStorage.getItem('colorcontrast-theme');
-		return theme === 'dark' || theme === 'light' ? theme : null;
-	} catch (error) {
-		return null;
-	}
+	var theme = getStoredValue(STORAGE_KEYS.theme);
+	return theme === 'dark' || theme === 'light' ? theme : null;
 }
 
 function getActiveTheme() {
@@ -198,10 +196,7 @@ function updateThemeToggle() {
 }
 
 function setThemePreference(theme, shouldAnnounce) {
-	try {
-		window.localStorage.setItem('colorcontrast-theme', theme);
-	} catch (error) {}
-
+	setStoredValue(STORAGE_KEYS.theme, theme);
 	document.documentElement.setAttribute('data-theme', theme);
 	updateThemeToggle();
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'colorcontrast-v2';
+const CACHE_NAME = 'colorcontrast-v3';
 const CORE_ASSETS = [
 	'/',
 	'/css/style.css',
@@ -8,7 +8,6 @@ const CORE_ASSETS = [
 	'/js/contrast.js',
 	'/js/image.js',
 	'/js/pwa.js',
-	'/js/script.js',
 	'/js/toolbar.js',
 	'/js/util.js',
 	'/manifest.webmanifest',

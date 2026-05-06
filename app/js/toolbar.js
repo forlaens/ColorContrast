@@ -70,12 +70,14 @@ function placeCrosshairs(canvas) {
 
 function moveCrosshairs(canvas, x, y) {
 	var crosshairs = selector('#crosshairs');
+	var maxX = Math.max(0, canvas.offsetWidth - 1);
+	var maxY = Math.max(0, canvas.offsetHeight - 1);
 
 	x = Math.max(x, 0);
-	x = Math.min(x, canvas.offsetWidth);
+	x = Math.min(x, maxX);
 
 	y = Math.max(y, 0);
-	y = Math.min(y, canvas.offsetHeight);
+	y = Math.min(y, maxY);
 
 	crosshairs.setAttribute('data-posx', x);
 	crosshairs.setAttribute('data-posy', y);

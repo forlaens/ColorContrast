@@ -5,6 +5,7 @@ var imageThumbnailUrl = null;
 
 window.onresize = recalcImage;
 
+// Keep the canvas and cached pixels aligned with the rendered preview size.
 function recalcImage() {
 	if (!image.dimensions || !image.dimensions.width) {
 		return false;
@@ -67,6 +68,8 @@ function loadImagePreview() {
 	reader.readAsDataURL(file);
 }
 
+// The empty canvas keeps the checker forgiving: users can enter the canvas view
+// first and still upload or drag in an image later.
 function showEmptyPreviewCanvas() {
 	cachedPixels = false;
 	image = {};
@@ -150,6 +153,7 @@ function resizePreviewFrame() {
 	previewArea.style.width = width + 'px';
 }
 
+// Cache the original image pixels before we draw contrast highlights over them.
 function cachePixels(context) {
 	if (!context || !image.dimensions) {
 		throw new Error(translate('imagePreviewNotReady'));

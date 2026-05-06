@@ -874,7 +874,7 @@
 
 	function getInitialLanguage() {
 		var params = new URLSearchParams(window.location.search);
-		var requested = params.get('lang') || window.localStorage.getItem('colorcontrast-language');
+		var requested = params.get('lang') || getStoredValue(STORAGE_KEYS.language);
 
 		if (translations[requested]) {
 			return requested;
@@ -931,7 +931,7 @@
 			switcher.value = window.appLanguage;
 		}
 
-		window.localStorage.setItem('colorcontrast-language', window.appLanguage);
+		setStoredValue(STORAGE_KEYS.language, window.appLanguage);
 	}
 
 	function initLanguageSwitcher() {

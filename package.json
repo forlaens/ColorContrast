@@ -11,7 +11,7 @@
     "test:html": "node --test test/html-validation.test.mjs",
     "test:structure": "node --test test/build-output.test.mjs",
     "test:accessibility": "node --test --test-concurrency=1 test/alfa-accessibility.test.mjs",
-    "test": "node --test --test-concurrency=1",
+    "test": "node --test --test-concurrency=1 test/alfa-accessibility.test.mjs test/build-output.test.mjs test/html-validation.test.mjs",
     "clean": "node scripts/clean.mjs",
     "build": "node scripts/build.mjs"
   },
