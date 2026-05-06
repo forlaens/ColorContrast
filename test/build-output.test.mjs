@@ -127,11 +127,12 @@ test('document explains purpose and basic use without eyebrow labels', async () 
   assert.match(index, /<h2 id="intro-title" data-i18n="introTitle">How to use it<\/h2>/);
   assert.match(index, /<button id="intro-toggle" class="intro-toggle" type="button" aria-expanded="true" aria-controls="intro-steps" aria-labelledby="intro-title"><\/button>/);
   assert.match(index, /<h3 data-i18n="stepUploadTitle">Upload an image<\/h3>/);
-  assert.match(index, /<h3 data-i18n="stepColorTitle">Pick the foreground color<\/h3>/);
+  assert.match(index, /<h3 data-i18n="stepColorTitle">Choose the color to check<\/h3>/);
   assert.match(index, /<h3 data-i18n="stepRunTitle">Run the test<\/h3>/);
   assert.match(index, /<form id="step-1" class="step upload-panel"[^>]+aria-labelledby="upload-title"/);
   assert.match(index, /<h2 id="upload-title" class="upload-title" data-i18n="chooseImage">Choose an image<\/h2>/);
-  assert.match(index, /Check whether text or UI colors have enough contrast/);
+  assert.match(index, /Choose a color from the image, run the test/);
+  assert.match(index, /can I still read it or see what I am supposed to see/);
   assert.match(index, /The file stays in your browser/);
   assert.ok(index.indexOf('id="step-1"') < index.indexOf('id="intro-title"'));
   assert.equal(index.includes('class="eyebrow"'), false);

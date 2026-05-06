@@ -1,7 +1,7 @@
 {
   "name": "Image contrast checker",
   "short_name": "Contrast",
-  "description": "Upload an image and highlight areas that do not meet WCAG contrast targets.",
+  "description": "Choose a color from an image and check whether it stays readable or visible.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
