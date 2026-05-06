@@ -260,7 +260,8 @@ h2 {
 .error-panel,
 .intro-panel,
 .upload-panel,
-.checker-stage {
+.checker-stage,
+.accessibility-page {
 	border: 1px solid var(--border);
 	border-radius: var(--radius);
 	background: var(--panel);
@@ -273,22 +274,6 @@ h2 {
 	font-size: 0.95rem;
 }
 
-.accessibility-statement {
-	max-width: 780px;
-	margin-bottom: 18px;
-}
-
-.accessibility-statement h2 {
-	margin: 0 0 6px;
-	color: var(--text);
-	font-size: 1rem;
-	line-height: 1.3;
-}
-
-.accessibility-statement p + p {
-	margin-top: 6px;
-}
-
 .site-footer p {
 	margin: 0;
 }
@@ -298,6 +283,42 @@ h2 {
 	font-weight: 700;
 	text-decoration-thickness: 0.08em;
 	text-underline-offset: 0.18em;
+}
+
+.accessibility-page {
+	max-width: 780px;
+	padding: 24px;
+	box-shadow: none;
+}
+
+.accessibility-page h2 {
+	margin: 0 0 12px;
+	font-size: clamp(2rem, 4vw, 3.2rem);
+	line-height: 1.05;
+}
+
+.accessibility-page p {
+	margin: 0;
+	color: var(--muted);
+	font-size: 1.05rem;
+	line-height: 1.6;
+}
+
+.accessibility-page p + p {
+	margin-top: 14px;
+}
+
+.accessibility-page a {
+	color: var(--text);
+	font-weight: 700;
+	text-decoration-thickness: 0.08em;
+	text-underline-offset: 0.18em;
+}
+
+.accessibility-page .back-link {
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
 }
 
 .notice {

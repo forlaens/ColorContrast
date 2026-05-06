@@ -44,6 +44,7 @@
 	</header>
 
 	<main id="main-content" class="app-main" tabindex="-1">
+		<div id="home-view">
 		<form id="step-1" class="step upload-panel" method="POST" enctype="multipart/form-data" aria-labelledby="upload-title" onsubmit="loadImagePreview(); return false;">
 			<div class="upload-dropzone">
 				<h2 id="upload-title" class="upload-title" data-i18n="chooseImage">Choose an image</h2>
@@ -168,22 +169,28 @@
 			</section>
 		</div>
 	</section>
-	</main>
+		</div>
 
-	<footer class="site-footer">
-		<section class="accessibility-statement" aria-labelledby="accessibility-statement-title">
+		<section hidden id="accessibility-statement" class="accessibility-page" aria-labelledby="accessibility-statement-title" tabindex="-1">
 			<h2 id="accessibility-statement-title" data-i18n="accessibilityTitle">Accessibility statement</h2>
 			<p data-i18n="accessibilityCopy">We aim to make this tool accessible and test it against WCAG AAA and accessibility best practices.</p>
 			<p>
 				<span data-i18n="accessibilityContact">For accessibility issues or requests, email</span>
 				<a href="mailto:tobias@forlaens.com">tobias@forlaens.com</a>.
 			</p>
+			<p>
+				<a class="back-link" href="/" data-i18n="accessibilityBack">Back to checker</a>
+			</p>
 		</section>
+	</main>
+
+	<footer class="site-footer">
 		<p>
 			<span data-i18n="footerCopyright">Copyright</span>
 			<a href="https://forlaens.com/">Forlæns</a>.
 			<span data-i18n="footerContact">For contact, questions, suggestions, etc. email</span>
 			<a href="mailto:tobias@forlaens.com">tobias@forlaens.com</a>.
+			<a href="#accessibility-statement" data-i18n="accessibilityLink">Accessibility statement</a>.
 		</p>
 	</footer>
 </div>
