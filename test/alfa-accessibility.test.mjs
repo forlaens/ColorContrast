@@ -15,7 +15,8 @@ import { Conformance, Criterion } from '@siteimprove/alfa-wcag';
 const { and } = Refinement;
 
 const renderedRoutes = [
-  { name: 'home', path: '/' }
+  { name: 'home', path: '/' },
+  { name: 'accessibility-statement', path: '/#accessibility-statement' }
 ];
 
 const supportedLanguages = ['en', 'da', 'no', 'sv', 'fi', 'kl', 'is', 'fo', 'es', 'de', 'fr', 'pt', 'it'];
@@ -116,6 +117,23 @@ function formatAxeViolations(route, violations) {
   }).join('\n\n');
 }
 
+function formatAlfaFailures(route, audit) {
+  const serialised = audit.toJSON();
+  const failures = audit.resultAggregates
+    .toArray()
+    .filter(([, aggregate]) => aggregate.failed > 0)
+    .map(([rule, aggregate]) => {
+      const ruleName = rule.split('/').pop() ?? rule;
+      return `${ruleName}: ${aggregate.failed} failure(s)`;
+    });
+  const failedOutcomes = serialised.outcomes
+    .filter((outcome) => outcome.outcome === 'failed')
+    .slice(0, 3)
+    .map((outcome) => JSON.stringify(outcome, null, 2));
+
+  return `Expected no Alfa WCAG AAA or best-practice failures on ${route.path}.\n${failures.join('\n')}\n${failedOutcomes.join('\n')}`;
+}
+
 async function writeAxeReport(route, results) {
   await mkdir('test-results/accessibility', { recursive: true });
   await writeFile(
@@ -132,18 +150,22 @@ test('built app passes Siteimprove Alfa WCAG AAA and best-practice checks', asyn
 
   try {
     browser = await chromium.launch({ headless: true });
-    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
-    await page.goto(server.url, { waitUntil: 'networkidle' });
 
-    const document = await page.evaluateHandle(() => window.document);
-    const alfaPage = await Playwright.toPage(document);
-    const audit = await Audit.run(alfaPage, {
-      rules: { include: alfaAAAAndBestPracticeFilter },
-      outcomes: { include: Outcomes.failedFilter }
-    });
+    for (const route of renderedRoutes) {
+      const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+      await page.goto(new URL(route.path, server.url).toString(), { waitUntil: 'networkidle' });
 
-    const failed = audit.resultAggregates.reduce((total, result) => total + result.failed, 0);
-    assert.equal(failed, 0, `Expected no Alfa WCAG AAA or best-practice failures, found ${failed}.`);
+      const document = await page.evaluateHandle(() => window.document);
+      const alfaPage = await Playwright.toPage(document);
+      const audit = await Audit.run(alfaPage, {
+        rules: { include: alfaAAAAndBestPracticeFilter },
+        outcomes: { include: Outcomes.failedFilter }
+      });
+
+      const failed = audit.resultAggregates.reduce((total, result) => total + result.failed, 0);
+      assert.equal(failed, 0, formatAlfaFailures(route, audit));
+      await page.close();
+    }
   } finally {
     if (browser) {
       await browser.close();
@@ -234,6 +256,18 @@ test('built app supports every language in the switcher', async () => {
     assert.equal(await page.locator('#preview_area').getAttribute('aria-label'), 'Kontrasttjek');
     assert.equal(await page.locator('[role="toolbar"]').getAttribute('aria-label'), 'Indstillinger for tjek');
     assert.equal(await page.locator('#accessibility-statement-title').textContent(), 'Tilgængelighedserklæring');
+    assert.equal(await page.locator('a[href="#accessibility-statement"]').textContent(), 'Tilgængelighedserklæring');
+
+    await page.locator('a[href="#accessibility-statement"]').click();
+    await page.waitForFunction(() => window.location.hash === '#accessibility-statement');
+    assert.equal(await page.locator('#home-view').evaluate((element) => element.hidden), true);
+    assert.equal(await page.locator('#accessibility-statement').evaluate((element) => element.hidden), false);
+    assert.equal(await page.title(), 'Tilgængelighedserklæring - Kontrasttjek for billeder');
+
+    await page.locator('#accessibility-statement a[href="/"]').click();
+    await page.waitForFunction(() => window.location.hash === '' && !document.querySelector('#home-view').hidden);
+    assert.equal(await page.locator('#home-view').evaluate((element) => element.hidden), false);
+    assert.equal(await page.locator('#accessibility-statement').evaluate((element) => element.hidden), true);
 
     await context.close();
   } finally {

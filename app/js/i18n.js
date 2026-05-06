@@ -76,7 +76,9 @@
 			footerContact: 'For contact, questions, suggestions, etc. email',
 			accessibilityTitle: 'Accessibility statement',
 			accessibilityCopy: 'We aim to make this tool accessible and test it against WCAG AAA and accessibility best practices.',
-			accessibilityContact: 'For accessibility issues or requests, email'
+			accessibilityContact: 'For accessibility issues or requests, email',
+			accessibilityLink: 'Accessibility statement',
+			accessibilityBack: 'Back to checker'
 		},
 		da: {
 			description: 'Upload et billede, og markér områder, der ikke opfylder WCAG-kontrastkrav.',
@@ -138,7 +140,9 @@
 			footerContact: 'Ved kontakt, spørgsmål, forslag osv. kan du skrive til',
 			accessibilityTitle: 'Tilgængelighedserklæring',
 			accessibilityCopy: 'Vi arbejder for, at dette værktøj er tilgængeligt, og tester det mod WCAG AAA og best practices for tilgængelighed.',
-			accessibilityContact: 'Ved tilgængelighedsproblemer eller ønsker, skriv til'
+			accessibilityContact: 'Ved tilgængelighedsproblemer eller ønsker, skriv til',
+			accessibilityLink: 'Tilgængelighedserklæring',
+			accessibilityBack: 'Tilbage til kontrasttjekket'
 		},
 		no: {
 			description: 'Last opp et bilde og marker områder som ikke oppfyller WCAG-kontrastkrav.',
@@ -200,7 +204,9 @@
 			footerContact: 'For kontakt, spørsmål, forslag osv. kan du skrive til',
 			accessibilityTitle: 'Tilgjengelighetserklæring',
 			accessibilityCopy: 'Vi jobber for at dette verktøyet skal være tilgjengelig, og tester det mot WCAG AAA og best practices for tilgjengelighet.',
-			accessibilityContact: 'For tilgjengelighetsproblemer eller ønsker, skriv til'
+			accessibilityContact: 'For tilgjengelighetsproblemer eller ønsker, skriv til',
+			accessibilityLink: 'Tilgjengelighetserklæring',
+			accessibilityBack: 'Tilbake til kontrastsjekken'
 		},
 		sv: {
 			description: 'Ladda upp en bild och markera områden som inte uppfyller WCAG:s kontrastmål.',
@@ -262,7 +268,9 @@
 			footerContact: 'För kontakt, frågor, förslag osv. kan du skriva till',
 			accessibilityTitle: 'Tillgänglighetsredogörelse',
 			accessibilityCopy: 'Vi arbetar för att det här verktyget ska vara tillgängligt och testar det mot WCAG AAA och best practices för tillgänglighet.',
-			accessibilityContact: 'Vid tillgänglighetsproblem eller önskemål, skriv till'
+			accessibilityContact: 'Vid tillgänglighetsproblem eller önskemål, skriv till',
+			accessibilityLink: 'Tillgänglighetsredogörelse',
+			accessibilityBack: 'Tillbaka till kontrastkontrollen'
 		},
 		fi: {
 			description: 'Lataa kuva ja korosta alueet, jotka eivät täytä WCAG-kontrastitavoitteita.',
@@ -324,7 +332,9 @@
 			footerContact: 'Yhteydenottoja, kysymyksiä, ehdotuksia ym. varten sähköposti',
 			accessibilityTitle: 'Saavutettavuusseloste',
 			accessibilityCopy: 'Pyrimme tekemään tästä työkalusta saavutettavan ja testaamme sitä WCAG AAA -tason ja saavutettavuuden best practices -käytäntöjen mukaisesti.',
-			accessibilityContact: 'Saavutettavuusongelmista tai pyynnöistä voit lähettää sähköpostia'
+			accessibilityContact: 'Saavutettavuusongelmista tai pyynnöistä voit lähettää sähköpostia',
+			accessibilityLink: 'Saavutettavuusseloste',
+			accessibilityBack: 'Takaisin kontrastin tarkistukseen'
 		},
 		kl: {
 			description: 'Assi ikkuuk, WCAG-imi kontrastimut piumasaqaatinik naammassinninngitsut ersersillugit.',
@@ -386,7 +396,9 @@
 			footerContact: 'Attaveqarneq, apeqqutit, siunnersuutit il.il. pillugit email',
 			accessibilityTitle: 'Accessibility statement',
 			accessibilityCopy: 'Sakkup taassuma sapinngisamik accessible-uunissaa anguniarparput, WCAG AAA aamma accessibility best practices malillugit testertarlugu.',
-			accessibilityContact: 'Accessibility-imut ajornartorsiutit imaluunniit kissaateqaatit pillugit email'
+			accessibilityContact: 'Accessibility-imut ajornartorsiutit imaluunniit kissaateqaatit pillugit email',
+			accessibilityLink: 'Accessibility statement',
+			accessibilityBack: 'Kontrastimik misissuinermut uterit'
 		},
 		is: {
 			description: 'Hladdu upp mynd og merktu svæði sem uppfylla ekki WCAG birtuskilamarkmið.',
@@ -448,7 +460,9 @@
 			footerContact: 'Fyrir samband, spurningar, tillögur o.s.frv. sendu tölvupóst á',
 			accessibilityTitle: 'Aðgengisyfirlýsing',
 			accessibilityCopy: 'Við stefnum að því að gera þetta tól aðgengilegt og prófum það samkvæmt WCAG AAA og best practices fyrir aðgengi.',
-			accessibilityContact: 'Vegna aðgengisvandamála eða beiðna, sendu tölvupóst á'
+			accessibilityContact: 'Vegna aðgengisvandamála eða beiðna, sendu tölvupóst á',
+			accessibilityLink: 'Aðgengisyfirlýsing',
+			accessibilityBack: 'Til baka í kontrastprófunina'
 		},
 		fo: {
 			description: 'Legg eina mynd inn og markera øki, sum ikki lúka WCAG-krøvini til kontrast.',
@@ -510,7 +524,9 @@
 			footerContact: 'Til samband, spurningar, uppskot o.s.fr. skriva til',
 			accessibilityTitle: 'Atkomuyvirlýsing',
 			accessibilityCopy: 'Vit arbeiða fyri, at hetta amboðið er atkomuligt, og testa tað móti WCAG AAA og best practices fyri atkomu.',
-			accessibilityContact: 'Við atkomutrupulleikum ella ynskjum, skriva til'
+			accessibilityContact: 'Við atkomutrupulleikum ella ynskjum, skriva til',
+			accessibilityLink: 'Atkomuyvirlýsing',
+			accessibilityBack: 'Aftur til kontrastkanningina'
 		},
 		es: {
 			description: 'Sube una imagen y resalta las zonas que no cumplen los objetivos de contraste WCAG.',
@@ -572,7 +588,9 @@
 			footerContact: 'Para contacto, preguntas, sugerencias, etc., escribe a',
 			accessibilityTitle: 'Declaración de accesibilidad',
 			accessibilityCopy: 'Nuestro objetivo es que esta herramienta sea accesible y la probamos con WCAG AAA y buenas prácticas de accesibilidad.',
-			accessibilityContact: 'Para problemas o solicitudes de accesibilidad, escribe a'
+			accessibilityContact: 'Para problemas o solicitudes de accesibilidad, escribe a',
+			accessibilityLink: 'Declaración de accesibilidad',
+			accessibilityBack: 'Volver al comprobador'
 		},
 		de: {
 			description: 'Lade ein Bild hoch und markiere Bereiche, die die WCAG-Kontrastziele nicht erfüllen.',
@@ -634,7 +652,9 @@
 			footerContact: 'Für Kontakt, Fragen, Vorschläge usw. schreibe an',
 			accessibilityTitle: 'Barrierefreiheitserklärung',
 			accessibilityCopy: 'Wir möchten dieses Tool barrierefrei machen und testen es gegen WCAG AAA und Best Practices für Barrierefreiheit.',
-			accessibilityContact: 'Bei Barrierefreiheitsproblemen oder Anfragen schreibe an'
+			accessibilityContact: 'Bei Barrierefreiheitsproblemen oder Anfragen schreibe an',
+			accessibilityLink: 'Barrierefreiheitserklärung',
+			accessibilityBack: 'Zurück zum Kontrastcheck'
 		},
 		fr: {
 			description: 'Importez une image et mettez en évidence les zones qui ne respectent pas les objectifs de contraste WCAG.',
@@ -696,7 +716,9 @@
 			footerContact: 'Pour tout contact, question, suggestion, etc., écrivez à',
 			accessibilityTitle: 'Déclaration d’accessibilité',
 			accessibilityCopy: 'Nous voulons rendre cet outil accessible et le testons selon WCAG AAA et les bonnes pratiques d’accessibilité.',
-			accessibilityContact: 'Pour un problème ou une demande d’accessibilité, écrivez à'
+			accessibilityContact: 'Pour un problème ou une demande d’accessibilité, écrivez à',
+			accessibilityLink: 'Déclaration d’accessibilité',
+			accessibilityBack: 'Retour au vérificateur'
 		},
 		pt: {
 			description: 'Carregue uma imagem e destaque áreas que não cumprem os objetivos de contraste WCAG.',
@@ -758,7 +780,9 @@
 			footerContact: 'Para contactos, perguntas, sugestões, etc., escreva para',
 			accessibilityTitle: 'Declaração de acessibilidade',
 			accessibilityCopy: 'O nosso objetivo é tornar esta ferramenta acessível e testá-la com WCAG AAA e boas práticas de acessibilidade.',
-			accessibilityContact: 'Para problemas ou pedidos de acessibilidade, escreva para'
+			accessibilityContact: 'Para problemas ou pedidos de acessibilidade, escreva para',
+			accessibilityLink: 'Declaração de acessibilidade',
+			accessibilityBack: 'Voltar ao verificador'
 		},
 		it: {
 			description: 'Carica un’immagine ed evidenzia le aree che non rispettano gli obiettivi di contrasto WCAG.',
@@ -820,7 +844,9 @@
 			footerContact: 'Per contatti, domande, suggerimenti, ecc. scrivi a',
 			accessibilityTitle: 'Dichiarazione di accessibilità',
 			accessibilityCopy: 'Vogliamo rendere questo strumento accessibile e lo testiamo rispetto a WCAG AAA e alle best practice di accessibilità.',
-			accessibilityContact: 'Per problemi o richieste di accessibilità, scrivi a'
+			accessibilityContact: 'Per problemi o richieste di accessibilità, scrivi a',
+			accessibilityLink: 'Dichiarazione di accessibilità',
+			accessibilityBack: 'Torna al controllo'
 		}
 	};
 
@@ -894,6 +920,10 @@
 
 		if (window.updateThemeToggle) {
 			window.updateThemeToggle();
+		}
+
+		if (window.updateAppView) {
+			window.updateAppView(false);
 		}
 
 		var switcher = document.querySelector('#language-switcher');

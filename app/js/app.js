@@ -11,6 +11,60 @@ function showStep(stepNumber) {
 	newStep.removeAttribute('aria-hidden');
 }
 
+function isAccessibilityStatementView() {
+	return window.location.hash === '#accessibility-statement';
+}
+
+function updateDocumentTitleForView() {
+	if (!window.translate) {
+		return false;
+	}
+
+	if (isAccessibilityStatementView()) {
+		document.title = translate('accessibilityTitle') + ' - ' + translate('title');
+	} else {
+		document.title = translate('title');
+	}
+
+	return true;
+}
+
+function updateAppView(shouldFocus) {
+	var homeView = id('home-view');
+	var statementView = id('accessibility-statement');
+	var showStatement = isAccessibilityStatementView();
+
+	if (!homeView || !statementView) {
+		return false;
+	}
+
+	homeView.hidden = showStatement;
+	statementView.hidden = !showStatement;
+
+	if (showStatement) {
+		homeView.setAttribute('aria-hidden', 'true');
+		statementView.removeAttribute('aria-hidden');
+	} else {
+		homeView.removeAttribute('aria-hidden');
+		statementView.setAttribute('aria-hidden', 'true');
+	}
+	updateDocumentTitleForView();
+
+	if (shouldFocus) {
+		(showStatement ? statementView : id('main-content')).focus();
+	}
+
+	return true;
+}
+
+function initViewRouting() {
+	window.updateAppView = updateAppView;
+	window.addEventListener('hashchange', function () {
+		updateAppView(true);
+	});
+	updateAppView(false);
+}
+
 function markSkipLinkTarget() {
 	var main = id('main-content');
 
@@ -192,10 +246,12 @@ function initThemeToggle() {
 
 if (document.readyState === 'loading') {
 	document.addEventListener('DOMContentLoaded', function () {
+		initViewRouting();
 		initIntroPanel();
 		initThemeToggle();
 	});
 } else {
+	initViewRouting();
 	initIntroPanel();
 	initThemeToggle();
 }
