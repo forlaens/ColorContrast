@@ -3,3 +3,6 @@ dist/
 test-results/
 .DS_Store
 npm-debug.log*
+
+# macOS/iCloud conflict copies
+* 2.*

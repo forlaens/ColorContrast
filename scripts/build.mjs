@@ -1,4 +1,4 @@
-import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
 import { resolve } from 'node:path';
 
@@ -22,7 +22,6 @@ run('php', ['scripts/generate-social-card.php']);
 
 const distDir = resolve('dist');
 const scriptFiles = [
-  'script.js',
   'util.js',
   'i18n.js',
   'app.js',
@@ -34,6 +33,8 @@ const scriptFiles = [
   'pwa.js'
 ];
 
+// Production deploys are static. The build renders PHP once, inlines CSS,
+// bundles the small plain-JS modules, and leaves deployable assets in dist/.
 async function inlineStyles(html) {
   const css = await readFile(resolve('app/css/style.css'), 'utf8');
 
@@ -62,9 +63,18 @@ async function optimizeServiceWorker() {
   const serviceWorker = await readFile(serviceWorkerPath, 'utf8');
   const optimized = serviceWorker
     .replace('/css/style.css', '/js/app.bundle.js')
-    .replace(/,\n\t'\/js\/(?:app|canvas|color|contrast|i18n|image|pwa|script|toolbar|util)\.js'/g, '');
+    .replace(/,\n\t'\/js\/(?:app|canvas|color|contrast|i18n|image|pwa|toolbar|util)\.js'/g, '');
 
   await writeFile(serviceWorkerPath, optimized);
+}
+
+async function removeUnbundledScripts() {
+  const jsDir = resolve(distDir, 'js');
+  const files = await readdir(jsDir);
+
+  await Promise.all(files
+    .filter((file) => file.endsWith('.js') && file !== 'app.bundle.js')
+    .map((file) => rm(resolve(jsDir, file), { force: true })));
 }
 
 async function removeUnusedReleaseImages() {
@@ -106,6 +116,7 @@ let html = await inlineStyles(rendered.stdout);
 html = await bundleScripts(html);
 
 await optimizeServiceWorker();
+await removeUnbundledScripts();
 await removeUnusedReleaseImages();
 await writeFile(resolve(distDir, 'index.html'), html);
 

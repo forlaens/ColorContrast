@@ -1,4 +1,3 @@
-	<script src="/js/script.js" defer></script>
 	<script src="/js/util.js" defer></script>
 	<script src="/js/i18n.js" defer></script>
 	<script src="/js/app.js" defer></script>
