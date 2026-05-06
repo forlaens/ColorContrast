@@ -269,13 +269,41 @@ h2 {
 }
 
 .site-footer {
-	margin-top: 28px;
+	margin-top: 32px;
 	color: var(--muted);
 	font-size: 0.95rem;
 }
 
+.footer-inner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px 28px;
+	padding: 20px 0 0;
+	border-top: 1px solid var(--border);
+}
+
 .site-footer p {
 	margin: 0;
+}
+
+.footer-brand,
+.footer-meta,
+.footer-meta p {
+	display: flex;
+	align-items: center;
+	gap: 0.35em;
+}
+
+.footer-brand {
+	color: var(--text);
+	font-weight: 700;
+}
+
+.footer-meta {
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	color: var(--muted);
 }
 
 .site-footer a {
@@ -283,6 +311,17 @@ h2 {
 	font-weight: 700;
 	text-decoration-thickness: 0.08em;
 	text-underline-offset: 0.18em;
+}
+
+@media (max-width: 760px) {
+	.footer-inner {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+
+	.footer-meta {
+		justify-content: flex-start;
+	}
 }
 
 .accessibility-page {

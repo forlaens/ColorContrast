@@ -106,9 +106,12 @@ test('document includes contact footer', async () => {
   assert.match(index, /<p data-i18n="accessibilityCopy">We aim to make this tool accessible and test it against WCAG AAA and accessibility best practices\.<\/p>/);
   assert.match(index, /<span data-i18n="accessibilityContact">For accessibility issues or requests, email<\/span>/);
   assert.match(index, /<a class="back-link" href="\/" data-i18n="accessibilityBack">Back to checker<\/a>/);
+  assert.match(index, /<div class="footer-inner">/);
+  assert.match(index, /<p class="footer-brand">/);
   assert.match(index, /<span data-i18n="footerCopyright">Copyright<\/span>/);
   assert.match(index, /<a href="https:\/\/forlaens\.com\/">Forlæns<\/a>/);
-  assert.match(index, /<span data-i18n="footerContact">For contact, questions, suggestions, etc\. email<\/span>/);
+  assert.match(index, /<div class="footer-meta">/);
+  assert.match(index, /<span data-i18n="footerContact">Contact, questions, or suggestions:<\/span>/);
   assert.match(index, /<a href="mailto:tobias@forlaens\.com">tobias@forlaens\.com<\/a>/);
   assert.match(index, /<a href="#accessibility-statement" data-i18n="accessibilityLink">Accessibility statement<\/a>/);
   assert.match(i18n, /footerCopyright:/);

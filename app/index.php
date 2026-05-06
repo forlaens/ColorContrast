@@ -185,13 +185,19 @@
 	</main>
 
 	<footer class="site-footer">
-		<p>
-			<span data-i18n="footerCopyright">Copyright</span>
-			<a href="https://forlaens.com/">Forlæns</a>.
-			<span data-i18n="footerContact">For contact, questions, suggestions, etc. email</span>
-			<a href="mailto:tobias@forlaens.com">tobias@forlaens.com</a>.
-			<a href="#accessibility-statement" data-i18n="accessibilityLink">Accessibility statement</a>.
-		</p>
+		<div class="footer-inner">
+			<p class="footer-brand">
+				<span data-i18n="footerCopyright">Copyright</span>
+				<a href="https://forlaens.com/">Forlæns</a>
+			</p>
+			<div class="footer-meta">
+				<p>
+					<span data-i18n="footerContact">Contact, questions, or suggestions:</span>
+					<a href="mailto:tobias@forlaens.com">tobias@forlaens.com</a>
+				</p>
+				<a href="#accessibility-statement" data-i18n="accessibilityLink">Accessibility statement</a>
+			</div>
+		</div>
 	</footer>
 </div>
 
