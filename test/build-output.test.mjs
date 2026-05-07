@@ -154,6 +154,11 @@ test('document explains purpose and basic use without eyebrow labels', async () 
   assert.match(index, /<form id="step-1" class="step upload-panel"[^>]+aria-labelledby="upload-title"/);
   assert.match(index, /<h2 id="upload-title" class="upload-title" data-i18n="chooseImage">Choose an image<\/h2>/);
   assert.match(index, /<option value="3" data-i18n="nonText">Graphics \(3:1\)<\/option>/);
+  assert.match(index, /<span id="zoom-label" data-i18n="zoomLabel">Zoom<\/span>/);
+  assert.match(index, /<output id="zoom-output" for="image_preview" aria-live="polite">100%<\/output>/);
+  assert.match(index, /<div class="zoom-controls" role="group" aria-labelledby="zoom-label">/);
+  assert.match(index, /<div hidden id="pan-controls" class="pan-controls" role="group" aria-label="Pan image" data-i18n-aria-label="panControls">/);
+  assert.match(index, /<section id="preview-viewport" class="preview-viewport" tabindex="0" aria-label="Zoomable image preview" data-i18n-aria-label="previewViewport" aria-describedby="preview-help">/);
   assert.match(index, /Choose a color from the image, run the test/);
   assert.match(index, /can I still read it or see what I am supposed to see/);
   assert.match(index, /The file stays in your browser/);
@@ -187,6 +192,9 @@ test('document includes language switcher support', async () => {
   assert.match(i18n, /nonText: 'Graphics \(3:1\)'/);
   assert.match(i18n, /nonText: 'Grafik \(3:1\)'/);
   assert.match(i18n, /nonText: 'Gráficos \(3:1\)'/);
+  assert.match(i18n, /zoomLabel:/);
+  assert.match(i18n, /previewHelp:/);
+  assert.match(i18n, /panControls:/);
   assert.equal(i18n.includes('Non-text (3:1)'), false);
 });
 

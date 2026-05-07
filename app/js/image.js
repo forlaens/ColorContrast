@@ -2,6 +2,7 @@ var cachedPixels = false;
 var image = {};
 var imageDragDepth = 0;
 var imageThumbnailUrl = null;
+var zoomSteps = [0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4];
 
 window.onresize = recalcImage;
 
@@ -42,6 +43,7 @@ function loadImagePreview() {
 
 		loadedImage.onload = function() {
 			image.file = loadedImage;
+			image.zoom = null;
 			showStep(2);
 
 			try {
@@ -86,7 +88,11 @@ function showEmptyPreviewCanvas() {
 	resizePreviewFrame();
 	canvas.width = canvas.offsetWidth;
 	canvas.height = 320;
+	canvas.style.width = canvas.width + 'px';
+	canvas.style.height = canvas.height + 'px';
+	updateCanvasLayerSize(canvas.width, canvas.height);
 	context.clearRect(0, 0, canvas.width, canvas.height);
+	updatePreviewControls();
 }
 
 function updatePreviewCanvas() {
@@ -109,24 +115,136 @@ function updatePreviewCanvas() {
 		throw new Error(translate('imageSizeError'));
 	}
 
-	canvas.width = canvas.offsetWidth;
+	canvas.width = image.dimensions.width;
 	canvas.height = image.dimensions.height;
+	canvas.style.width = image.dimensions.width + 'px';
+	canvas.style.height = image.dimensions.height + 'px';
+	updateCanvasLayerSize(image.dimensions.width, image.dimensions.height);
 	context.clearRect(0, 0, canvas.width, canvas.height);
 
 	renderImage(context, image.file);
 	cachePixels(context);
+	updatePreviewControls();
 }
 
 function scaleImage(canvas) {
 	resizePreviewFrame();
 
-	var canvasWidth = canvas.offsetWidth;
-	var scale = Math.min(1, canvasWidth / image.file.width);
+	var viewport = id('preview-viewport');
+	var viewportWidth = viewport ? viewport.clientWidth : canvas.offsetWidth;
+	var fitScale = Math.min(1, viewportWidth / image.file.width);
+	var scale = image.zoom || fitScale;
 
 	var width = Math.floor(image.file.width * scale);
 	var height = Math.floor(image.file.height * scale);
 
 	return { width, height };
+}
+
+function getCurrentZoom() {
+	if (!image.file) {
+		return 1;
+	}
+
+	if (image.zoom) {
+		return image.zoom;
+	}
+
+	var viewport = id('preview-viewport');
+	var viewportWidth = viewport ? viewport.clientWidth : 1;
+	return Math.min(1, viewportWidth / image.file.width);
+}
+
+function setPreviewZoom(zoom, shouldAnnounce) {
+	if (!image.file) {
+		return false;
+	}
+
+	image.zoom = Math.max(zoomSteps[0], Math.min(zoomSteps[zoomSteps.length - 1], zoom));
+	updatePreviewCanvas();
+
+	if (shouldAnnounce) {
+		announceStatus(translate('zoomStatus').replace('{zoom}', Math.round(image.zoom * 100)));
+	}
+
+	return true;
+}
+
+function zoomPreview(direction) {
+	var currentZoom = getCurrentZoom();
+	var nextZoom = zoomSteps[zoomSteps.length - 1];
+
+	for (var i = 0; i < zoomSteps.length; i++) {
+		if (direction < 0 && zoomSteps[i] < currentZoom) {
+			nextZoom = zoomSteps[i];
+		} else if (direction > 0 && zoomSteps[i] > currentZoom) {
+			nextZoom = zoomSteps[i];
+			break;
+		}
+	}
+
+	return setPreviewZoom(nextZoom, true);
+}
+
+function resetPreviewZoom() {
+	return setPreviewZoom(1, true);
+}
+
+function panPreview(xDirection, yDirection) {
+	var viewport = id('preview-viewport');
+
+	if (!viewport) {
+		return false;
+	}
+
+	viewport.scrollBy({
+		left: xDirection * Math.max(80, viewport.clientWidth * 0.25),
+		top: yDirection * Math.max(80, viewport.clientHeight * 0.25),
+		behavior: 'smooth'
+	});
+
+	return true;
+}
+
+function updatePreviewControls() {
+	var viewport = id('preview-viewport');
+	var panControls = id('pan-controls');
+	var zoomOutput = id('zoom-output');
+	var zoomOut = id('zoom-out');
+	var zoomIn = id('zoom-in');
+	var zoomReset = id('zoom-reset');
+	var hasImage = !!(image.file && image.dimensions);
+	var currentZoom = getCurrentZoom();
+
+	if (zoomOutput) {
+		zoomOutput.value = Math.round(currentZoom * 100) + '%';
+		zoomOutput.textContent = Math.round(currentZoom * 100) + '%';
+	}
+
+	if (zoomOut) {
+		zoomOut.disabled = !hasImage || currentZoom <= zoomSteps[0];
+	}
+
+	if (zoomIn) {
+		zoomIn.disabled = !hasImage || currentZoom >= zoomSteps[zoomSteps.length - 1];
+	}
+
+	if (zoomReset) {
+		zoomReset.disabled = !hasImage;
+	}
+
+	if (!viewport || !panControls) {
+		return false;
+	}
+
+	var canPan = hasImage && (
+		viewport.scrollWidth > viewport.clientWidth + 1 ||
+		viewport.scrollHeight > viewport.clientHeight + 1
+	);
+
+	panControls.hidden = !canPan;
+	viewport.classList.toggle('can-pan', canPan);
+	return true;
 }
 
 function resizePreviewFrame() {
