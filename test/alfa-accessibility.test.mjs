@@ -600,7 +600,7 @@ test('contrast rendering changes the canvas and reset restores the source image'
     const highlightedCanvas = await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL());
     assert.notEqual(highlightedCanvas, originalCanvas);
     assert.equal(await page.locator('#reset-image').isVisible(), true);
-    assert.match(await page.locator('#checker-result').textContent(), /^Test complete\. [\d,]+ of [\d,]+ preview pixels, [\d.]+ percent, do not meet Small text \(7:1\) for #ffffff\./);
+    assert.match(await page.locator('#checker-result').textContent(), /^Test complete\. About [\d.]+ percent of the preview does not meet Small text \(7:1\) for #ffffff\. Those areas are highlighted with the selected color\./);
     assert.equal(await page.locator('#checker-result').textContent(), await page.locator('#settings-status').textContent());
 
     await page.locator('#reset-image').click();
