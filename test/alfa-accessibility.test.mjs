@@ -270,6 +270,13 @@ test('built app supports every language in the switcher', async () => {
     assert.equal(await page.locator('#home-view').evaluate((element) => element.hidden), false);
     assert.equal(await page.locator('#accessibility-statement').evaluate((element) => element.hidden), true);
 
+    await page.locator('a[href="#accessibility-statement"]').click();
+    await page.waitForFunction(() => window.location.hash === '#accessibility-statement');
+    await page.locator('#app-title a').click();
+    await page.waitForFunction(() => window.location.hash === '' && !document.querySelector('#home-view').hidden);
+    assert.equal(await page.locator('#home-view').evaluate((element) => element.hidden), false);
+    assert.equal(await page.locator('#accessibility-statement').evaluate((element) => element.hidden), true);
+
     await context.close();
   } finally {
     if (browser) {
@@ -298,6 +305,11 @@ test('load image without a selected file opens an empty checker canvas', async (
     assert.equal(await page.locator('#step-1').isHidden(), true);
     assert.equal(await page.locator('#app-error').evaluate((element) => element.hidden), true);
     assert.equal(await page.locator('#image_preview').evaluate((canvas) => canvas.height), 320);
+
+    await page.locator('#app-title a').click();
+    await page.waitForFunction(() => !document.querySelector('#step-1').hidden && document.querySelector('#step-2').hidden);
+    assert.equal(await page.locator('#step-1').isVisible(), true);
+    assert.equal(await page.locator('#step-2').isHidden(), true);
 
     await context.close();
   } finally {

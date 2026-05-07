@@ -87,6 +87,8 @@ test('document provides a skip link to main content', async () => {
   assert.match(index, /<a class="skip-link" href="#main-content" onclick="markSkipLinkTarget\(\);" data-i18n="skipLink">Skip to main content<\/a>/);
   assert.match(index, /<div class="app-shell">/);
   assert.match(index, /<header class="hero" aria-labelledby="app-title">/);
+  assert.match(index, /<h1 id="app-title">/);
+  assert.match(index, /<a class="home-title-link" href="\/" onclick="return showFrontView\(\);" data-i18n="title">Image contrast checker<\/a>/);
   assert.match(index, /<main id="main-content" class="app-main" tabindex="-1">/);
   assert.ok(index.indexOf('<header class="hero"') < index.indexOf('id="main-content"'));
 });
@@ -160,6 +162,7 @@ test('document explains purpose and basic use without eyebrow labels', async () 
   assert.match(app, /addEventListener\('click'/);
   assert.match(app, /hashchange/);
   assert.match(app, /#accessibility-statement/);
+  assert.match(app, /function showFrontView\(\)/);
 });
 
 test('document includes language switcher support', async () => {

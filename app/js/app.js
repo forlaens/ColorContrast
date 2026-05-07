@@ -57,9 +57,22 @@ function updateAppView(shouldFocus) {
 	return true;
 }
 
+function showFrontView() {
+	if (window.location.hash) {
+		window.history.pushState('', document.title, window.location.pathname + window.location.search);
+	}
+
+	updateAppView(false);
+	showStep(1);
+	window.scrollTo(0, 0);
+
+	return false;
+}
+
 // Hash-based routing keeps this static app deployable without server rewrites.
 function initViewRouting() {
 	window.updateAppView = updateAppView;
+	window.showFrontView = showFrontView;
 	window.addEventListener('hashchange', function () {
 		updateAppView(true);
 	});
