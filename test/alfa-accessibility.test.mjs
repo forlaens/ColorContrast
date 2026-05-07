@@ -258,10 +258,11 @@ test('built app supports every language in the switcher', async () => {
     assert.equal(await page.locator('#accessibility-statement-title').textContent(), 'Tilgængelighedserklæring');
     assert.equal(await page.locator('a[href="#accessibility-statement"]').textContent(), 'Tilgængelighedserklæring');
 
-    await page.locator('a[href="#accessibility-statement"]').click();
-    await page.waitForFunction(() => window.location.hash === '#accessibility-statement');
-    assert.equal(await page.locator('#home-view').evaluate((element) => element.hidden), true);
-    assert.equal(await page.locator('#accessibility-statement').evaluate((element) => element.hidden), false);
+	    await page.locator('a[href="#accessibility-statement"]').click();
+	    await page.waitForFunction(() => window.location.hash === '#accessibility-statement');
+	    await page.waitForFunction(() => document.querySelector('#home-view').hidden && !document.querySelector('#accessibility-statement').hidden);
+	    assert.equal(await page.locator('#home-view').evaluate((element) => element.hidden), true);
+	    assert.equal(await page.locator('#accessibility-statement').evaluate((element) => element.hidden), false);
     assert.equal(await page.title(), 'Tilgængelighedserklæring - Kontrasttjek for billeder');
 
     await page.locator('#accessibility-statement a[href="/"]').click();

@@ -173,14 +173,38 @@
 
 		<section hidden id="accessibility-statement" class="accessibility-page" aria-labelledby="accessibility-statement-title" tabindex="-1">
 			<h2 id="accessibility-statement-title" data-i18n="accessibilityTitle">Accessibility statement</h2>
-			<p data-i18n="accessibilityCopy">We aim to make this tool accessible and test it against WCAG AAA and accessibility best practices.</p>
-			<p>
-				<span data-i18n="accessibilityContact">For accessibility issues or requests, email</span>
-				<a href="mailto:tobias@forlaens.com">tobias@forlaens.com</a>.
-			</p>
-			<p>
-				<a class="back-link" href="/" data-i18n="accessibilityBack">Back to checker</a>
-			</p>
+			<p class="accessibility-lede" data-i18n="accessibilityIntro">This statement explains how the Image contrast checker is made accessible, what it is tested against, and how to report a problem.</p>
+
+			<section class="accessibility-section" aria-labelledby="accessibility-scope-title">
+				<h3 id="accessibility-scope-title" data-i18n="accessibilityScopeTitle">Scope</h3>
+				<p data-i18n="accessibilityScopeCopy">This statement covers the public Image contrast checker web app at colorcontrast.2biaz.dk, including the checker view, language and theme controls, and the accessibility statement page.</p>
+			</section>
+
+			<section class="accessibility-section" aria-labelledby="accessibility-standard-title">
+				<h3 id="accessibility-standard-title" data-i18n="accessibilityStandardTitle">Standard</h3>
+				<p data-i18n="accessibilityStandardCopy">The goal is WCAG 2.2 AAA conformance where it is relevant for this tool, plus accessibility best practices for keyboard use, focus visibility, language, headings, landmarks, labels, and status announcements.</p>
+			</section>
+
+			<section class="accessibility-section" aria-labelledby="accessibility-testing-title">
+				<h3 id="accessibility-testing-title" data-i18n="accessibilityTestingTitle">Testing</h3>
+				<p data-i18n="accessibilityTestingCopy">The app is tested in the build pipeline with Siteimprove Alfa, axe-core, Nu Html Checker, and browser tests for keyboard flows, focus behavior, language switching, theme switching, drag and drop, upload handling, and contrast checking.</p>
+			</section>
+
+			<section class="accessibility-section" aria-labelledby="accessibility-limitations-title">
+				<h3 id="accessibility-limitations-title" data-i18n="accessibilityLimitationsTitle">Known limitations</h3>
+				<p data-i18n="accessibilityLimitationsCopy">The checker analyzes pixel colors in an image, so the usefulness of the result depends on the uploaded image quality and the color chosen by the user. The image itself may contain accessibility issues that this tool can highlight, but not fix.</p>
+			</section>
+
+			<section class="accessibility-section" aria-labelledby="accessibility-feedback-title">
+				<h3 id="accessibility-feedback-title" data-i18n="accessibilityFeedbackTitle">Feedback and contact</h3>
+				<p>
+					<span data-i18n="accessibilityFeedbackCopy">If you find an accessibility problem, have trouble using the app, or have a suggestion, email</span>
+					<a href="mailto:tobias@forlaens.com">tobias@forlaens.com</a>.
+				</p>
+			</section>
+
+			<p class="accessibility-updated" data-i18n="accessibilityUpdated">Last updated: May 7, 2026.</p>
+			<a class="back-link" href="/" data-i18n="accessibilityBack">Back to checker</a>
 		</section>
 	</main>
 
