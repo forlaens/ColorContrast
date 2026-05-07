@@ -1,6 +1,8 @@
 var STORAGE_KEYS = {
+	conformanceLevel: 'colorcontrast-conformance-level',
 	introOpen: 'colorcontrast-intro-open',
 	language: 'colorcontrast-language',
+	testColor: 'colorcontrast-test-color',
 	theme: 'colorcontrast-theme'
 };
 
