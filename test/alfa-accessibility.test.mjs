@@ -286,6 +286,60 @@ test('built app supports every language in the switcher', async () => {
   }
 });
 
+test('live status text describes hex colors with approximate names', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    assert.deepEqual(await page.evaluate(() => ({
+      black: formatColorForStatus('#000000'),
+      white: formatColorForStatus('#ffffff'),
+      lightRed: formatColorForStatus('#ff6666'),
+      darkRed: formatColorForStatus('#660000'),
+      rose: formatColorForStatus('#e11d48'),
+      teal: formatColorForStatus('#14b8a6'),
+      turquoise: formatColorForStatus('#00ced1'),
+      silver: formatColorForStatus('#c0c0c0')
+    })), {
+      black: '#000000 (black)',
+      white: '#ffffff (white)',
+      lightRed: '#ff6666 (light red)',
+      darkRed: '#660000 (dark red)',
+      rose: '#e11d48 (rose)',
+      teal: '#14b8a6 (teal)',
+      turquoise: '#00ced1 (turquoise)',
+      silver: '#c0c0c0 (silver)'
+    });
+
+    await page.selectOption('#language-switcher', 'da');
+    await page.waitForFunction(() => document.documentElement.lang === 'da');
+
+    assert.deepEqual(await page.evaluate(() => ({
+      lightRed: formatColorForStatus('#ff6666'),
+      rose: formatColorForStatus('#e11d48'),
+      silver: formatColorForStatus('#c0c0c0')
+    })), {
+      lightRed: '#ff6666 (lys rød)',
+      rose: '#e11d48 (rosa)',
+      silver: '#c0c0c0 (sølv)'
+    });
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
 test('load image without a selected file opens an empty checker canvas', async () => {
   buildApp();
 
@@ -512,7 +566,8 @@ test('color picker supports keyboard placement and selection', async () => {
     assert.deepEqual({ x: pickerState.x, y: pickerState.y }, { x: 21, y: 30 });
     assert.equal(pickerState.actual, pickerState.expected);
     await page.waitForFunction((color) => document.querySelector('#settings-status').textContent.includes(color), pickerState.actual);
-    assert.equal(await page.locator('#settings-status').textContent(), `Selected color ${pickerState.actual}.`);
+    const escapedColor = pickerState.actual.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    assert.match(await page.locator('#settings-status').textContent(), new RegExp(`^Selected color ${escapedColor} \\(.+\\)\\.$`));
 
     await context.close();
   } finally {
@@ -600,7 +655,7 @@ test('contrast rendering changes the canvas and reset restores the source image'
     const highlightedCanvas = await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL());
     assert.notEqual(highlightedCanvas, originalCanvas);
     assert.equal(await page.locator('#reset-image').isVisible(), true);
-    assert.match(await page.locator('#checker-result').textContent(), /^Test complete\. About [\d.]+ percent of the preview does not meet Small text \(7:1\) for #ffffff\. Those areas are highlighted with the selected color\./);
+    assert.match(await page.locator('#checker-result').textContent(), /^Test complete\. About [\d.]+ percent of the preview does not meet Small text \(7:1\) for #ffffff \(white\)\. Those areas are highlighted with the selected color\./);
     assert.equal(await page.locator('#checker-result').textContent(), await page.locator('#settings-status').textContent());
 
     await page.locator('#reset-image').click();

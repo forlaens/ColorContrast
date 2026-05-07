@@ -53,7 +53,7 @@ function setTestColor(hex, shouldAnnounce) {
 	storeCheckerSettings();
 
 	if (shouldAnnounce) {
-		announceStatus(translate('colorSelectedStatus').replace('{color}', hex));
+		announceStatus(translate('colorSelectedStatus').replace('{color}', formatColorForStatus(hex)));
 	}
 }
 
