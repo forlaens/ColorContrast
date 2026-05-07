@@ -92,7 +92,6 @@
 				<p class="stage-copy" data-i18n="checkerCopy">Highlighted pixels are places where the chosen color may be hard to read or see against the image.</p>
 			</div>
 			<div class="stage-actions">
-				<button type="button" class="cta secondary" onclick="resetFileInput(); showStep(1);" data-i18n="newImage">New image</button>
 				<button hidden type="button" id="reset-image" class="cta ghost" onclick="resetPreviewImage();" data-i18n="resetImage">Reset image</button>
 			</div>
 		</div>
