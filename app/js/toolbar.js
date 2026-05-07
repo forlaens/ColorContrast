@@ -130,8 +130,8 @@ function placeCrosshairs(canvas) {
 
 function moveCrosshairs(canvas, x, y) {
 	var crosshairs = selector('#crosshairs');
-	var maxX = Math.max(0, canvas.offsetWidth - 1);
-	var maxY = Math.max(0, canvas.offsetHeight - 1);
+	var maxX = Math.max(0, canvas.width - 1);
+	var maxY = Math.max(0, canvas.height - 1);
 
 	x = Math.max(x, 0);
 	x = Math.min(x, maxX);
@@ -142,8 +142,8 @@ function moveCrosshairs(canvas, x, y) {
 	crosshairs.setAttribute('data-posx', x);
 	crosshairs.setAttribute('data-posy', y);
 
-	crosshairs.style.left = canvas.offsetLeft + x - (crosshairs.offsetWidth / 2) + 'px';
-	crosshairs.style.top = canvas.offsetTop + y - (crosshairs.offsetWidth / 2) + 'px';
+	crosshairs.style.left = x - (crosshairs.offsetWidth / 2) + 'px';
+	crosshairs.style.top = y - (crosshairs.offsetWidth / 2) + 'px';
 }
 
 function pickColorFromCrosshairs() {

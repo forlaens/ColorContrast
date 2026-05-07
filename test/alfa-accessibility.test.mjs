@@ -606,6 +606,85 @@ test('contrast rendering changes the canvas and reset restores the source image'
   }
 });
 
+test('image preview supports zoom and only shows pan controls when the image overflows', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 640, height: 720 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
+    await page.getByRole('button', { name: 'Load image' }).click();
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
+
+    const initialState = await page.evaluate(() => {
+      const viewport = document.querySelector('#preview-viewport');
+      const canvas = document.querySelector('#image_preview');
+
+      return {
+        panHidden: document.querySelector('#pan-controls').hidden,
+        viewportName: viewport.getAttribute('aria-label'),
+        describedBy: canvas.getAttribute('aria-describedby'),
+        zoom: document.querySelector('#zoom-output').textContent.trim(),
+        canvasWidth: canvas.width,
+        canvasCssWidth: Math.round(canvas.getBoundingClientRect().width),
+        documentWidth: document.documentElement.scrollWidth,
+        viewportWidth: window.innerWidth
+      };
+    });
+
+    assert.equal(initialState.panHidden, true);
+    assert.equal(initialState.viewportName, 'Zoomable image preview');
+    assert.equal(initialState.describedBy, 'preview-help');
+    assert.match(initialState.zoom, /%$/);
+    assert.equal(initialState.canvasWidth, initialState.canvasCssWidth);
+    assert.equal(initialState.documentWidth <= initialState.viewportWidth, true);
+
+    await page.getByRole('button', { name: 'Reset zoom' }).click();
+
+    const zoomedState = await page.evaluate(() => {
+      const viewport = document.querySelector('#preview-viewport');
+      const canvas = document.querySelector('#image_preview');
+
+      return {
+        panHidden: document.querySelector('#pan-controls').hidden,
+        panLabel: document.querySelector('#pan-controls').getAttribute('aria-label'),
+        zoom: document.querySelector('#zoom-output').textContent.trim(),
+        scrollWidth: viewport.scrollWidth,
+        clientWidth: viewport.clientWidth,
+        scrollHeight: viewport.scrollHeight,
+        clientHeight: viewport.clientHeight,
+        canvasWidth: canvas.width,
+        canvasCssWidth: Math.round(canvas.getBoundingClientRect().width),
+        documentWidth: document.documentElement.scrollWidth,
+        viewportWidth: window.innerWidth
+      };
+    });
+
+    assert.equal(zoomedState.panHidden, false);
+    assert.equal(zoomedState.panLabel, 'Pan image');
+    assert.equal(zoomedState.zoom, '100%');
+    assert.equal(zoomedState.scrollWidth > zoomedState.clientWidth || zoomedState.scrollHeight > zoomedState.clientHeight, true);
+    assert.equal(zoomedState.canvasWidth, zoomedState.canvasCssWidth);
+    assert.equal(zoomedState.documentWidth <= zoomedState.viewportWidth, true);
+
+    await page.getByRole('button', { name: 'Pan right' }).click();
+    await page.waitForFunction(() => document.querySelector('#preview-viewport').scrollLeft > 0);
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
 test('loaded image preview stays within the viewport on small screens and resize', async () => {
   buildApp();
 
@@ -625,20 +704,25 @@ test('loaded image preview stays within the viewport on small screens and resize
     async function assertNoHorizontalOverflow() {
       const dimensions = await page.evaluate(() => {
         const preview = document.querySelector('#preview_area');
+        const viewport = document.querySelector('#preview-viewport');
         const canvas = document.querySelector('#image_preview');
         return {
           viewportWidth: window.innerWidth,
           documentWidth: document.documentElement.scrollWidth,
           previewWidth: Math.ceil(preview.getBoundingClientRect().width),
+          scrollViewportWidth: Math.ceil(viewport.getBoundingClientRect().width),
           canvasWidth: Math.ceil(canvas.getBoundingClientRect().width),
-          canvasBufferWidth: canvas.width
+          canvasBufferWidth: canvas.width,
+          panControlsHidden: document.querySelector('#pan-controls').hidden
         };
       });
 
       assert.equal(dimensions.documentWidth <= dimensions.viewportWidth, true);
       assert.equal(dimensions.previewWidth <= dimensions.viewportWidth, true);
-      assert.equal(dimensions.canvasWidth <= dimensions.viewportWidth, true);
-      assert.equal(dimensions.canvasBufferWidth <= dimensions.viewportWidth, true);
+      assert.equal(dimensions.scrollViewportWidth <= dimensions.viewportWidth, true);
+      assert.equal(dimensions.canvasWidth <= dimensions.scrollViewportWidth, true);
+      assert.equal(dimensions.canvasBufferWidth <= dimensions.scrollViewportWidth, true);
+      assert.equal(dimensions.panControlsHidden, true);
     }
 
     await assertNoHorizontalOverflow();

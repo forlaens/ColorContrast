@@ -759,6 +759,35 @@ input[type=color] {
 	fill: currentColor;
 }
 
+.view-controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: end;
+	justify-content: flex-end;
+	gap: 12px;
+}
+
+.zoom-controls,
+.pan-controls {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.zoom-controls output {
+	min-width: 4.2em;
+	color: var(--text);
+	font-weight: 750;
+	text-align: center;
+}
+
+.text-icon-button {
+	width: auto;
+	min-width: 44px;
+	padding: 0 9px;
+	font-weight: 750;
+}
+
 .icon-button[aria-pressed=true] {
 	background: var(--button-strong-bg);
 	color: var(--button-strong-text);
@@ -772,12 +801,29 @@ input[type=color] {
 	filter: brightness(35%);
 }
 
+.preview-viewport {
+	overflow: auto;
+	max-width: 100%;
+	max-height: min(72vh, 760px);
+	background-color: var(--panel);
+	background-image: linear-gradient(45deg, var(--checkerboard) 25%, transparent 25%), linear-gradient(-45deg, var(--checkerboard) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, var(--checkerboard) 75%), linear-gradient(-45deg, transparent 75%, var(--checkerboard) 75%);
+	background-size: 32px 32px;
+	background-position: 0 0, 0 16px, 16px -16px, -16px 0;
+}
+
+.preview-viewport.can-pan {
+	scrollbar-color: var(--border-strong) var(--panel-soft);
+}
+
+.preview-canvas-layer {
+	position: relative;
+	min-width: 100%;
+	min-height: 1px;
+}
+
 .preview {
 	cursor: crosshair;
 	display: block;
-	width: 100%;
-	max-width: 100%;
-	min-height: 1px;
 	background-color: var(--panel);
 	background-image: linear-gradient(45deg, var(--checkerboard) 25%, transparent 25%), linear-gradient(-45deg, var(--checkerboard) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, var(--checkerboard) 75%), linear-gradient(-45deg, transparent 75%, var(--checkerboard) 75%);
 	background-size: 32px 32px;

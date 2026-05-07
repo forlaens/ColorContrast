@@ -131,12 +131,32 @@
 						</label>
 					</div>
 
-					<button class="cta" type="button" onclick="initRenderContrast();" data-i18n="runTest">Run test</button>
+					<div class="view-controls">
+						<div class="field zoom-field">
+							<span id="zoom-label" data-i18n="zoomLabel">Zoom</span>
+							<div class="zoom-controls" role="group" aria-labelledby="zoom-label">
+								<button id="zoom-out" class="icon-button" type="button" aria-label="Zoom out" data-i18n-aria-label="zoomOut" onclick="zoomPreview(-1);">−</button>
+								<output id="zoom-output" for="image_preview" aria-live="polite">100%</output>
+								<button id="zoom-in" class="icon-button" type="button" aria-label="Zoom in" data-i18n-aria-label="zoomIn" onclick="zoomPreview(1);">+</button>
+								<button id="zoom-reset" class="icon-button text-icon-button" type="button" aria-label="Reset zoom" data-i18n-aria-label="resetZoom" onclick="resetPreviewZoom();">1:1</button>
+							</div>
+						</div>
+						<div hidden id="pan-controls" class="pan-controls" role="group" aria-label="Pan image" data-i18n-aria-label="panControls">
+							<button class="icon-button" type="button" aria-label="Pan left" data-i18n-aria-label="panLeft" onclick="panPreview(-1, 0);">←</button>
+							<button class="icon-button" type="button" aria-label="Pan up" data-i18n-aria-label="panUp" onclick="panPreview(0, -1);">↑</button>
+							<button class="icon-button" type="button" aria-label="Pan down" data-i18n-aria-label="panDown" onclick="panPreview(0, 1);">↓</button>
+							<button class="icon-button" type="button" aria-label="Pan right" data-i18n-aria-label="panRight" onclick="panPreview(1, 0);">→</button>
+						</div>
+						<button class="cta" type="button" onclick="initRenderContrast();" data-i18n="runTest">Run test</button>
+					</div>
 				</div>
 
-				<canvas id="image_preview" class="preview" tabindex="0" aria-label="Image preview" data-i18n-aria-label="imagePreview" onmousedown="setTestColorFromCanvas(event, this);" onfocus="placeCrosshairs(this);" onkeydown="canvasKeyDown(this, event);" onkeyup="canvasKeyUp(event);" onblur="canvasBlur();"></canvas>
+				<p id="preview-help" class="sr-only" data-i18n="previewHelp">Use the zoom controls to inspect the image. If the image is larger than the visible preview, use the pan buttons or scroll the preview. Focus the image preview and use arrow keys to move the color picker.</p>
+				<section id="preview-viewport" class="preview-viewport" tabindex="0" aria-label="Zoomable image preview" data-i18n-aria-label="previewViewport" aria-describedby="preview-help">
+					<div id="preview-canvas-layer" class="preview-canvas-layer">
+						<canvas id="image_preview" class="preview" tabindex="0" aria-label="Image preview" data-i18n-aria-label="imagePreview" aria-describedby="preview-help" onmousedown="setTestColorFromCanvas(event, this);" onfocus="placeCrosshairs(this);" onkeydown="canvasKeyDown(this, event);" onkeyup="canvasKeyUp(event);" onblur="canvasBlur();"></canvas>
 
-				<div id="crosshairs">
+						<div id="crosshairs">
 					<svg aria-hidden="true" focusable="false" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1792 1792" xml:space="preserve">
 						<g>
 							<path class="white" d="M833.1,1691.6c-24.7,0-47.2-9.4-65-27.3c-17.9-17.9-27.3-40.4-27.3-65v-120.8
@@ -166,8 +186,10 @@
 								c24.7-107.3,76.2-200.2,154.5-278.5S660.7,359.7,768,335V192c0-17.3,6.3-32.3,19-45s27.7-19,45-19h128c17.3,0,32.3,6.3,45,19
 								s19,27.7,19,45v143c107.3,24.7,200.2,76.2,278.5,154.5S1432.3,660.7,1457,768h143c17.3,0,32.3,6.3,45,19S1664,814.7,1664,832z"/>
 						</g>
-					</svg>
-				</div>
+							</svg>
+						</div>
+					</div>
+				</section>
 			</section>
 		</div>
 	</section>
