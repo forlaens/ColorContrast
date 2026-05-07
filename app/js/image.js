@@ -24,19 +24,20 @@ function recalcImage() {
 
 function loadImagePreview() {
 	clearError();
-	updateImageSelectionPreview();
 
 	var files = id('image_file').files;
-	var file = imageValidation(files[0]);
+	var file = files && files[0];
 
 	if (!file) {
+		updateSelectedFileName();
+		clearImageThumbnail();
 		showStep(2);
 		showEmptyPreviewCanvas();
 		announceStatus(translate('emptyCanvasStatus'));
 		return false;
 	}
 
-	return loadImageFile(file);
+	return loadSelectedImageFromInput();
 }
 
 function loadImageFile(file) {
@@ -429,6 +430,27 @@ function updateImageSelectionPreview() {
 	return showImageThumbnail(file);
 }
 
+function loadSelectedImageFromInput() {
+	var fileInput = id('image_file');
+	updateSelectedFileName();
+
+	if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+		clearImageThumbnail();
+		return false;
+	}
+
+	var file = imageValidation(fileInput.files[0]);
+
+	if (!file) {
+		clearImageThumbnail();
+		return false;
+	}
+
+	showImageThumbnail(file);
+	clearError();
+	return loadImageFile(file);
+}
+
 function updateSelectedFileName() {
 	var fileInput = id('image_file');
 	var fileName = id('selected-file-name');
@@ -487,7 +509,7 @@ function initImageChooser() {
 	var fileInput = id('image_file');
 
 	if (fileInput) {
-		fileInput.addEventListener('change', updateImageSelectionPreview);
+		fileInput.addEventListener('change', loadSelectedImageFromInput);
 	}
 
 	document.addEventListener('dragenter', function (event) {

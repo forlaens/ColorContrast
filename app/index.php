@@ -53,7 +53,7 @@
 				<span class="upload-copy" data-i18n="uploadCopy">PNG, JPG, GIF, or SVG. The file stays in your browser.</span>
 				<span class="upload-file-row">
 					<img hidden id="image-thumbnail" class="upload-thumbnail" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" alt="">
-					<input id="image_file" class="file-input-native" type="file" name="image" accept="image/*" aria-describedby="selected-file-name" onchange="updateImageSelectionPreview();">
+					<input id="image_file" class="file-input-native" type="file" name="image" accept="image/*" aria-describedby="selected-file-name">
 					<label for="image_file" class="file-picker-button" data-i18n="chooseFile">Choose file</label>
 					<span id="selected-file-name" class="selected-file-name" data-i18n-file-empty="noFileChosen">No file chosen</span>
 				</span>
