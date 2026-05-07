@@ -106,8 +106,10 @@ test('document includes contact footer', async () => {
   assert.match(index, /<section hidden id="accessibility-statement" class="accessibility-page" aria-labelledby="accessibility-statement-title" tabindex="-1">/);
   assert.match(index, /<h2 id="accessibility-statement-title" data-i18n="accessibilityTitle">Accessibility statement<\/h2>/);
   assert.match(index, /<p class="accessibility-lede" data-i18n="accessibilityIntro">/);
+  assert.match(index, /<h3 id="accessibility-status-title" data-i18n="accessibilityStatusTitle">Conformance status<\/h3>/);
   assert.match(index, /<h3 id="accessibility-scope-title" data-i18n="accessibilityScopeTitle">Scope<\/h3>/);
-  assert.match(index, /<h3 id="accessibility-standard-title" data-i18n="accessibilityStandardTitle">Standard<\/h3>/);
+  assert.match(index, /<h3 id="accessibility-standard-title" data-i18n="accessibilityStandardTitle">Accessibility approach<\/h3>/);
+  assert.match(index, /<h3 id="accessibility-measures-title" data-i18n="accessibilityMeasuresTitle">What the tool can and cannot do<\/h3>/);
   assert.match(index, /<h3 id="accessibility-testing-title" data-i18n="accessibilityTestingTitle">Testing<\/h3>/);
   assert.match(index, /<h3 id="accessibility-limitations-title" data-i18n="accessibilityLimitationsTitle">Known limitations<\/h3>/);
   assert.match(index, /<h3 id="accessibility-feedback-title" data-i18n="accessibilityFeedbackTitle">Feedback and contact<\/h3>/);
@@ -127,8 +129,10 @@ test('document includes contact footer', async () => {
   assert.match(i18n, /footerContact:/);
   assert.match(i18n, /accessibilityTitle:/);
   assert.match(i18n, /accessibilityIntro:/);
+  assert.match(i18n, /accessibilityStatusTitle:/);
   assert.match(i18n, /accessibilityScopeTitle:/);
   assert.match(i18n, /accessibilityStandardTitle:/);
+  assert.match(i18n, /accessibilityMeasuresTitle:/);
   assert.match(i18n, /accessibilityTestingTitle:/);
   assert.match(i18n, /accessibilityLimitationsTitle:/);
   assert.match(i18n, /accessibilityFeedbackTitle:/);
