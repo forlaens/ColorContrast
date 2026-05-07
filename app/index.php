@@ -173,26 +173,36 @@
 
 		<section hidden id="accessibility-statement" class="accessibility-page" aria-labelledby="accessibility-statement-title" tabindex="-1">
 			<h2 id="accessibility-statement-title" data-i18n="accessibilityTitle">Accessibility statement</h2>
-			<p class="accessibility-lede" data-i18n="accessibilityIntro">This statement explains how the Image contrast checker is made accessible, what it is tested against, and how to report a problem.</p>
+			<p class="accessibility-lede" data-i18n="accessibilityIntro">This statement explains the accessibility target for the Image contrast checker, what is covered, how the app is tested, and how to report an accessibility problem.</p>
+
+			<section class="accessibility-section" aria-labelledby="accessibility-status-title">
+				<h3 id="accessibility-status-title" data-i18n="accessibilityStatusTitle">Conformance status</h3>
+				<p data-i18n="accessibilityStatusCopy">The aim is for the app itself to conform to WCAG 2.2 AAA where the criteria apply to this kind of tool. The interface is built to work with keyboard, screen reader, zoom, high contrast, light mode, dark mode, and system color preferences.</p>
+			</section>
 
 			<section class="accessibility-section" aria-labelledby="accessibility-scope-title">
 				<h3 id="accessibility-scope-title" data-i18n="accessibilityScopeTitle">Scope</h3>
-				<p data-i18n="accessibilityScopeCopy">This statement covers the public Image contrast checker web app at colorcontrast.2biaz.dk, including the checker view, language and theme controls, and the accessibility statement page.</p>
+				<p data-i18n="accessibilityScopeCopy">This statement covers the public Image contrast checker web app at colorcontrast.2biaz.dk: the upload view, checker view, language and theme controls, footer, and accessibility statement page. It does not cover user-uploaded images or browser and operating system controls outside the app.</p>
 			</section>
 
 			<section class="accessibility-section" aria-labelledby="accessibility-standard-title">
-				<h3 id="accessibility-standard-title" data-i18n="accessibilityStandardTitle">Standard</h3>
-				<p data-i18n="accessibilityStandardCopy">The goal is WCAG 2.2 AAA conformance where it is relevant for this tool, plus accessibility best practices for keyboard use, focus visibility, language, headings, landmarks, labels, and status announcements.</p>
+				<h3 id="accessibility-standard-title" data-i18n="accessibilityStandardTitle">Accessibility approach</h3>
+				<p data-i18n="accessibilityStandardCopy">The app uses semantic HTML landmarks and headings, visible focus styles, labelled controls, status messages for important changes, translated interface text, and controls that can be operated without a mouse. Text and focus indicators are designed for strong contrast in both light and dark mode.</p>
+			</section>
+
+			<section class="accessibility-section" aria-labelledby="accessibility-measures-title">
+				<h3 id="accessibility-measures-title" data-i18n="accessibilityMeasuresTitle">What the tool can and cannot do</h3>
+				<p data-i18n="accessibilityMeasuresCopy">The checker helps review whether a chosen foreground color, such as text, icon, or UI color, remains readable or visible over an image. It highlights image areas that do not meet the selected contrast target. It does not automatically decide whether the image is meaningful, whether the chosen color is the right one, or whether the final design is accessible in every context.</p>
 			</section>
 
 			<section class="accessibility-section" aria-labelledby="accessibility-testing-title">
 				<h3 id="accessibility-testing-title" data-i18n="accessibilityTestingTitle">Testing</h3>
-				<p data-i18n="accessibilityTestingCopy">The app is tested in the build pipeline with Siteimprove Alfa, axe-core, Nu Html Checker, and browser tests for keyboard flows, focus behavior, language switching, theme switching, drag and drop, upload handling, and contrast checking.</p>
+				<p data-i18n="accessibilityTestingCopy">The build pipeline tests the rendered app with Siteimprove Alfa, axe-core, Nu Html Checker, and browser tests. The tests cover WCAG AAA and best-practice checks, valid HTML, keyboard flows, focus behavior, language switching, theme switching, drag and drop, upload handling, empty-canvas handling, and contrast rendering.</p>
 			</section>
 
 			<section class="accessibility-section" aria-labelledby="accessibility-limitations-title">
 				<h3 id="accessibility-limitations-title" data-i18n="accessibilityLimitationsTitle">Known limitations</h3>
-				<p data-i18n="accessibilityLimitationsCopy">The checker analyzes pixel colors in an image, so the usefulness of the result depends on the uploaded image quality and the color chosen by the user. The image itself may contain accessibility issues that this tool can highlight, but not fix.</p>
+				<p data-i18n="accessibilityLimitationsCopy">The result depends on the quality of the uploaded image, the color selected by the user, and the contrast target chosen. Some native browser controls, such as the file picker button and file name text, are supplied by the browser and may look or behave slightly differently across platforms. Uploaded images stay in the browser and are not assessed as content covered by this statement.</p>
 			</section>
 
 			<section class="accessibility-section" aria-labelledby="accessibility-feedback-title">
