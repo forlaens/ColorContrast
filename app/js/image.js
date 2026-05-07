@@ -32,6 +32,7 @@ function loadImagePreview() {
 	if (!file) {
 		showStep(2);
 		showEmptyPreviewCanvas();
+		announceStatus(translate('emptyCanvasStatus'));
 		return false;
 	}
 
@@ -48,6 +49,10 @@ function loadImagePreview() {
 
 			try {
 				updatePreviewCanvas();
+				announceStatus(translate('imageLoadedStatus')
+					.replace('{name}', file.name)
+					.replace('{width}', formatNumber(image.file.width))
+					.replace('{height}', formatNumber(image.file.height)));
 			} catch (error) {
 				showStep(1);
 				showError(error.message);
@@ -93,6 +98,7 @@ function showEmptyPreviewCanvas() {
 	updateCanvasLayerSize(canvas.width, canvas.height);
 	context.clearRect(0, 0, canvas.width, canvas.height);
 	updatePreviewControls();
+	updateCheckerResult('');
 }
 
 function updatePreviewCanvas() {
@@ -125,6 +131,16 @@ function updatePreviewCanvas() {
 	renderImage(context, image.file);
 	cachePixels(context);
 	updatePreviewControls();
+	updateCheckerResult('');
+}
+
+function resetPreviewImage() {
+	try {
+		updatePreviewCanvas();
+		announceStatus(translate('imageResetStatus'));
+	} catch (error) {
+		showError(error.message);
+	}
 }
 
 function scaleImage(canvas) {
@@ -432,6 +448,17 @@ function clearImageThumbnail() {
 		thumbnail.hidden = true;
 		thumbnail.removeAttribute('src');
 	}
+}
+
+function updateCheckerResult(message) {
+	var result = id('checker-result');
+
+	if (!result) {
+		return false;
+	}
+
+	result.textContent = message || '';
+	return true;
 }
 
 window.updateSelectedFileName = updateSelectedFileName;

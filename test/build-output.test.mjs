@@ -178,6 +178,7 @@ test('document includes language switcher support', async () => {
 
   assert.match(index, /<select id="language-switcher" name="language" autocomplete="off"><\/select>/);
   assert.match(index, /<div id="settings-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"><\/div>/);
+  assert.match(index, /<p id="checker-result" class="sr-only" role="status" aria-live="polite" aria-atomic="true"><\/p>/);
   assert.match(index, /<label for="image_file" class="file-picker-button" data-i18n="chooseFile">Choose file<\/label>/);
   assert.match(index, /data-i18n-file-empty="noFileChosen"/);
   assert.match(index, /data-i18n-aria-label="checkerRegion"/);
@@ -195,6 +196,11 @@ test('document includes language switcher support', async () => {
   assert.match(i18n, /zoomLabel:/);
   assert.match(i18n, /previewHelp:/);
   assert.match(i18n, /panControls:/);
+  assert.match(i18n, /emptyCanvasStatus:/);
+  assert.match(i18n, /imageLoadedStatus:/);
+  assert.match(i18n, /colorSelectedStatus:/);
+  assert.match(i18n, /testCompleteStatus:/);
+  assert.match(i18n, /testCompleteNoIssuesStatus:/);
   assert.equal(i18n.includes('Non-text (3:1)'), false);
 });
 
@@ -223,6 +229,8 @@ test('document remembers checker settings', async () => {
   assert.match(app, /function initCheckerSettings\(\)/);
   assert.match(app, /function restoreCheckerSettings\(\)/);
   assert.match(app, /function storeCheckerSettings\(\)/);
+  assert.match(app, /function announceContrastResult\(/);
+  assert.match(app, /function resetPreviewImage\(\)/);
 });
 
 test('document includes step illustrations', async () => {

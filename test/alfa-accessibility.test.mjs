@@ -305,6 +305,8 @@ test('load image without a selected file opens an empty checker canvas', async (
     assert.equal(await page.locator('#step-1').isHidden(), true);
     assert.equal(await page.locator('#app-error').evaluate((element) => element.hidden), true);
     assert.equal(await page.locator('#image_preview').evaluate((canvas) => canvas.height), 320);
+    await page.waitForFunction(() => document.querySelector('#settings-status').textContent.includes('empty canvas'));
+    assert.equal(await page.locator('#settings-status').textContent(), 'Checker opened with an empty canvas. Choose or drop an image to test it.');
 
     await page.locator('#app-title a').click();
     await page.waitForFunction(() => !document.querySelector('#step-1').hidden && document.querySelector('#step-2').hidden);
@@ -373,6 +375,8 @@ test('loading a selected image hides the image chooser in canvas view', async ()
     assert.equal(await page.locator('#step-1').isHidden(), true);
     assert.equal(await page.locator('#step-1').getAttribute('aria-hidden'), 'true');
     assert.equal(await page.locator('#image_preview').evaluate((canvas) => canvas.height > 0), true);
+    await page.waitForFunction(() => document.querySelector('#settings-status').textContent.includes('Loaded social-card.png'));
+    assert.equal(await page.locator('#settings-status').textContent(), 'Loaded social-card.png. Original size: 1,200 by 630 pixels.');
 
     await context.close();
   } finally {
@@ -503,6 +507,8 @@ test('color picker supports keyboard placement and selection', async () => {
     assert.equal(pickerState.pressed, 'true');
     assert.deepEqual({ x: pickerState.x, y: pickerState.y }, { x: 21, y: 30 });
     assert.equal(pickerState.actual, pickerState.expected);
+    await page.waitForFunction((color) => document.querySelector('#settings-status').textContent.includes(color), pickerState.actual);
+    assert.equal(await page.locator('#settings-status').textContent(), `Selected color ${pickerState.actual}.`);
 
     await context.close();
   } finally {
@@ -591,11 +597,16 @@ test('contrast rendering changes the canvas and reset restores the source image'
     const highlightedCanvas = await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL());
     assert.notEqual(highlightedCanvas, originalCanvas);
     assert.equal(await page.locator('#reset-image').isVisible(), true);
+    assert.match(await page.locator('#checker-result').textContent(), /^Test complete\. [\d,]+ of [\d,]+ preview pixels, [\d.]+ percent, do not meet Small text \(7:1\) for #ffffff\./);
+    assert.equal(await page.locator('#checker-result').textContent(), await page.locator('#settings-status').textContent());
 
     await page.locator('#reset-image').click();
     const resetCanvas = await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL());
     assert.equal(resetCanvas, originalCanvas);
     assert.equal(await page.locator('#reset-image').isHidden(), true);
+    assert.equal(await page.locator('#checker-result').textContent(), '');
+    await page.waitForFunction(() => document.querySelector('#settings-status').textContent.includes('Image reset'));
+    assert.equal(await page.locator('#settings-status').textContent(), 'Image reset. Contrast highlights removed.');
 
     await context.close();
   } finally {

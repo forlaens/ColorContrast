@@ -50,3 +50,11 @@ function round(value, precision) {
 	var multiplier = Math.pow(10, precision || 0);
 	return Math.floor(value * multiplier) / multiplier;
 }
+
+function formatNumber(value) {
+	try {
+		return new Intl.NumberFormat(document.documentElement.lang || undefined).format(value);
+	} catch (error) {
+		return String(value);
+	}
+}
