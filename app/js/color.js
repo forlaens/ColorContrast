@@ -71,6 +71,7 @@ var COLOR_NAME_RANGES = [
 var COLOR_NAME_TRANSLATIONS = {
 	en: {
 		black: 'black', white: 'white', gray: 'gray', silver: 'silver', brown: 'brown',
+		cream: 'cream', beige: 'beige', tan: 'tan', peach: 'peach', copper: 'copper',
 		red: 'red', rose: 'rose', orange: 'orange', amber: 'amber', yellow: 'yellow',
 		lime: 'lime', green: 'green', teal: 'teal', turquoise: 'turquoise', cyan: 'cyan',
 		skyBlue: 'sky blue', blue: 'blue', indigo: 'indigo', violet: 'violet',
@@ -79,6 +80,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	},
 	da: {
 		black: 'sort', white: 'hvid', gray: 'grå', silver: 'sølv', brown: 'brun',
+		cream: 'creme', beige: 'beige', tan: 'tan', peach: 'fersken', copper: 'kobber',
 		red: 'rød', rose: 'rosa', orange: 'orange', amber: 'ravgul', yellow: 'gul',
 		lime: 'limegrøn', green: 'grøn', teal: 'teal', turquoise: 'turkis', cyan: 'cyan',
 		skyBlue: 'himmelblå', blue: 'blå', indigo: 'indigo', violet: 'violet',
@@ -87,6 +89,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	},
 	no: {
 		black: 'svart', white: 'hvit', gray: 'grå', silver: 'sølv', brown: 'brun',
+		cream: 'krem', beige: 'beige', tan: 'tan', peach: 'fersken', copper: 'kobber',
 		red: 'rød', rose: 'rosa', orange: 'oransje', amber: 'ravgul', yellow: 'gul',
 		lime: 'limegrønn', green: 'grønn', teal: 'teal', turquoise: 'turkis', cyan: 'cyan',
 		skyBlue: 'himmelblå', blue: 'blå', indigo: 'indigo', violet: 'fiolett',
@@ -95,6 +98,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	},
 	sv: {
 		black: 'svart', white: 'vit', gray: 'grå', silver: 'silver', brown: 'brun',
+		cream: 'kräm', beige: 'beige', tan: 'tan', peach: 'persika', copper: 'koppar',
 		red: 'röd', rose: 'rosa', orange: 'orange', amber: 'bärnsten', yellow: 'gul',
 		lime: 'limegrön', green: 'grön', teal: 'teal', turquoise: 'turkos', cyan: 'cyan',
 		skyBlue: 'himmelsblå', blue: 'blå', indigo: 'indigo', violet: 'violett',
@@ -103,6 +107,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	},
 	fi: {
 		black: 'musta', white: 'valkoinen', gray: 'harmaa', silver: 'hopea', brown: 'ruskea',
+		cream: 'kerma', beige: 'beige', tan: 'tan', peach: 'persikka', copper: 'kupari',
 		red: 'punainen', rose: 'roosa', orange: 'oranssi', amber: 'meripihka', yellow: 'keltainen',
 		lime: 'limenvihreä', green: 'vihreä', teal: 'sinivihreä', turquoise: 'turkoosi', cyan: 'syaani',
 		skyBlue: 'taivaansininen', blue: 'sininen', indigo: 'indigo', violet: 'violetti',
@@ -111,6 +116,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	},
 	kl: {
 		black: 'qernertoq', white: 'qaqortoq', gray: 'qasersoq', silver: 'sølv', brown: 'kajortoq',
+		cream: 'creme', beige: 'beige', tan: 'tan', peach: 'fersken', copper: 'kobber',
 		red: 'aappaluttoq', rose: 'rose', orange: 'orange', amber: 'amber', yellow: 'sungaartoq',
 		lime: 'lime', green: 'qorsuk', teal: 'teal', turquoise: 'turkis', cyan: 'cyan',
 		skyBlue: 'tungujortoq qaamasoq', blue: 'tungujortoq', indigo: 'indigo', violet: 'violet',
@@ -119,6 +125,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	},
 	is: {
 		black: 'svartur', white: 'hvítur', gray: 'grár', silver: 'silfur', brown: 'brúnn',
+		cream: 'rjómi', beige: 'beige', tan: 'tan', peach: 'ferskja', copper: 'kopar',
 		red: 'rauður', rose: 'rósrauður', orange: 'appelsínugulur', amber: 'rafgulur', yellow: 'gulur',
 		lime: 'limegrænn', green: 'grænn', teal: 'teal', turquoise: 'túrkís', cyan: 'cyan',
 		skyBlue: 'himinblár', blue: 'blár', indigo: 'indigo', violet: 'fjólublár',
@@ -127,6 +134,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	},
 	fo: {
 		black: 'svartur', white: 'hvítur', gray: 'gráur', silver: 'silvur', brown: 'brúnur',
+		cream: 'krem', beige: 'beige', tan: 'tan', peach: 'fersken', copper: 'kopar',
 		red: 'reyður', rose: 'rosa', orange: 'appilsingulur', amber: 'ravlittur', yellow: 'gulur',
 		lime: 'limegrønur', green: 'grønur', teal: 'teal', turquoise: 'turkis', cyan: 'cyan',
 		skyBlue: 'himmalbláur', blue: 'bláur', indigo: 'indigo', violet: 'violettur',
@@ -135,6 +143,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	},
 	es: {
 		black: 'negro', white: 'blanco', gray: 'gris', silver: 'plateado', brown: 'marrón',
+		cream: 'crema', beige: 'beige', tan: 'tostado', peach: 'melocotón', copper: 'cobre',
 		red: 'rojo', rose: 'rosa', orange: 'naranja', amber: 'ámbar', yellow: 'amarillo',
 		lime: 'verde lima', green: 'verde', teal: 'verde azulado', turquoise: 'turquesa', cyan: 'cian',
 		skyBlue: 'azul cielo', blue: 'azul', indigo: 'índigo', violet: 'violeta',
@@ -143,6 +152,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	},
 	de: {
 		black: 'schwarz', white: 'weiß', gray: 'grau', silver: 'silber', brown: 'braun',
+		cream: 'creme', beige: 'beige', tan: 'hellbraun', peach: 'pfirsich', copper: 'kupfer',
 		red: 'rot', rose: 'rosé', orange: 'orange', amber: 'bernstein', yellow: 'gelb',
 		lime: 'limettengrün', green: 'grün', teal: 'blaugrün', turquoise: 'türkis', cyan: 'cyan',
 		skyBlue: 'himmelblau', blue: 'blau', indigo: 'indigo', violet: 'violett',
@@ -151,6 +161,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	},
 	fr: {
 		black: 'noir', white: 'blanc', gray: 'gris', silver: 'argent', brown: 'brun',
+		cream: 'crème', beige: 'beige', tan: 'fauve', peach: 'pêche', copper: 'cuivre',
 		red: 'rouge', rose: 'rose', orange: 'orange', amber: 'ambre', yellow: 'jaune',
 		lime: 'vert citron', green: 'vert', teal: 'bleu sarcelle', turquoise: 'turquoise', cyan: 'cyan',
 		skyBlue: 'bleu ciel', blue: 'bleu', indigo: 'indigo', violet: 'violet',
@@ -159,6 +170,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	},
 	pt: {
 		black: 'preto', white: 'branco', gray: 'cinzento', silver: 'prateado', brown: 'castanho',
+		cream: 'creme', beige: 'bege', tan: 'tan', peach: 'pêssego', copper: 'cobre',
 		red: 'vermelho', rose: 'rosa', orange: 'laranja', amber: 'âmbar', yellow: 'amarelo',
 		lime: 'verde lima', green: 'verde', teal: 'azul-petróleo', turquoise: 'turquesa', cyan: 'ciano',
 		skyBlue: 'azul-céu', blue: 'azul', indigo: 'índigo', violet: 'violeta',
@@ -167,6 +179,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	},
 	it: {
 		black: 'nero', white: 'bianco', gray: 'grigio', silver: 'argento', brown: 'marrone',
+		cream: 'crema', beige: 'beige', tan: 'tan', peach: 'pesca', copper: 'rame',
 		red: 'rosso', rose: 'rosa', orange: 'arancione', amber: 'ambra', yellow: 'giallo',
 		lime: 'verde lime', green: 'verde', teal: 'verde petrolio', turquoise: 'turchese', cyan: 'ciano',
 		skyBlue: 'azzurro cielo', blue: 'blu', indigo: 'indaco', violet: 'viola',
@@ -243,6 +256,38 @@ function localizedColorName(name) {
 	return COLOR_NAME_TRANSLATIONS[language][name] || COLOR_NAME_TRANSLATIONS.en[name] || name;
 }
 
+function warmNeutralName(hsl) {
+	if (hsl.h < 16 || hsl.h > 55) {
+		return '';
+	}
+
+	if (hsl.l >= 0.88 && hsl.s <= 0.78) {
+		return 'cream';
+	}
+
+	if (hsl.l >= 0.78 && hsl.s <= 0.78) {
+		return hsl.h <= 32 && hsl.s >= 0.42 ? 'peach' : 'beige';
+	}
+
+	if (hsl.l >= 0.58 && hsl.s <= 0.68) {
+		return hsl.h <= 28 && hsl.s >= 0.36 ? 'peach' : 'tan';
+	}
+
+	if (hsl.l >= 0.42 && hsl.s <= 0.78) {
+		return hsl.h <= 32 && hsl.s >= 0.45 ? 'copper' : 'tan';
+	}
+
+	if (hsl.l < 0.52 && hsl.s >= 0.18) {
+		return 'brown';
+	}
+
+	return '';
+}
+
+function shouldModifyColorName(name) {
+	return !['black', 'white', 'silver', 'cream', 'beige', 'tan', 'peach', 'copper'].includes(name);
+}
+
 function describeRgbColor(color) {
 	var hsl = hslFromRgb(color);
 	var name = '';
@@ -262,13 +307,11 @@ function describeRgbColor(color) {
 		} else {
 			name = 'gray';
 		}
-	} else if (hsl.h >= 18 && hsl.h <= 45 && hsl.s >= 0.28 && hsl.l < 0.42) {
-		name = 'brown';
 	} else {
-		name = baseColorName(hsl.h);
+		name = warmNeutralName(hsl) || baseColorName(hsl.h);
 	}
 
-	if (!modifier || name === 'black' || name === 'white' || name === 'silver') {
+	if (!modifier || !shouldModifyColorName(name)) {
 		return localizedColorName(name);
 	}
 

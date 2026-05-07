@@ -306,7 +306,13 @@ test('live status text describes hex colors with approximate names', async () =>
       rose: formatColorForStatus('#e11d48'),
       teal: formatColorForStatus('#14b8a6'),
       turquoise: formatColorForStatus('#00ced1'),
-      silver: formatColorForStatus('#c0c0c0')
+      silver: formatColorForStatus('#c0c0c0'),
+      cream: formatColorForStatus('#f8ead8'),
+      beige: formatColorForStatus('#f5deb3'),
+      tan: formatColorForStatus('#d8b08c'),
+      peach: formatColorForStatus('#f1d2b6'),
+      copper: formatColorForStatus('#b87333'),
+      brown: formatColorForStatus('#8b5a2b')
     })), {
       black: '#000000 (black)',
       white: '#ffffff (white)',
@@ -315,7 +321,13 @@ test('live status text describes hex colors with approximate names', async () =>
       rose: '#e11d48 (rose)',
       teal: '#14b8a6 (teal)',
       turquoise: '#00ced1 (turquoise)',
-      silver: '#c0c0c0 (silver)'
+      silver: '#c0c0c0 (silver)',
+      cream: '#f8ead8 (cream)',
+      beige: '#f5deb3 (beige)',
+      tan: '#d8b08c (tan)',
+      peach: '#f1d2b6 (peach)',
+      copper: '#b87333 (copper)',
+      brown: '#8b5a2b (brown)'
     });
 
     await page.selectOption('#language-switcher', 'da');
@@ -324,11 +336,15 @@ test('live status text describes hex colors with approximate names', async () =>
     assert.deepEqual(await page.evaluate(() => ({
       lightRed: formatColorForStatus('#ff6666'),
       rose: formatColorForStatus('#e11d48'),
-      silver: formatColorForStatus('#c0c0c0')
+      silver: formatColorForStatus('#c0c0c0'),
+      peach: formatColorForStatus('#f1d2b6'),
+      copper: formatColorForStatus('#b87333')
     })), {
       lightRed: '#ff6666 (lys rød)',
       rose: '#e11d48 (rosa)',
-      silver: '#c0c0c0 (sølv)'
+      silver: '#c0c0c0 (sølv)',
+      peach: '#f1d2b6 (fersken)',
+      copper: '#b87333 (kobber)'
     });
 
     await context.close();
