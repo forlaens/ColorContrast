@@ -693,6 +693,7 @@ input[type=file] {
 
 .checker-scroll {
 	overflow-x: auto;
+	width: 100%;
 	padding-bottom: 4px;
 	max-width: 100%;
 }
@@ -700,6 +701,7 @@ input[type=file] {
 .checker {
 	position: relative;
 	width: 100%;
+	inline-size: 100%;
 	max-width: 100%;
 	min-width: var(--checker-min-width);
 	overflow: hidden;
