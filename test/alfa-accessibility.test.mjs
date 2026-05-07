@@ -779,10 +779,20 @@ test('small images expand to the full preview width before zooming', async () =>
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
 
     const previewState = await page.evaluate(() => {
+      const stage = document.querySelector('#step-2');
+      const stageStyles = window.getComputedStyle(stage);
+      const stageContentWidth = Math.round(
+        stage.getBoundingClientRect().width -
+        parseFloat(stageStyles.paddingLeft) -
+        parseFloat(stageStyles.paddingRight)
+      );
+      const checker = document.querySelector('#preview_area');
       const viewport = document.querySelector('#preview-viewport');
       const canvas = document.querySelector('#image_preview');
 
       return {
+        stageContentWidth,
+        checkerWidth: Math.round(checker.getBoundingClientRect().width),
         viewportWidth: viewport.clientWidth,
         canvasCssWidth: Math.round(canvas.getBoundingClientRect().width),
         canvasWidth: canvas.width,
@@ -790,6 +800,7 @@ test('small images expand to the full preview width before zooming', async () =>
       };
     });
 
+    assert.equal(Math.abs(previewState.checkerWidth - previewState.stageContentWidth) <= 2, true);
     assert.equal(previewState.canvasCssWidth, previewState.viewportWidth);
     assert.equal(previewState.canvasWidth, previewState.canvasCssWidth);
     assert.equal(previewState.zoomPercent > 100, true);

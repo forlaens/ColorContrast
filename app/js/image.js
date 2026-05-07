@@ -292,18 +292,8 @@ function resizePreviewFrame() {
 		return false;
 	}
 
-	var areaStyles = window.getComputedStyle(previewArea);
-	var horizontalSpacing =
-		parseFloat(areaStyles.paddingLeft) +
-		parseFloat(areaStyles.paddingRight) +
-		parseFloat(areaStyles.borderLeftWidth) +
-		parseFloat(areaStyles.borderRightWidth);
-	var availableWidth = Math.floor(scrollArea.getBoundingClientRect().width);
-	var contentWidth = Math.max(1, availableWidth - horizontalSpacing);
-	var width = Math.max(1, Math.min(contentWidth + horizontalSpacing, availableWidth));
-
 	previewArea.style.setProperty('--checker-min-width', '0px');
-	previewArea.style.width = width + 'px';
+	previewArea.style.width = '100%';
 }
 
 // Cache the original image pixels before we draw contrast highlights over them.
