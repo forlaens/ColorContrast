@@ -82,7 +82,7 @@ function renderContrastIssue(context, contrast, color1, x, y) {
 window.applyContrastHighlights = applyContrastHighlights;
 
 function announceContrastResult(failedPixels, totalPixels, testContrast) {
-	var color = selector('[name=color]').value;
+	var color = formatColorForStatus(selector('[name=color]').value);
 	var level = selector('[name=contrast]').selectedOptions[0].textContent.trim();
 	var percentage = totalPixels ? round((failedPixels / totalPixels) * 100, 1) : 0;
 	var key = failedPixels > 0 ? 'testCompleteStatus' : 'testCompleteNoIssuesStatus';
