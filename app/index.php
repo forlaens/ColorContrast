@@ -219,7 +219,8 @@
 					<span data-i18n="footerContact">Contact, questions, or suggestions:</span>
 					<a href="mailto:tobias@forlaens.com">tobias@forlaens.com</a>
 				</p>
-				<a href="#accessibility-statement" data-i18n="accessibilityLink">Accessibility statement</a>
+				<span class="footer-separator" aria-hidden="true">|</span>
+				<a href="#accessibility-statement" data-i18n="accessibilityLink">Accessibility Statement</a>
 			</div>
 		</div>
 	</footer>

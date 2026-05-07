@@ -308,6 +308,11 @@ h2 {
 	color: var(--muted);
 }
 
+.footer-separator {
+	color: var(--muted);
+	font-weight: 700;
+}
+
 .site-footer a {
 	color: var(--text);
 	font-weight: 700;

@@ -119,7 +119,8 @@ test('document includes contact footer', async () => {
   assert.match(index, /<div class="footer-meta">/);
   assert.match(index, /<span data-i18n="footerContact">Contact, questions, or suggestions:<\/span>/);
   assert.match(index, /<a href="mailto:tobias@forlaens\.com">tobias@forlaens\.com<\/a>/);
-  assert.match(index, /<a href="#accessibility-statement" data-i18n="accessibilityLink">Accessibility statement<\/a>/);
+  assert.match(index, /<span class="footer-separator" aria-hidden="true">\|<\/span>/);
+  assert.match(index, /<a href="#accessibility-statement" data-i18n="accessibilityLink">Accessibility Statement<\/a>/);
   assert.match(i18n, /footerCopyright:/);
   assert.match(i18n, /footerContact:/);
   assert.match(i18n, /accessibilityTitle:/);
