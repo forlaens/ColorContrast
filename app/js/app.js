@@ -257,9 +257,11 @@ if (document.readyState === 'loading') {
 		initViewRouting();
 		initIntroPanel();
 		initThemeToggle();
+		initCheckerSettings();
 	});
 } else {
 	initViewRouting();
 	initIntroPanel();
 	initThemeToggle();
+	initCheckerSettings();
 }

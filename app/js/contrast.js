@@ -1,5 +1,6 @@
 function initRenderContrast() {
 	clearError();
+	storeCheckerSettings();
 
 	if (!image.file || !image.dimensions) {
 		showError(translate('loadBeforeTest'));

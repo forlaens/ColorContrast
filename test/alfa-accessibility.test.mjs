@@ -513,6 +513,56 @@ test('color picker supports keyboard placement and selection', async () => {
   }
 });
 
+test('checker remembers the last color and conformance level', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    await page.locator('[name=color]').evaluate((input) => {
+      input.value = '#336699';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    await page.locator('[name=contrast]').evaluate((select) => {
+      select.selectedIndex = 4;
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    assert.deepEqual(await page.evaluate(() => ({
+      color: window.localStorage.getItem('colorcontrast-test-color'),
+      level: window.localStorage.getItem('colorcontrast-conformance-level')
+    })), {
+      color: '#336699',
+      level: '4'
+    });
+
+    await page.reload({ waitUntil: 'networkidle' });
+
+    assert.deepEqual(await page.evaluate(() => ({
+      color: document.querySelector('[name=color]').value,
+      selectedIndex: document.querySelector('[name=contrast]').selectedIndex,
+      selectedText: document.querySelector('[name=contrast]').selectedOptions[0].textContent.trim()
+    })), {
+      color: '#336699',
+      selectedIndex: 4,
+      selectedText: 'Small text (7:1)'
+    });
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
 test('contrast rendering changes the canvas and reset restores the source image', async () => {
   buildApp();
 

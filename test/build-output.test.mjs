@@ -163,6 +163,7 @@ test('document explains purpose and basic use without eyebrow labels', async () 
   assert.match(app, /hashchange/);
   assert.match(app, /#accessibility-statement/);
   assert.match(app, /function showFrontView\(\)/);
+  assert.match(app, /initCheckerSettings\(\)/);
 });
 
 test('document includes language switcher support', async () => {
@@ -199,6 +200,16 @@ test('document includes dark mode support', async () => {
   assert.match(styles, /--focus-ring: #ffffff/);
   assert.match(app, /colorcontrast-theme/);
   assert.match(app, /prefers-color-scheme: dark/);
+});
+
+test('document remembers checker settings', async () => {
+  const app = await readFile(join(distDir, 'js/app.bundle.js'), 'utf8');
+
+  assert.match(app, /colorcontrast-test-color/);
+  assert.match(app, /colorcontrast-conformance-level/);
+  assert.match(app, /function initCheckerSettings\(\)/);
+  assert.match(app, /function restoreCheckerSettings\(\)/);
+  assert.match(app, /function storeCheckerSettings\(\)/);
 });
 
 test('document includes step illustrations', async () => {
