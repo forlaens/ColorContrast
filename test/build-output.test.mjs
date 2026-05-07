@@ -153,6 +153,7 @@ test('document explains purpose and basic use without eyebrow labels', async () 
   assert.match(index, /<h3 data-i18n="stepRunTitle">Run the test<\/h3>/);
   assert.match(index, /<form id="step-1" class="step upload-panel"[^>]+aria-labelledby="upload-title"/);
   assert.match(index, /<h2 id="upload-title" class="upload-title" data-i18n="chooseImage">Choose an image<\/h2>/);
+  assert.match(index, /<option value="3" data-i18n="nonText">Graphics \(3:1\)<\/option>/);
   assert.match(index, /Choose a color from the image, run the test/);
   assert.match(index, /can I still read it or see what I am supposed to see/);
   assert.match(index, /The file stays in your browser/);
@@ -183,6 +184,10 @@ test('document includes language switcher support', async () => {
   assert.match(i18n, /droppedFilePickerError:/);
   assert.match(i18n, /languageChanged:/);
   assert.match(i18n, /themeChanged:/);
+  assert.match(i18n, /nonText: 'Graphics \(3:1\)'/);
+  assert.match(i18n, /nonText: 'Grafik \(3:1\)'/);
+  assert.match(i18n, /nonText: 'Gráficos \(3:1\)'/);
+  assert.equal(i18n.includes('Non-text (3:1)'), false);
 });
 
 test('document includes dark mode support', async () => {

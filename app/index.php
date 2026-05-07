@@ -119,7 +119,7 @@
 							<span id="contrast-label" data-i18n="contrastLabel">Conformance level</span>
 							<select name="contrast" aria-labelledby="contrast-label">
 								<optgroup label="WCAG level AA" data-i18n-label="wcagAA">
-									<option value="3" data-i18n="nonText">Non-text (3:1)</option>
+									<option value="3" data-i18n="nonText">Graphics (3:1)</option>
 									<option value="3" data-i18n="largeTextAA">Large text (3:1)</option>
 									<option value="4.5" selected data-i18n="smallTextAA">Small text (4.5:1)</option>
 								</optgroup>
