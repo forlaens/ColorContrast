@@ -43,15 +43,19 @@ function renderContrastIssues(context) {
 
 	var testContrast = getTestContrast();
 	var testColor = getTestColor();
+	var failedPixels = 0;
 
 	for (var x = 0; x < width; x++) {
 		for (var y = 0; y < height; y++) {
-			renderContrastIssue(context, testContrast, testColor, x, y);
+			if (renderContrastIssue(context, testContrast, testColor, x, y)) {
+				failedPixels++;
+			}
 		}
 	}
 
 	showResetBtn();
 	setLoadingState(false);
+	announceContrastResult(failedPixels, width * height, testContrast);
 }
 
 function renderContrastIssue(context, contrast, color1, x, y) {
@@ -65,5 +69,25 @@ function renderContrastIssue(context, contrast, color1, x, y) {
 
 	if (ratio < contrast) {
 		drawPixel(context, color1, x, y);
+		return true;
 	}
+
+	return false;
+}
+
+function announceContrastResult(failedPixels, totalPixels, testContrast) {
+	var color = selector('[name=color]').value;
+	var level = selector('[name=contrast]').selectedOptions[0].textContent.trim();
+	var percentage = totalPixels ? round((failedPixels / totalPixels) * 100, 1) : 0;
+	var key = failedPixels > 0 ? 'testCompleteStatus' : 'testCompleteNoIssuesStatus';
+	var message = translate(key)
+		.replace('{failed}', formatNumber(failedPixels))
+		.replace('{total}', formatNumber(totalPixels))
+		.replace('{percent}', formatNumber(percentage))
+		.replace('{color}', color)
+		.replace('{ratio}', testContrast)
+		.replace('{level}', level);
+
+	updateCheckerResult(message);
+	announceStatus(message);
 }

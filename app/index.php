@@ -93,11 +93,12 @@
 			</div>
 			<div class="stage-actions">
 				<button type="button" class="cta secondary" onclick="resetFileInput(); showStep(1);" data-i18n="newImage">New image</button>
-				<button hidden type="button" id="reset-image" class="cta ghost" onclick="updatePreviewCanvas();" data-i18n="resetImage">Reset image</button>
+				<button hidden type="button" id="reset-image" class="cta ghost" onclick="resetPreviewImage();" data-i18n="resetImage">Reset image</button>
 			</div>
 		</div>
 
 		<div hidden role="status" class="loading" aria-atomic="true"></div>
+		<p id="checker-result" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
 
 		<div class="checker-scroll">
 			<section id="preview_area" class="checker" aria-label="Contrast checker" data-i18n-aria-label="checkerRegion">

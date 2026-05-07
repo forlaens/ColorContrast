@@ -42,15 +42,19 @@ function setTestColorFromCanvas(e, canvas) {
 	moveCrosshairs(canvas, x, y);
 
 	var color = pixelToHex(getContext(), x, y);
-	setTestColor(color);
+	setTestColor(color, true);
 }
 
-function setTestColor(hex) {
+function setTestColor(hex, shouldAnnounce) {
 	if (hex == 'transparent') {
 		hex = '#000000';
 	}
 	selector('[name=color]').value = hex;
 	storeCheckerSettings();
+
+	if (shouldAnnounce) {
+		announceStatus(translate('colorSelectedStatus').replace('{color}', hex));
+	}
 }
 
 function isValidTestColor(value) {
@@ -153,5 +157,5 @@ function pickColorFromCrosshairs() {
 	var y = parseInt(crosshairs.getAttribute('data-posy'));
 
 	var color = pixelToHex(getContext(), x, y);
-	setTestColor(color);
+	setTestColor(color, true);
 }
