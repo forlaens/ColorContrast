@@ -1,5 +1,6 @@
 function initRenderContrast() {
 	clearError();
+	storeCheckerSettings();
 
 	if (!image.file || !image.dimensions) {
 		showError(translate('loadBeforeTest'));
@@ -31,26 +32,34 @@ function initRenderContrast() {
 }
 
 function renderContrastIssues(context) {
-	if (!cachedPixels) {
-		cachePixels(context);
-	}
+	updatePreviewCanvas({ preserveHighlights: false });
 
-	updatePreviewCanvas();
+	image.contrastTest = {
+		contrast: getTestContrast(),
+		color: getTestColor()
+	};
+	image.hasContrastHighlights = true;
 
+	var failedPixels = applyContrastHighlights(context, image.contrastTest, true);
+	showResetBtn();
+	setLoadingState(false);
+	announceContrastResult(failedPixels, image.dimensions.width * image.dimensions.height, image.contrastTest.contrast);
+}
+
+function applyContrastHighlights(context, test, shouldAnnounce) {
 	var width = image.dimensions.width;
 	var height = image.dimensions.height;
-
-	var testContrast = getTestContrast();
-	var testColor = getTestColor();
+	var failedPixels = 0;
 
 	for (var x = 0; x < width; x++) {
 		for (var y = 0; y < height; y++) {
-			renderContrastIssue(context, testContrast, testColor, x, y);
+			if (renderContrastIssue(context, test.contrast, test.color, x, y)) {
+				failedPixels++;
+			}
 		}
 	}
 
-	showResetBtn();
-	setLoadingState(false);
+	return failedPixels;
 }
 
 function renderContrastIssue(context, contrast, color1, x, y) {
@@ -60,16 +69,31 @@ function renderContrastIssue(context, contrast, color1, x, y) {
 		return false;
 	}
 
-	var color1Luminance = luminance(color1.r, color1.g, color1.b);
-	var color2Luminance = luminance(color2.r, color2.g, color2.b);
-
-	var ratio = color1Luminance > color2Luminance
-		? ((color2Luminance + 0.05) / (color1Luminance + 0.05))
-		: ((color1Luminance + 0.05) / (color2Luminance + 0.05));
-
-	ratio = round(1 / ratio, 2);
+	var ratio = contrastRatio(color1, color2);
 
 	if (ratio < contrast) {
 		drawPixel(context, color1, x, y);
+		return true;
 	}
+
+	return false;
+}
+
+window.applyContrastHighlights = applyContrastHighlights;
+
+function announceContrastResult(failedPixels, totalPixels, testContrast) {
+	var color = selector('[name=color]').value;
+	var level = selector('[name=contrast]').selectedOptions[0].textContent.trim();
+	var percentage = totalPixels ? round((failedPixels / totalPixels) * 100, 1) : 0;
+	var key = failedPixels > 0 ? 'testCompleteStatus' : 'testCompleteNoIssuesStatus';
+	var message = translate(key)
+		.replace('{failed}', formatNumber(failedPixels))
+		.replace('{total}', formatNumber(totalPixels))
+		.replace('{percent}', formatNumber(percentage))
+		.replace('{color}', color)
+		.replace('{ratio}', testContrast)
+		.replace('{level}', level);
+
+	updateCheckerResult(message);
+	announceStatus(message);
 }

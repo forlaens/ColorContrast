@@ -15,7 +15,8 @@ import { Conformance, Criterion } from '@siteimprove/alfa-wcag';
 const { and } = Refinement;
 
 const renderedRoutes = [
-  { name: 'home', path: '/' }
+  { name: 'home', path: '/' },
+  { name: 'accessibility-statement', path: '/#accessibility-statement' }
 ];
 
 const supportedLanguages = ['en', 'da', 'no', 'sv', 'fi', 'kl', 'is', 'fo', 'es', 'de', 'fr', 'pt', 'it'];
@@ -116,6 +117,23 @@ function formatAxeViolations(route, violations) {
   }).join('\n\n');
 }
 
+function formatAlfaFailures(route, audit) {
+  const serialised = audit.toJSON();
+  const failures = audit.resultAggregates
+    .toArray()
+    .filter(([, aggregate]) => aggregate.failed > 0)
+    .map(([rule, aggregate]) => {
+      const ruleName = rule.split('/').pop() ?? rule;
+      return `${ruleName}: ${aggregate.failed} failure(s)`;
+    });
+  const failedOutcomes = serialised.outcomes
+    .filter((outcome) => outcome.outcome === 'failed')
+    .slice(0, 3)
+    .map((outcome) => JSON.stringify(outcome, null, 2));
+
+  return `Expected no Alfa WCAG AAA or best-practice failures on ${route.path}.\n${failures.join('\n')}\n${failedOutcomes.join('\n')}`;
+}
+
 async function writeAxeReport(route, results) {
   await mkdir('test-results/accessibility', { recursive: true });
   await writeFile(
@@ -132,18 +150,22 @@ test('built app passes Siteimprove Alfa WCAG AAA and best-practice checks', asyn
 
   try {
     browser = await chromium.launch({ headless: true });
-    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
-    await page.goto(server.url, { waitUntil: 'networkidle' });
 
-    const document = await page.evaluateHandle(() => window.document);
-    const alfaPage = await Playwright.toPage(document);
-    const audit = await Audit.run(alfaPage, {
-      rules: { include: alfaAAAAndBestPracticeFilter },
-      outcomes: { include: Outcomes.failedFilter }
-    });
+    for (const route of renderedRoutes) {
+      const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+      await page.goto(new URL(route.path, server.url).toString(), { waitUntil: 'networkidle' });
 
-    const failed = audit.resultAggregates.reduce((total, result) => total + result.failed, 0);
-    assert.equal(failed, 0, `Expected no Alfa WCAG AAA or best-practice failures, found ${failed}.`);
+      const document = await page.evaluateHandle(() => window.document);
+      const alfaPage = await Playwright.toPage(document);
+      const audit = await Audit.run(alfaPage, {
+        rules: { include: alfaAAAAndBestPracticeFilter },
+        outcomes: { include: Outcomes.failedFilter }
+      });
+
+      const failed = audit.resultAggregates.reduce((total, result) => total + result.failed, 0);
+      assert.equal(failed, 0, formatAlfaFailures(route, audit));
+      await page.close();
+    }
   } finally {
     if (browser) {
       await browser.close();
@@ -211,10 +233,11 @@ test('built app supports every language in the switcher', async () => {
       await page.waitForFunction((expected) => document.documentElement.lang === expected, language);
 
       const heading = await page.locator('#app-title').textContent();
-      const fileLabel = await page.locator('label[for="image_file"]').textContent();
+      const fileLabel = await page.locator('.file-picker-button').textContent();
       const fileName = await page.locator('#selected-file-name').textContent();
       const checkerLabel = await page.locator('#preview_area').getAttribute('aria-label');
       const toolbarLabel = await page.locator('[role="toolbar"]').getAttribute('aria-label');
+      const accessibilityTitle = await page.locator('#accessibility-statement-title').textContent();
       assert.equal(await page.locator('#language-switcher').inputValue(), language);
       assert.equal(await documentLanguage(page), language);
       assert.equal((heading || '').trim().length > 0, true);
@@ -222,15 +245,37 @@ test('built app supports every language in the switcher', async () => {
       assert.equal((fileName || '').trim().length > 0, true);
       assert.equal((checkerLabel || '').trim().length > 0, true);
       assert.equal((toolbarLabel || '').trim().length > 0, true);
+      assert.equal((accessibilityTitle || '').trim().length > 0, true);
     }
 
     await page.selectOption('#language-switcher', 'da');
     await page.waitForFunction(() => document.documentElement.lang === 'da');
     await page.waitForFunction(() => document.querySelector('#settings-status').textContent === 'Sprog ændret til Dansk.');
-    assert.equal(await page.locator('label[for="image_file"]').textContent(), 'Vælg fil');
+    assert.equal(await page.locator('.file-picker-button').textContent(), 'Vælg fil');
     assert.equal(await page.locator('#selected-file-name').textContent(), 'Ingen fil valgt');
     assert.equal(await page.locator('#preview_area').getAttribute('aria-label'), 'Kontrasttjek');
     assert.equal(await page.locator('[role="toolbar"]').getAttribute('aria-label'), 'Indstillinger for tjek');
+    assert.equal(await page.locator('#accessibility-statement-title').textContent(), 'Tilgængelighedserklæring');
+    assert.equal(await page.locator('a[href="#accessibility-statement"]').textContent(), 'Tilgængelighedserklæring');
+
+	    await page.locator('a[href="#accessibility-statement"]').click();
+	    await page.waitForFunction(() => window.location.hash === '#accessibility-statement');
+	    await page.waitForFunction(() => document.querySelector('#home-view').hidden && !document.querySelector('#accessibility-statement').hidden);
+	    assert.equal(await page.locator('#home-view').evaluate((element) => element.hidden), true);
+	    assert.equal(await page.locator('#accessibility-statement').evaluate((element) => element.hidden), false);
+    assert.equal(await page.title(), 'Tilgængelighedserklæring - Kontrasttjek for billeder');
+
+    await page.locator('#accessibility-statement a[href="/"]').click();
+    await page.waitForFunction(() => window.location.hash === '' && !document.querySelector('#home-view').hidden);
+    assert.equal(await page.locator('#home-view').evaluate((element) => element.hidden), false);
+    assert.equal(await page.locator('#accessibility-statement').evaluate((element) => element.hidden), true);
+
+    await page.locator('a[href="#accessibility-statement"]').click();
+    await page.waitForFunction(() => window.location.hash === '#accessibility-statement');
+    await page.locator('#app-title a').click();
+    await page.waitForFunction(() => window.location.hash === '' && !document.querySelector('#home-view').hidden);
+    assert.equal(await page.locator('#home-view').evaluate((element) => element.hidden), false);
+    assert.equal(await page.locator('#accessibility-statement').evaluate((element) => element.hidden), true);
 
     await context.close();
   } finally {
@@ -256,10 +301,18 @@ test('load image without a selected file opens an empty checker canvas', async (
     await page.getByRole('button', { name: 'Load image' }).click();
 
     assert.equal(await page.locator('#step-2').isVisible(), true);
-    assert.equal(await page.locator('#step-1').evaluate((element) => element.hidden), true);
-    assert.equal(await page.locator('#step-1').isHidden(), true);
+    assert.equal(await page.locator('#step-1').evaluate((element) => element.hidden), false);
+    assert.equal(await page.locator('#step-1').isVisible(), true);
+    assert.equal(await page.locator('#intro-panel').isHidden(), true);
     assert.equal(await page.locator('#app-error').evaluate((element) => element.hidden), true);
     assert.equal(await page.locator('#image_preview').evaluate((canvas) => canvas.height), 320);
+    await page.waitForFunction(() => document.querySelector('#settings-status').textContent.includes('empty canvas'));
+    assert.equal(await page.locator('#settings-status').textContent(), 'Checker opened with an empty canvas. Choose or drop an image to test it.');
+
+    await page.locator('#app-title a').click();
+    await page.waitForFunction(() => !document.querySelector('#step-1').hidden && document.querySelector('#step-2').hidden);
+    assert.equal(await page.locator('#step-1').isVisible(), true);
+    assert.equal(await page.locator('#step-2').isHidden(), true);
 
     await context.close();
   } finally {
@@ -290,7 +343,7 @@ test('intro heading remains a heading when collapsed', async () => {
 
     await page.locator('#intro-toggle').click();
     assert.equal(await page.getByRole('heading', { name: 'Upload an image', level: 3 }).isVisible(), true);
-    assert.equal(await page.getByRole('heading', { name: 'Pick the foreground color', level: 3 }).isVisible(), true);
+    assert.equal(await page.getByRole('heading', { name: 'Choose the color to check', level: 3 }).isVisible(), true);
     assert.equal(await page.getByRole('heading', { name: 'Run the test', level: 3 }).isVisible(), true);
 
     await context.close();
@@ -302,7 +355,7 @@ test('intro heading remains a heading when collapsed', async () => {
   }
 });
 
-test('loading a selected image hides the image chooser in canvas view', async () => {
+test('choosing an image opens the checker and keeps the image chooser available', async () => {
   buildApp();
 
   const server = await startStaticServer();
@@ -314,15 +367,20 @@ test('loading a selected image hides the image chooser in canvas view', async ()
     const page = await context.newPage();
     await page.goto(server.url, { waitUntil: 'networkidle' });
 
-    await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
-    await page.getByRole('button', { name: 'Load image' }).click();
+    const fileChooserPromise = page.waitForEvent('filechooser');
+    await page.locator('#selected-file-name').click();
+    const fileChooser = await fileChooserPromise;
+    await fileChooser.setFiles(resolve('dist/img/social-card.png'));
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
 
     assert.equal(await page.locator('#step-2').isVisible(), true);
-    assert.equal(await page.locator('#step-1').evaluate((element) => element.hidden), true);
-    assert.equal(await page.locator('#step-1').isHidden(), true);
-    assert.equal(await page.locator('#step-1').getAttribute('aria-hidden'), 'true');
+    assert.equal(await page.locator('#step-1').evaluate((element) => element.hidden), false);
+    assert.equal(await page.locator('#step-1').isVisible(), true);
+    assert.equal(await page.locator('#step-1').getAttribute('aria-hidden'), null);
+    assert.equal(await page.locator('#intro-panel').isHidden(), true);
     assert.equal(await page.locator('#image_preview').evaluate((canvas) => canvas.height > 0), true);
+    await page.waitForFunction(() => document.querySelector('#settings-status').textContent.includes('Loaded social-card.png'));
+    assert.equal(await page.locator('#settings-status').textContent(), 'Loaded social-card.png. Original size: 1,200 by 630 pixels.');
 
     await context.close();
   } finally {
@@ -333,7 +391,7 @@ test('loading a selected image hides the image chooser in canvas view', async ()
   }
 });
 
-test('image chooser previews selected and dropped images', async () => {
+test('image chooser loads selected and dropped images immediately', async () => {
   buildApp();
 
   const server = await startStaticServer();
@@ -346,7 +404,9 @@ test('image chooser previews selected and dropped images', async () => {
     await page.goto(server.url, { waitUntil: 'networkidle' });
 
     await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
-    await page.locator('#image_file').dispatchEvent('change');
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
+    assert.equal(await page.locator('#step-2').isVisible(), true);
+    assert.equal(await page.locator('#step-1').isVisible(), true);
     assert.equal(await page.locator('#image-thumbnail').isVisible(), true);
     assert.match(await page.locator('#image-thumbnail').getAttribute('src'), /^blob:/);
     assert.equal(await page.locator('#selected-file-name').textContent(), 'social-card.png');
@@ -356,20 +416,394 @@ test('image chooser previews selected and dropped images', async () => {
     assert.equal(await page.locator('body').evaluate((body) => body.classList.contains('is-dragging-image')), true);
     assert.equal(await page.locator('.upload-dropzone').evaluate((dropzone) => dropzone.classList.contains('is-drag-target')), true);
     await page.dispatchEvent('body', 'drop', { dataTransfer: dragData });
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
 
+    assert.equal(await page.locator('#step-2').isVisible(), true);
     assert.equal(await page.locator('#step-1').isVisible(), true);
     assert.equal(await page.locator('#image_file').evaluate((input) => input.files[0].name), 'dropped-social-card.png');
     assert.equal(await page.locator('#selected-file-name').textContent(), 'dropped-social-card.png');
-    assert.equal(await page.locator('#image-thumbnail').isVisible(), true);
-
-    await page.getByRole('button', { name: 'Load image' }).click();
-    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
-    assert.equal(await page.locator('#step-2').isVisible(), true);
+    assert.match(await page.locator('#image-thumbnail').getAttribute('src'), /^blob:/);
 
     const secondDragData = await createImageDataTransfer(page);
     await page.dispatchEvent('body', 'drop', { dataTransfer: secondDragData });
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
+    assert.equal(await page.locator('#step-2').isVisible(), true);
     assert.equal(await page.locator('#step-1').isVisible(), true);
-    assert.equal(await page.locator('#step-2').isHidden(), true);
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
+test('image chooser rejects non-image files with a useful error', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    await page.locator('#image_file').setInputFiles({
+      name: 'not-an-image.txt',
+      mimeType: 'text/plain',
+      buffer: Buffer.from('This is not an image.')
+    });
+    await page.locator('#image_file').dispatchEvent('change');
+
+    assert.equal(await page.locator('#step-1').isVisible(), true);
+    assert.equal(await page.locator('#app-error').isVisible(), true);
+    assert.equal(await page.locator('#app-error').textContent(), 'Please choose an image file.');
+    assert.equal(await page.locator('#image-thumbnail').isHidden(), true);
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
+test('color picker supports keyboard placement and selection', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
+
+    await page.locator('#colorpicker').click();
+    assert.equal(await page.evaluate(() => document.activeElement.id), 'image_preview');
+
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Shift+ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const pickerState = await page.evaluate(() => {
+      const crosshairs = document.querySelector('#crosshairs');
+      const x = Number(crosshairs.getAttribute('data-posx'));
+      const y = Number(crosshairs.getAttribute('data-posy'));
+
+      return {
+        pressed: document.querySelector('#colorpicker').getAttribute('aria-pressed'),
+        x,
+        y,
+        expected: pixelToHex(getContext(), x, y),
+        actual: document.querySelector('[name=color]').value
+      };
+    });
+
+    assert.equal(pickerState.pressed, 'true');
+    assert.deepEqual({ x: pickerState.x, y: pickerState.y }, { x: 21, y: 30 });
+    assert.equal(pickerState.actual, pickerState.expected);
+    await page.waitForFunction((color) => document.querySelector('#settings-status').textContent.includes(color), pickerState.actual);
+    assert.equal(await page.locator('#settings-status').textContent(), `Selected color ${pickerState.actual}.`);
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
+test('checker remembers the last color and conformance level', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    await page.locator('[name=color]').evaluate((input) => {
+      input.value = '#336699';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    await page.locator('[name=contrast]').evaluate((select) => {
+      select.selectedIndex = 4;
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    assert.deepEqual(await page.evaluate(() => ({
+      color: window.localStorage.getItem('colorcontrast-test-color'),
+      level: window.localStorage.getItem('colorcontrast-conformance-level')
+    })), {
+      color: '#336699',
+      level: '4'
+    });
+
+    await page.reload({ waitUntil: 'networkidle' });
+
+    assert.deepEqual(await page.evaluate(() => ({
+      color: document.querySelector('[name=color]').value,
+      selectedIndex: document.querySelector('[name=contrast]').selectedIndex,
+      selectedText: document.querySelector('[name=contrast]').selectedOptions[0].textContent.trim()
+    })), {
+      color: '#336699',
+      selectedIndex: 4,
+      selectedText: 'Small text (7:1)'
+    });
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
+test('contrast rendering changes the canvas and reset restores the source image', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
+
+    const originalCanvas = await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL());
+    await page.locator('[name=color]').evaluate((input) => {
+      input.value = '#ffffff';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    await page.locator('[name=contrast]').selectOption('7');
+    await page.getByRole('button', { name: 'Run test' }).click();
+    await page.waitForFunction(() => !document.querySelector('#reset-image').hidden);
+
+    const highlightedCanvas = await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL());
+    assert.notEqual(highlightedCanvas, originalCanvas);
+    assert.equal(await page.locator('#reset-image').isVisible(), true);
+    assert.match(await page.locator('#checker-result').textContent(), /^Test complete\. [\d,]+ of [\d,]+ preview pixels, [\d.]+ percent, do not meet Small text \(7:1\) for #ffffff\./);
+    assert.equal(await page.locator('#checker-result').textContent(), await page.locator('#settings-status').textContent());
+
+    await page.locator('#reset-image').click();
+    const resetCanvas = await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL());
+    assert.equal(resetCanvas, originalCanvas);
+    assert.equal(await page.locator('#reset-image').isHidden(), true);
+    assert.equal(await page.locator('#checker-result').textContent(), '');
+    await page.waitForFunction(() => document.querySelector('#settings-status').textContent.includes('Image reset'));
+    assert.equal(await page.locator('#settings-status').textContent(), 'Image reset. Contrast highlights removed.');
+
+    await page.getByRole('button', { name: 'Run test' }).click();
+    await page.waitForFunction(() => !document.querySelector('#reset-image').hidden);
+    assert.notEqual(await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL()), originalCanvas);
+
+    const dragData = await createImageDataTransfer(page);
+    await page.dispatchEvent('body', 'drop', { dataTransfer: dragData });
+    await page.waitForFunction(() => document.querySelector('#settings-status').textContent.includes('Loaded dropped-social-card.png'));
+
+    assert.equal(await page.locator('#step-2').isVisible(), true);
+    assert.equal(await page.locator('#reset-image').isHidden(), true);
+    assert.equal(await page.locator('#checker-result').textContent(), '');
+    assert.equal(await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL()), originalCanvas);
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
+test('image preview supports zoom and only shows pan controls when the image overflows', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 640, height: 720 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
+
+    const initialState = await page.evaluate(() => {
+      const viewport = document.querySelector('#preview-viewport');
+      const canvas = document.querySelector('#image_preview');
+
+      return {
+        panHidden: document.querySelector('#pan-controls').hidden,
+        viewportName: viewport.getAttribute('aria-label'),
+        describedBy: canvas.getAttribute('aria-describedby'),
+        zoom: document.querySelector('#zoom-output').textContent.trim(),
+        canvasWidth: canvas.width,
+        canvasCssWidth: Math.round(canvas.getBoundingClientRect().width),
+        documentWidth: document.documentElement.scrollWidth,
+        viewportWidth: window.innerWidth
+      };
+    });
+
+    assert.equal(initialState.panHidden, true);
+    assert.equal(initialState.viewportName, 'Zoomable image preview');
+    assert.equal(initialState.describedBy, 'preview-help');
+    assert.match(initialState.zoom, /%$/);
+    assert.equal(initialState.canvasWidth, initialState.canvasCssWidth);
+    assert.equal(initialState.documentWidth <= initialState.viewportWidth, true);
+
+    await page.getByRole('button', { name: 'Reset zoom' }).click();
+
+    const zoomedState = await page.evaluate(() => {
+      const viewport = document.querySelector('#preview-viewport');
+      const canvas = document.querySelector('#image_preview');
+
+      return {
+        panHidden: document.querySelector('#pan-controls').hidden,
+        panLabel: document.querySelector('#pan-controls').getAttribute('aria-label'),
+        zoom: document.querySelector('#zoom-output').textContent.trim(),
+        scrollWidth: viewport.scrollWidth,
+        clientWidth: viewport.clientWidth,
+        scrollHeight: viewport.scrollHeight,
+        clientHeight: viewport.clientHeight,
+        canvasWidth: canvas.width,
+        canvasCssWidth: Math.round(canvas.getBoundingClientRect().width),
+        documentWidth: document.documentElement.scrollWidth,
+        viewportWidth: window.innerWidth
+      };
+    });
+
+    assert.equal(zoomedState.panHidden, false);
+    assert.equal(zoomedState.panLabel, 'Pan image');
+    assert.equal(zoomedState.zoom, '100%');
+    assert.equal(zoomedState.scrollWidth > zoomedState.clientWidth || zoomedState.scrollHeight > zoomedState.clientHeight, true);
+    assert.equal(zoomedState.canvasWidth, zoomedState.canvasCssWidth);
+    assert.equal(zoomedState.documentWidth <= zoomedState.viewportWidth, true);
+
+    await page.getByRole('button', { name: 'Pan right' }).click();
+    await page.waitForFunction(() => document.querySelector('#preview-viewport').scrollLeft > 0);
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
+test('zooming keeps active contrast highlights until the image is reset', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 640, height: 720 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
+
+    const originalCanvas = await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL());
+    await page.locator('[name=color]').evaluate((input) => {
+      input.value = '#ffffff';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    await page.locator('[name=contrast]').selectOption('7');
+    await page.getByRole('button', { name: 'Run test' }).click();
+    await page.waitForFunction(() => !document.querySelector('#reset-image').hidden);
+
+    const resultBeforeZoom = await page.locator('#checker-result').textContent();
+    const highlightedCanvas = await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL());
+    assert.notEqual(highlightedCanvas, originalCanvas);
+
+    await page.getByRole('button', { name: 'Zoom in' }).click();
+    await page.waitForFunction(() => document.querySelector('#settings-status').textContent.includes('Zoom'));
+
+    assert.equal(await page.locator('#reset-image').isVisible(), true);
+    assert.equal(await page.locator('#checker-result').textContent(), resultBeforeZoom);
+    assert.notEqual(await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL()), originalCanvas);
+
+    await page.locator('#reset-image').click();
+    assert.equal(await page.locator('#reset-image').isHidden(), true);
+    assert.equal(await page.locator('#checker-result').textContent(), '');
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
+test('small images expand to the full preview width before zooming', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 900, height: 720 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    await page.locator('#image_file').setInputFiles({
+      name: 'small-preview.svg',
+      mimeType: 'image/svg+xml',
+      buffer: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="120" height="60"><rect width="120" height="60" fill="#ffffff"/><circle cx="30" cy="30" r="20" fill="#222222"/></svg>')
+    });
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
+
+    const previewState = await page.evaluate(() => {
+      const stage = document.querySelector('#step-2');
+      const stageStyles = window.getComputedStyle(stage);
+      const stageContentWidth = Math.round(
+        stage.getBoundingClientRect().width -
+        parseFloat(stageStyles.paddingLeft) -
+        parseFloat(stageStyles.paddingRight)
+      );
+      const checker = document.querySelector('#preview_area');
+      const viewport = document.querySelector('#preview-viewport');
+      const canvas = document.querySelector('#image_preview');
+
+      return {
+        stageContentWidth,
+        checkerWidth: Math.round(checker.getBoundingClientRect().width),
+        viewportWidth: viewport.clientWidth,
+        canvasCssWidth: Math.round(canvas.getBoundingClientRect().width),
+        canvasWidth: canvas.width,
+        zoomPercent: parseInt(document.querySelector('#zoom-output').textContent, 10)
+      };
+    });
+
+    assert.equal(Math.abs(previewState.checkerWidth - previewState.stageContentWidth) <= 2, true);
+    assert.equal(previewState.canvasCssWidth, previewState.viewportWidth);
+    assert.equal(previewState.canvasWidth, previewState.canvasCssWidth);
+    assert.equal(previewState.zoomPercent > 100, true);
 
     await context.close();
   } finally {
@@ -393,26 +827,30 @@ test('loaded image preview stays within the viewport on small screens and resize
     await page.goto(server.url, { waitUntil: 'networkidle' });
 
     await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
-    await page.getByRole('button', { name: 'Load image' }).click();
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
 
     async function assertNoHorizontalOverflow() {
       const dimensions = await page.evaluate(() => {
         const preview = document.querySelector('#preview_area');
+        const viewport = document.querySelector('#preview-viewport');
         const canvas = document.querySelector('#image_preview');
         return {
           viewportWidth: window.innerWidth,
           documentWidth: document.documentElement.scrollWidth,
           previewWidth: Math.ceil(preview.getBoundingClientRect().width),
+          scrollViewportWidth: Math.ceil(viewport.getBoundingClientRect().width),
           canvasWidth: Math.ceil(canvas.getBoundingClientRect().width),
-          canvasBufferWidth: canvas.width
+          canvasBufferWidth: canvas.width,
+          panControlsHidden: document.querySelector('#pan-controls').hidden
         };
       });
 
       assert.equal(dimensions.documentWidth <= dimensions.viewportWidth, true);
       assert.equal(dimensions.previewWidth <= dimensions.viewportWidth, true);
-      assert.equal(dimensions.canvasWidth <= dimensions.viewportWidth, true);
-      assert.equal(dimensions.canvasBufferWidth <= dimensions.viewportWidth, true);
+      assert.equal(dimensions.scrollViewportWidth <= dimensions.viewportWidth, true);
+      assert.equal(dimensions.canvasWidth <= dimensions.scrollViewportWidth, true);
+      assert.equal(dimensions.canvasBufferWidth <= dimensions.scrollViewportWidth, true);
+      assert.equal(dimensions.panControlsHidden, true);
     }
 
     await assertNoHorizontalOverflow();

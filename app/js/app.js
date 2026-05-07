@@ -1,14 +1,96 @@
 function showStep(stepNumber) {
 	var step1 = id('step-1');
 	var step2 = id('step-2');
-	var newStep = id('step-' + stepNumber);
+	var intro = id('intro-panel');
+	var isCheckerView = stepNumber === 2;
 
-	step1.hidden = true;
-	step1.setAttribute('aria-hidden', 'true');
-	step2.hidden = true;
-	step2.setAttribute('aria-hidden', 'true');
-	newStep.hidden = false;
-	newStep.removeAttribute('aria-hidden');
+	step1.hidden = false;
+	step1.removeAttribute('aria-hidden');
+	step2.hidden = !isCheckerView;
+	document.body.classList.toggle('is-checker-view', isCheckerView);
+
+	if (isCheckerView) {
+		step2.removeAttribute('aria-hidden');
+	} else {
+		step2.setAttribute('aria-hidden', 'true');
+	}
+
+	if (intro) {
+		intro.hidden = isCheckerView;
+		if (isCheckerView) {
+			intro.setAttribute('aria-hidden', 'true');
+		} else {
+			intro.removeAttribute('aria-hidden');
+		}
+	}
+}
+
+function isAccessibilityStatementView() {
+	return window.location.hash === '#accessibility-statement';
+}
+
+function updateDocumentTitleForView() {
+	if (!window.translate) {
+		return false;
+	}
+
+	if (isAccessibilityStatementView()) {
+		document.title = translate('accessibilityTitle') + ' - ' + translate('title');
+	} else {
+		document.title = translate('title');
+	}
+
+	return true;
+}
+
+function updateAppView(shouldFocus) {
+	var homeView = id('home-view');
+	var statementView = id('accessibility-statement');
+	var showStatement = isAccessibilityStatementView();
+
+	if (!homeView || !statementView) {
+		return false;
+	}
+
+	homeView.hidden = showStatement;
+	statementView.hidden = !showStatement;
+
+	if (showStatement) {
+		homeView.setAttribute('aria-hidden', 'true');
+		statementView.removeAttribute('aria-hidden');
+	} else {
+		homeView.removeAttribute('aria-hidden');
+		statementView.setAttribute('aria-hidden', 'true');
+	}
+	updateDocumentTitleForView();
+
+	if (shouldFocus) {
+		(showStatement ? statementView : id('main-content')).focus();
+	}
+
+	return true;
+}
+
+function showFrontView() {
+	if (window.location.hash) {
+		window.history.pushState('', document.title, window.location.pathname + window.location.search);
+	}
+
+	updateAppView(false);
+	showStep(1);
+	window.scrollTo(0, 0);
+
+	return false;
+}
+
+// Hash-based routing keeps this static app deployable without server rewrites.
+function initViewRouting() {
+	window.updateAppView = updateAppView;
+	window.showFrontView = showFrontView;
+	window.addEventListener('hashchange', function () {
+		updateAppView(true);
+	});
+	updateAppView(false);
 }
 
 function markSkipLinkTarget() {
@@ -73,11 +155,12 @@ function setLoadingState(state, message) {
 	loadingText.textContent = message;
 }
 
+// The intro panel can be collapsed, but its heading remains in the document
+// outline so assistive technology users keep a stable page structure.
 function initIntroPanel() {
 	var introPanel = id('intro-panel');
 	var introToggle = id('intro-toggle');
 	var introSteps = id('intro-steps');
-	var storageKey = 'colorcontrast-intro-open';
 
 	if (!introPanel || !introToggle || !introSteps) {
 		return false;
@@ -87,10 +170,10 @@ function initIntroPanel() {
 		function setIntroOpen(isOpen) {
 			introToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
 			introSteps.hidden = !isOpen;
-			window.localStorage.setItem(storageKey, isOpen ? 'true' : 'false');
+			setStoredValue(STORAGE_KEYS.introOpen, isOpen ? 'true' : 'false');
 		}
 
-		var savedState = window.localStorage.getItem(storageKey);
+		var savedState = getStoredValue(STORAGE_KEYS.introOpen);
 
 		if (savedState === 'false') {
 			setIntroOpen(false);
@@ -117,12 +200,8 @@ function getSystemTheme() {
 }
 
 function getStoredTheme() {
-	try {
-		var theme = window.localStorage.getItem('colorcontrast-theme');
-		return theme === 'dark' || theme === 'light' ? theme : null;
-	} catch (error) {
-		return null;
-	}
+	var theme = getStoredValue(STORAGE_KEYS.theme);
+	return theme === 'dark' || theme === 'light' ? theme : null;
 }
 
 function getActiveTheme() {
@@ -144,10 +223,7 @@ function updateThemeToggle() {
 }
 
 function setThemePreference(theme, shouldAnnounce) {
-	try {
-		window.localStorage.setItem('colorcontrast-theme', theme);
-	} catch (error) {}
-
+	setStoredValue(STORAGE_KEYS.theme, theme);
 	document.documentElement.setAttribute('data-theme', theme);
 	updateThemeToggle();
 
@@ -192,10 +268,14 @@ function initThemeToggle() {
 
 if (document.readyState === 'loading') {
 	document.addEventListener('DOMContentLoaded', function () {
+		initViewRouting();
 		initIntroPanel();
 		initThemeToggle();
+		initCheckerSettings();
 	});
 } else {
+	initViewRouting();
 	initIntroPanel();
 	initThemeToggle();
+	initCheckerSettings();
 }

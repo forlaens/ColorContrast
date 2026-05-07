@@ -41,6 +41,7 @@ test('build creates a static release artifact', async () => {
 
   const rootEntries = await readdir('dist');
   assert.equal(rootEntries.includes('app'), false);
+  assert.deepEqual((await readdir(join(distDir, 'js'))).sort(), ['app.bundle.js']);
 
   const files = await listFiles(distDir);
   assert.equal(files.some((file) => extname(file) === '.php'), false);
@@ -86,6 +87,8 @@ test('document provides a skip link to main content', async () => {
   assert.match(index, /<a class="skip-link" href="#main-content" onclick="markSkipLinkTarget\(\);" data-i18n="skipLink">Skip to main content<\/a>/);
   assert.match(index, /<div class="app-shell">/);
   assert.match(index, /<header class="hero" aria-labelledby="app-title">/);
+  assert.match(index, /<h1 id="app-title">/);
+  assert.match(index, /<a class="home-title-link" href="\/" onclick="return showFrontView\(\);" data-i18n="title">Image contrast checker<\/a>/);
   assert.match(index, /<main id="main-content" class="app-main" tabindex="-1">/);
   assert.ok(index.indexOf('<header class="hero"') < index.indexOf('id="main-content"'));
 });
@@ -100,12 +103,42 @@ test('document includes contact footer', async () => {
   const i18n = await readFile(join(distDir, 'js/app.bundle.js'), 'utf8');
 
   assert.match(index, /<footer class="site-footer">/);
+  assert.match(index, /<section hidden id="accessibility-statement" class="accessibility-page" aria-labelledby="accessibility-statement-title" tabindex="-1">/);
+  assert.match(index, /<h2 id="accessibility-statement-title" data-i18n="accessibilityTitle">Accessibility statement<\/h2>/);
+  assert.match(index, /<p class="accessibility-lede" data-i18n="accessibilityIntro">/);
+  assert.match(index, /<h3 id="accessibility-status-title" data-i18n="accessibilityStatusTitle">Conformance status<\/h3>/);
+  assert.match(index, /<h3 id="accessibility-scope-title" data-i18n="accessibilityScopeTitle">Scope<\/h3>/);
+  assert.match(index, /<h3 id="accessibility-standard-title" data-i18n="accessibilityStandardTitle">Accessibility approach<\/h3>/);
+  assert.match(index, /<h3 id="accessibility-measures-title" data-i18n="accessibilityMeasuresTitle">What the tool can and cannot do<\/h3>/);
+  assert.match(index, /<h3 id="accessibility-testing-title" data-i18n="accessibilityTestingTitle">Testing<\/h3>/);
+  assert.match(index, /<h3 id="accessibility-limitations-title" data-i18n="accessibilityLimitationsTitle">Known limitations<\/h3>/);
+  assert.match(index, /<h3 id="accessibility-feedback-title" data-i18n="accessibilityFeedbackTitle">Feedback and contact<\/h3>/);
+  assert.match(index, /<span data-i18n="accessibilityFeedbackCopy">If you find an accessibility problem, have trouble using the app, or have a suggestion, email<\/span>/);
+  assert.match(index, /<p class="accessibility-updated" data-i18n="accessibilityUpdated">Last updated: May 7, 2026\.<\/p>/);
+  assert.match(index, /<a class="back-link" href="\/" data-i18n="accessibilityBack">Back to checker<\/a>/);
+  assert.match(index, /<div class="footer-inner">/);
+  assert.match(index, /<p class="footer-brand">/);
   assert.match(index, /<span data-i18n="footerCopyright">Copyright<\/span>/);
   assert.match(index, /<a href="https:\/\/forlaens\.com\/">Forlæns<\/a>/);
-  assert.match(index, /<span data-i18n="footerContact">For contact, questions, suggestions, etc\. email<\/span>/);
+  assert.match(index, /<div class="footer-meta">/);
+  assert.match(index, /<span data-i18n="footerContact">Contact, questions, or suggestions:<\/span>/);
   assert.match(index, /<a href="mailto:tobias@forlaens\.com">tobias@forlaens\.com<\/a>/);
+  assert.match(index, /<span class="footer-separator" aria-hidden="true">\|<\/span>/);
+  assert.match(index, /<a href="#accessibility-statement" data-i18n="accessibilityLink">Accessibility Statement<\/a>/);
   assert.match(i18n, /footerCopyright:/);
   assert.match(i18n, /footerContact:/);
+  assert.match(i18n, /accessibilityTitle:/);
+  assert.match(i18n, /accessibilityIntro:/);
+  assert.match(i18n, /accessibilityStatusTitle:/);
+  assert.match(i18n, /accessibilityScopeTitle:/);
+  assert.match(i18n, /accessibilityStandardTitle:/);
+  assert.match(i18n, /accessibilityMeasuresTitle:/);
+  assert.match(i18n, /accessibilityTestingTitle:/);
+  assert.match(i18n, /accessibilityLimitationsTitle:/);
+  assert.match(i18n, /accessibilityFeedbackTitle:/);
+  assert.match(i18n, /accessibilityUpdated:/);
+  assert.match(i18n, /accessibilityLink:/);
+  assert.match(i18n, /accessibilityBack:/);
 });
 
 test('document explains purpose and basic use without eyebrow labels', async () => {
@@ -116,16 +149,27 @@ test('document explains purpose and basic use without eyebrow labels', async () 
   assert.match(index, /<h2 id="intro-title" data-i18n="introTitle">How to use it<\/h2>/);
   assert.match(index, /<button id="intro-toggle" class="intro-toggle" type="button" aria-expanded="true" aria-controls="intro-steps" aria-labelledby="intro-title"><\/button>/);
   assert.match(index, /<h3 data-i18n="stepUploadTitle">Upload an image<\/h3>/);
-  assert.match(index, /<h3 data-i18n="stepColorTitle">Pick the foreground color<\/h3>/);
+  assert.match(index, /<h3 data-i18n="stepColorTitle">Choose the color to check<\/h3>/);
   assert.match(index, /<h3 data-i18n="stepRunTitle">Run the test<\/h3>/);
   assert.match(index, /<form id="step-1" class="step upload-panel"[^>]+aria-labelledby="upload-title"/);
   assert.match(index, /<h2 id="upload-title" class="upload-title" data-i18n="chooseImage">Choose an image<\/h2>/);
-  assert.match(index, /Check whether text or UI colors have enough contrast/);
+  assert.match(index, /<option value="3" data-i18n="nonText">Graphics \(3:1\)<\/option>/);
+  assert.match(index, /<span id="zoom-label" data-i18n="zoomLabel">Zoom<\/span>/);
+  assert.match(index, /<output id="zoom-output" for="image_preview" aria-live="polite">100%<\/output>/);
+  assert.match(index, /<div class="zoom-controls" role="group" aria-labelledby="zoom-label">/);
+  assert.match(index, /<div hidden id="pan-controls" class="pan-controls" role="group" aria-label="Pan image" data-i18n-aria-label="panControls">/);
+  assert.match(index, /<section id="preview-viewport" class="preview-viewport" tabindex="0" aria-label="Zoomable image preview" data-i18n-aria-label="previewViewport" aria-describedby="preview-help">/);
+  assert.match(index, /Choose a color from the image, run the test/);
+  assert.match(index, /can I still read it or see what I am supposed to see/);
   assert.match(index, /The file stays in your browser/);
   assert.ok(index.indexOf('id="step-1"') < index.indexOf('id="intro-title"'));
   assert.equal(index.includes('class="eyebrow"'), false);
   assert.match(app, /colorcontrast-intro-open/);
   assert.match(app, /addEventListener\('click'/);
+  assert.match(app, /hashchange/);
+  assert.match(app, /#accessibility-statement/);
+  assert.match(app, /function showFrontView\(\)/);
+  assert.match(app, /initCheckerSettings\(\)/);
 });
 
 test('document includes language switcher support', async () => {
@@ -134,7 +178,9 @@ test('document includes language switcher support', async () => {
 
   assert.match(index, /<select id="language-switcher" name="language" autocomplete="off"><\/select>/);
   assert.match(index, /<div id="settings-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"><\/div>/);
-  assert.match(index, /<label for="image_file" class="file-picker-button" data-i18n="chooseFile">Choose file<\/label>/);
+  assert.match(index, /<p id="checker-result" class="sr-only" role="status" aria-live="polite" aria-atomic="true"><\/p>/);
+  assert.match(index, /<label for="image_file" class="file-picker-control">/);
+  assert.match(index, /<span class="file-picker-button" data-i18n="chooseFile">Choose file<\/span>/);
   assert.match(index, /data-i18n-file-empty="noFileChosen"/);
   assert.match(index, /data-i18n-aria-label="checkerRegion"/);
   assert.match(index, /data-i18n-aria-label="settingsToolbar"/);
@@ -145,6 +191,18 @@ test('document includes language switcher support', async () => {
   assert.match(i18n, /droppedFilePickerError:/);
   assert.match(i18n, /languageChanged:/);
   assert.match(i18n, /themeChanged:/);
+  assert.match(i18n, /nonText: 'Graphics \(3:1\)'/);
+  assert.match(i18n, /nonText: 'Grafik \(3:1\)'/);
+  assert.match(i18n, /nonText: 'Gráficos \(3:1\)'/);
+  assert.match(i18n, /zoomLabel:/);
+  assert.match(i18n, /previewHelp:/);
+  assert.match(i18n, /panControls:/);
+  assert.match(i18n, /emptyCanvasStatus:/);
+  assert.match(i18n, /imageLoadedStatus:/);
+  assert.match(i18n, /colorSelectedStatus:/);
+  assert.match(i18n, /testCompleteStatus:/);
+  assert.match(i18n, /testCompleteNoIssuesStatus:/);
+  assert.equal(i18n.includes('Non-text (3:1)'), false);
 });
 
 test('document includes dark mode support', async () => {
@@ -162,6 +220,18 @@ test('document includes dark mode support', async () => {
   assert.match(styles, /--focus-ring: #ffffff/);
   assert.match(app, /colorcontrast-theme/);
   assert.match(app, /prefers-color-scheme: dark/);
+});
+
+test('document remembers checker settings', async () => {
+  const app = await readFile(join(distDir, 'js/app.bundle.js'), 'utf8');
+
+  assert.match(app, /colorcontrast-test-color/);
+  assert.match(app, /colorcontrast-conformance-level/);
+  assert.match(app, /function initCheckerSettings\(\)/);
+  assert.match(app, /function restoreCheckerSettings\(\)/);
+  assert.match(app, /function storeCheckerSettings\(\)/);
+  assert.match(app, /function announceContrastResult\(/);
+  assert.match(app, /function resetPreviewImage\(\)/);
 });
 
 test('document includes step illustrations', async () => {
@@ -188,6 +258,8 @@ test('build includes PWA files', async () => {
   assert.equal(manifest.display, 'standalone');
   assert.equal(manifest.start_url, '/');
   assert.equal(manifest.icons.length >= 2, true);
-  assert.match(serviceWorker, /colorcontrast-v1/);
+  assert.match(serviceWorker, /colorcontrast-v3/);
   assert.match(serviceWorker, /\/js\/app\.bundle\.js/);
+  assert.match(serviceWorker, /fetch\(event\.request\)/);
+  assert.match(serviceWorker, /caches\.match\(event\.request\)/);
 });

@@ -42,14 +42,78 @@ function setTestColorFromCanvas(e, canvas) {
 	moveCrosshairs(canvas, x, y);
 
 	var color = pixelToHex(getContext(), x, y);
-	setTestColor(color);
+	setTestColor(color, true);
 }
 
-function setTestColor(hex) {
+function setTestColor(hex, shouldAnnounce) {
 	if (hex == 'transparent') {
 		hex = '#000000';
 	}
 	selector('[name=color]').value = hex;
+	storeCheckerSettings();
+
+	if (shouldAnnounce) {
+		announceStatus(translate('colorSelectedStatus').replace('{color}', hex));
+	}
+}
+
+function isValidTestColor(value) {
+	return /^#[0-9a-f]{6}$/i.test(value);
+}
+
+function restoreCheckerSettings() {
+	var colorInput = selector('[name=color]');
+	var contrastSelect = selector('[name=contrast]');
+
+	if (!colorInput || !contrastSelect) {
+		return false;
+	}
+
+	var savedColor = getStoredValue(STORAGE_KEYS.testColor);
+	var savedLevel = parseInt(getStoredValue(STORAGE_KEYS.conformanceLevel), 10);
+
+	if (isValidTestColor(savedColor)) {
+		colorInput.value = savedColor;
+	}
+
+	if (!Number.isNaN(savedLevel) && savedLevel >= 0 && savedLevel < contrastSelect.options.length) {
+		contrastSelect.selectedIndex = savedLevel;
+	}
+
+	return true;
+}
+
+function storeCheckerSettings() {
+	var colorInput = selector('[name=color]');
+	var contrastSelect = selector('[name=contrast]');
+
+	if (!colorInput || !contrastSelect) {
+		return false;
+	}
+
+	if (isValidTestColor(colorInput.value)) {
+		setStoredValue(STORAGE_KEYS.testColor, colorInput.value);
+	}
+
+	setStoredValue(STORAGE_KEYS.conformanceLevel, String(contrastSelect.selectedIndex));
+	return true;
+}
+
+function initCheckerSettings() {
+	var colorInput = selector('[name=color]');
+	var contrastSelect = selector('[name=contrast]');
+
+	if (!colorInput || !contrastSelect) {
+		return false;
+	}
+
+	restoreCheckerSettings();
+
+	colorInput.addEventListener('input', storeCheckerSettings);
+	colorInput.addEventListener('change', storeCheckerSettings);
+	contrastSelect.addEventListener('change', storeCheckerSettings);
+
+	return true;
 }
 
 function showResetBtn() {
@@ -70,18 +134,20 @@ function placeCrosshairs(canvas) {
 
 function moveCrosshairs(canvas, x, y) {
 	var crosshairs = selector('#crosshairs');
+	var maxX = Math.max(0, canvas.width - 1);
+	var maxY = Math.max(0, canvas.height - 1);
 
 	x = Math.max(x, 0);
-	x = Math.min(x, canvas.offsetWidth);
+	x = Math.min(x, maxX);
 
 	y = Math.max(y, 0);
-	y = Math.min(y, canvas.offsetHeight);
+	y = Math.min(y, maxY);
 
 	crosshairs.setAttribute('data-posx', x);
 	crosshairs.setAttribute('data-posy', y);
 
-	crosshairs.style.left = canvas.offsetLeft + x - (crosshairs.offsetWidth / 2) + 'px';
-	crosshairs.style.top = canvas.offsetTop + y - (crosshairs.offsetWidth / 2) + 'px';
+	crosshairs.style.left = x - (crosshairs.offsetWidth / 2) + 'px';
+	crosshairs.style.top = y - (crosshairs.offsetWidth / 2) + 'px';
 }
 
 function pickColorFromCrosshairs() {
@@ -91,5 +157,5 @@ function pickColorFromCrosshairs() {
 	var y = parseInt(crosshairs.getAttribute('data-posy'));
 
 	var color = pixelToHex(getContext(), x, y);
-	setTestColor(color);
+	setTestColor(color, true);
 }

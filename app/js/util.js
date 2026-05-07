@@ -1,3 +1,11 @@
+var STORAGE_KEYS = {
+	conformanceLevel: 'colorcontrast-conformance-level',
+	introOpen: 'colorcontrast-intro-open',
+	language: 'colorcontrast-language',
+	testColor: 'colorcontrast-test-color',
+	theme: 'colorcontrast-theme'
+};
+
 function id(id) {
 	return document.getElementById(id);
 }
@@ -21,24 +29,32 @@ function announceStatus(message) {
 	return true;
 }
 
+function getStoredValue(key) {
+	try {
+		return window.localStorage.getItem(key);
+	} catch (error) {
+		return null;
+	}
+}
+
+function setStoredValue(key, value) {
+	try {
+		window.localStorage.setItem(key, value);
+		return true;
+	} catch (error) {
+		return false;
+	}
+}
+
 function round(value, precision) {
 	var multiplier = Math.pow(10, precision || 0);
 	return Math.floor(value * multiplier) / multiplier;
 }
 
-var measureStart = measureEnd = null;
-function measureStartTime() {
-	measureStart = new Date();
-};
-function measureEndTime() {
-	measureEnd = new Date();
-
-	var timeDiffMs = measureEnd - measureStart; //in ms
-
-	// strip the ms
-	var timeDiffS = timeDiffMs / 1000;
-	// get seconds 
-	timeDiffS = round(timeDiffS, 3);
-
-	console.log(timeDiffS + ' seconds', 'Time elapsed');
+function formatNumber(value) {
+	try {
+		return new Intl.NumberFormat(document.documentElement.lang || undefined).format(value);
+	} catch (error) {
+		return String(value);
+	}
 }

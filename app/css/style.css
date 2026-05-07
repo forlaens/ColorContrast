@@ -166,7 +166,7 @@ select {
 .language-switcher {
 	display: grid;
 	gap: 6px;
-	min-width: 180px;
+	min-width: 220px;
 	color: var(--muted);
 	font-size: 0.78rem;
 	font-weight: 750;
@@ -174,10 +174,12 @@ select {
 
 .header-controls {
 	display: flex;
+	flex: 0 0 auto;
 	flex-wrap: wrap;
 	justify-content: flex-end;
 	align-items: end;
-	gap: 14px;
+	gap: 10px;
+	padding-top: 6px;
 }
 
 .theme-control {
@@ -207,8 +209,8 @@ select {
 	cursor: pointer;
 	display: inline-grid;
 	place-items: center;
-	width: 44px;
-	min-height: 44px;
+	width: 52px;
+	min-height: 46px;
 	padding: 0;
 	border: 1px solid var(--border-strong);
 	border-radius: 6px;
@@ -249,6 +251,11 @@ h2 {
 	font-size: clamp(1.5rem, 3vw, 2.5rem);
 }
 
+.home-title-link {
+	color: inherit;
+	text-decoration: none;
+}
+
 .lede {
 	max-width: 920px;
 	margin: 18px 0 0;
@@ -260,7 +267,8 @@ h2 {
 .error-panel,
 .intro-panel,
 .upload-panel,
-.checker-stage {
+.checker-stage,
+.accessibility-page {
 	border: 1px solid var(--border);
 	border-radius: var(--radius);
 	background: var(--panel);
@@ -268,13 +276,46 @@ h2 {
 }
 
 .site-footer {
-	margin-top: 28px;
+	margin-top: 32px;
 	color: var(--muted);
 	font-size: 0.95rem;
 }
 
+.footer-inner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px 28px;
+	padding: 20px 0 0;
+	border-top: 1px solid var(--border);
+}
+
 .site-footer p {
 	margin: 0;
+}
+
+.footer-brand,
+.footer-meta,
+.footer-meta p {
+	display: flex;
+	align-items: center;
+	gap: 0.35em;
+}
+
+.footer-brand {
+	color: var(--text);
+	font-weight: 700;
+}
+
+.footer-meta {
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	color: var(--muted);
+}
+
+.footer-separator {
+	color: var(--muted);
+	font-weight: 700;
 }
 
 .site-footer a {
@@ -282,6 +323,70 @@ h2 {
 	font-weight: 700;
 	text-decoration-thickness: 0.08em;
 	text-underline-offset: 0.18em;
+}
+
+@media (max-width: 760px) {
+	.footer-inner {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+
+	.footer-meta {
+		justify-content: flex-start;
+	}
+}
+
+.accessibility-page {
+	max-width: 860px;
+	padding: 28px;
+	box-shadow: none;
+}
+
+.accessibility-page h2 {
+	margin: 0 0 12px;
+	font-size: clamp(2rem, 4vw, 3.2rem);
+	line-height: 1.05;
+}
+
+.accessibility-page h3 {
+	margin: 0 0 6px;
+	color: var(--text);
+	font-size: 1.12rem;
+	line-height: 1.25;
+}
+
+.accessibility-page p {
+	margin: 0;
+	color: var(--muted);
+	font-size: 1.05rem;
+	line-height: 1.6;
+}
+
+.accessibility-lede {
+	max-width: 720px;
+}
+
+.accessibility-section {
+	margin-top: 22px;
+}
+
+.accessibility-updated {
+	margin-top: 22px !important;
+	font-size: 0.95rem !important;
+}
+
+.accessibility-page a {
+	color: var(--text);
+	font-weight: 700;
+	text-decoration-thickness: 0.08em;
+	text-underline-offset: 0.18em;
+}
+
+.accessibility-page .back-link {
+	display: inline-flex;
+	align-items: center;
+	margin-top: 18px;
+	min-height: 44px;
 }
 
 .notice {
@@ -406,6 +511,20 @@ h2 {
 	padding: 16px;
 }
 
+body.is-checker-view .upload-panel {
+	margin-bottom: 12px;
+	box-shadow: none;
+}
+
+body.is-checker-view .upload-dropzone {
+	min-height: auto;
+	padding: 16px 18px;
+}
+
+body.is-checker-view .upload-panel .cta {
+	display: none;
+}
+
 .intro-panel {
 	margin-bottom: 18px;
 }
@@ -465,8 +584,16 @@ input[type=file] {
 	margin-top: 10px;
 }
 
-.file-picker-button {
+.file-picker-control {
 	cursor: pointer;
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+	max-width: 100%;
+}
+
+.file-picker-button {
 	display: inline-flex;
 	align-items: center;
 	min-height: 44px;
@@ -478,7 +605,7 @@ input[type=file] {
 	font-weight: 700;
 }
 
-.file-input-native:focus-visible + .file-picker-button {
+.file-input-native:focus-visible + .file-picker-control .file-picker-button {
 	outline: 4px solid var(--focus-ring);
 	outline-offset: 4px;
 }
@@ -566,6 +693,7 @@ input[type=file] {
 
 .checker-scroll {
 	overflow-x: auto;
+	width: 100%;
 	padding-bottom: 4px;
 	max-width: 100%;
 }
@@ -573,6 +701,7 @@ input[type=file] {
 .checker {
 	position: relative;
 	width: 100%;
+	inline-size: 100%;
 	max-width: 100%;
 	min-width: var(--checker-min-width);
 	overflow: hidden;
@@ -654,6 +783,35 @@ input[type=color] {
 	fill: currentColor;
 }
 
+.view-controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: end;
+	justify-content: flex-end;
+	gap: 12px;
+}
+
+.zoom-controls,
+.pan-controls {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.zoom-controls output {
+	min-width: 4.2em;
+	color: var(--text);
+	font-weight: 750;
+	text-align: center;
+}
+
+.text-icon-button {
+	width: auto;
+	min-width: 44px;
+	padding: 0 9px;
+	font-weight: 750;
+}
+
 .icon-button[aria-pressed=true] {
 	background: var(--button-strong-bg);
 	color: var(--button-strong-text);
@@ -667,12 +825,29 @@ input[type=color] {
 	filter: brightness(35%);
 }
 
+.preview-viewport {
+	overflow: auto;
+	max-width: 100%;
+	max-height: min(72vh, 760px);
+	background-color: var(--panel);
+	background-image: linear-gradient(45deg, var(--checkerboard) 25%, transparent 25%), linear-gradient(-45deg, var(--checkerboard) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, var(--checkerboard) 75%), linear-gradient(-45deg, transparent 75%, var(--checkerboard) 75%);
+	background-size: 32px 32px;
+	background-position: 0 0, 0 16px, 16px -16px, -16px 0;
+}
+
+.preview-viewport.can-pan {
+	scrollbar-color: var(--border-strong) var(--panel-soft);
+}
+
+.preview-canvas-layer {
+	position: relative;
+	min-width: 100%;
+	min-height: 1px;
+}
+
 .preview {
 	cursor: crosshair;
 	display: block;
-	width: 100%;
-	max-width: 100%;
-	min-height: 1px;
 	background-color: var(--panel);
 	background-image: linear-gradient(45deg, var(--checkerboard) 25%, transparent 25%), linear-gradient(-45deg, var(--checkerboard) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, var(--checkerboard) 75%), linear-gradient(-45deg, transparent 75%, var(--checkerboard) 75%);
 	background-size: 32px 32px;
@@ -735,11 +910,12 @@ input[type=color] {
 
 	.language-switcher {
 		min-width: 0;
-		max-width: 240px;
+		max-width: none;
 	}
 
 	.header-controls {
 		justify-content: start;
+		align-items: end;
 	}
 
 	.upload-panel,

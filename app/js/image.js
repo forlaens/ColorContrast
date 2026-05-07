@@ -2,9 +2,11 @@ var cachedPixels = false;
 var image = {};
 var imageDragDepth = 0;
 var imageThumbnailUrl = null;
+var zoomSteps = [0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4];
 
 window.onresize = recalcImage;
 
+// Keep the canvas and cached pixels aligned with the rendered preview size.
 function recalcImage() {
 	if (!image.dimensions || !image.dimensions.width) {
 		return false;
@@ -22,18 +24,26 @@ function recalcImage() {
 
 function loadImagePreview() {
 	clearError();
-	updateImageSelectionPreview();
 
 	var files = id('image_file').files;
-	var file = imageValidation(files[0]);
+	var file = files && files[0];
 
 	if (!file) {
+		updateSelectedFileName();
+		clearImageThumbnail();
 		showStep(2);
 		showEmptyPreviewCanvas();
+		announceStatus(translate('emptyCanvasStatus'));
 		return false;
 	}
 
+	return loadSelectedImageFromInput();
+}
+
+function loadImageFile(file) {
 	cachedPixels = false;
+	image.hasContrastHighlights = false;
+	image.contrastTest = null;
 
 	var reader = new FileReader();
 	reader.onload = function(event) {
@@ -41,10 +51,15 @@ function loadImagePreview() {
 
 		loadedImage.onload = function() {
 			image.file = loadedImage;
+			image.zoom = null;
 			showStep(2);
 
 			try {
 				updatePreviewCanvas();
+				announceStatus(translate('imageLoadedStatus')
+					.replace('{name}', file.name)
+					.replace('{width}', formatNumber(image.file.width))
+					.replace('{height}', formatNumber(image.file.height)));
 			} catch (error) {
 				showStep(1);
 				showError(error.message);
@@ -65,8 +80,11 @@ function loadImagePreview() {
 	};
 
 	reader.readAsDataURL(file);
+	return true;
 }
 
+// The empty canvas keeps the checker forgiving: users can enter the canvas view
+// first and still upload or drag in an image later.
 function showEmptyPreviewCanvas() {
 	cachedPixels = false;
 	image = {};
@@ -83,11 +101,16 @@ function showEmptyPreviewCanvas() {
 	resizePreviewFrame();
 	canvas.width = canvas.offsetWidth;
 	canvas.height = 320;
+	canvas.style.width = canvas.width + 'px';
+	canvas.style.height = canvas.height + 'px';
+	updateCanvasLayerSize(canvas.width, canvas.height);
 	context.clearRect(0, 0, canvas.width, canvas.height);
+	updatePreviewControls();
+	updateCheckerResult('');
 }
 
-function updatePreviewCanvas() {
-	hideResetBtn();
+function updatePreviewCanvas(options) {
+	options = options || {};
 
 	var canvas = getCanvas();
 	var context = getContext();
@@ -100,30 +123,164 @@ function updatePreviewCanvas() {
 		throw new Error(translate('noReadableImageError'));
 	}
 
+	var shouldPreserveHighlights = options.preserveHighlights !== false && image.hasContrastHighlights && image.contrastTest;
 	image.dimensions = scaleImage(canvas);
 
 	if (!image.dimensions.width || !image.dimensions.height) {
 		throw new Error(translate('imageSizeError'));
 	}
 
-	canvas.width = canvas.offsetWidth;
+	canvas.width = image.dimensions.width;
 	canvas.height = image.dimensions.height;
+	canvas.style.width = image.dimensions.width + 'px';
+	canvas.style.height = image.dimensions.height + 'px';
+	updateCanvasLayerSize(image.dimensions.width, image.dimensions.height);
 	context.clearRect(0, 0, canvas.width, canvas.height);
 
 	renderImage(context, image.file);
 	cachePixels(context);
+	updatePreviewControls();
+
+	if (shouldPreserveHighlights && window.applyContrastHighlights) {
+		applyContrastHighlights(context, image.contrastTest, false);
+		showResetBtn();
+	} else {
+		image.hasContrastHighlights = false;
+		image.contrastTest = null;
+		hideResetBtn();
+		updateCheckerResult('');
+	}
+}
+
+function resetPreviewImage() {
+	try {
+		image.hasContrastHighlights = false;
+		image.contrastTest = null;
+		updatePreviewCanvas({ preserveHighlights: false });
+		announceStatus(translate('imageResetStatus'));
+	} catch (error) {
+		showError(error.message);
+	}
 }
 
 function scaleImage(canvas) {
 	resizePreviewFrame();
 
-	var canvasWidth = canvas.offsetWidth;
-	var scale = Math.min(1, canvasWidth / image.file.width);
+	var viewport = id('preview-viewport');
+	var viewportWidth = viewport ? viewport.clientWidth : canvas.offsetWidth;
+	var fitScale = viewportWidth / image.file.width;
+	var scale = image.zoom || fitScale;
 
 	var width = Math.floor(image.file.width * scale);
 	var height = Math.floor(image.file.height * scale);
 
 	return { width, height };
+}
+
+function getCurrentZoom() {
+	if (!image.file) {
+		return 1;
+	}
+
+	if (image.zoom) {
+		return image.zoom;
+	}
+
+	var viewport = id('preview-viewport');
+	var viewportWidth = viewport ? viewport.clientWidth : 1;
+	return viewportWidth / image.file.width;
+}
+
+function setPreviewZoom(zoom, shouldAnnounce) {
+	if (!image.file) {
+		return false;
+	}
+
+	image.zoom = Math.max(zoomSteps[0], Math.min(zoomSteps[zoomSteps.length - 1], zoom));
+	updatePreviewCanvas();
+
+	if (shouldAnnounce) {
+		announceStatus(translate('zoomStatus').replace('{zoom}', Math.round(image.zoom * 100)));
+	}
+
+	return true;
+}
+
+function zoomPreview(direction) {
+	var currentZoom = getCurrentZoom();
+	var nextZoom = zoomSteps[zoomSteps.length - 1];
+
+	for (var i = 0; i < zoomSteps.length; i++) {
+		if (direction < 0 && zoomSteps[i] < currentZoom) {
+			nextZoom = zoomSteps[i];
+		} else if (direction > 0 && zoomSteps[i] > currentZoom) {
+			nextZoom = zoomSteps[i];
+			break;
+		}
+	}
+
+	return setPreviewZoom(nextZoom, true);
+}
+
+function resetPreviewZoom() {
+	return setPreviewZoom(1, true);
+}
+
+function panPreview(xDirection, yDirection) {
+	var viewport = id('preview-viewport');
+
+	if (!viewport) {
+		return false;
+	}
+
+	viewport.scrollBy({
+		left: xDirection * Math.max(80, viewport.clientWidth * 0.25),
+		top: yDirection * Math.max(80, viewport.clientHeight * 0.25),
+		behavior: 'smooth'
+	});
+
+	return true;
+}
+
+function updatePreviewControls() {
+	var viewport = id('preview-viewport');
+	var panControls = id('pan-controls');
+	var zoomOutput = id('zoom-output');
+	var zoomOut = id('zoom-out');
+	var zoomIn = id('zoom-in');
+	var zoomReset = id('zoom-reset');
+	var hasImage = !!(image.file && image.dimensions);
+	var currentZoom = getCurrentZoom();
+
+	if (zoomOutput) {
+		zoomOutput.value = Math.round(currentZoom * 100) + '%';
+		zoomOutput.textContent = Math.round(currentZoom * 100) + '%';
+	}
+
+	if (zoomOut) {
+		zoomOut.disabled = !hasImage || currentZoom <= zoomSteps[0];
+	}
+
+	if (zoomIn) {
+		zoomIn.disabled = !hasImage || currentZoom >= zoomSteps[zoomSteps.length - 1];
+	}
+
+	if (zoomReset) {
+		zoomReset.disabled = !hasImage;
+	}
+
+	if (!viewport || !panControls) {
+		return false;
+	}
+
+	var canPan = hasImage && (
+		viewport.scrollWidth > viewport.clientWidth + 1 ||
+		viewport.scrollHeight > viewport.clientHeight + 1
+	);
+
+	panControls.hidden = !canPan;
+	viewport.classList.toggle('can-pan', canPan);
+	return true;
 }
 
 function resizePreviewFrame() {
@@ -135,21 +292,11 @@ function resizePreviewFrame() {
 		return false;
 	}
 
-	var areaStyles = window.getComputedStyle(previewArea);
-	var horizontalSpacing =
-		parseFloat(areaStyles.paddingLeft) +
-		parseFloat(areaStyles.paddingRight) +
-		parseFloat(areaStyles.borderLeftWidth) +
-		parseFloat(areaStyles.borderRightWidth);
-	var availableWidth = Math.floor(scrollArea.getBoundingClientRect().width);
-	var contentWidth = Math.max(1, availableWidth - horizontalSpacing);
-	var preferredWidth = image.file ? Math.min(image.file.width, contentWidth) : contentWidth;
-	var width = Math.max(1, Math.min(preferredWidth + horizontalSpacing, availableWidth));
-
 	previewArea.style.setProperty('--checker-min-width', '0px');
-	previewArea.style.width = width + 'px';
+	previewArea.style.width = '100%';
 }
 
+// Cache the original image pixels before we draw contrast highlights over them.
 function cachePixels(context) {
 	if (!context || !image.dimensions) {
 		throw new Error(translate('imagePreviewNotReady'));
@@ -225,7 +372,7 @@ function hasImageDrag(dataTransfer) {
 	return dataTransfer.types && Array.prototype.indexOf.call(dataTransfer.types, 'Files') !== -1;
 }
 
-function setImageFile(file) {
+function setImageFile(file, shouldLoadPreview) {
 	var fileInput = id('image_file');
 
 	if (!fileInput || !imageValidation(file)) {
@@ -243,8 +390,13 @@ function setImageFile(file) {
 
 	showImageThumbnail(file);
 	updateSelectedFileName();
-	showStep(1);
 	clearError();
+
+	if (shouldLoadPreview) {
+		return loadImageFile(file);
+	}
+
+	showStep(1);
 	return true;
 }
 
@@ -281,6 +433,27 @@ function updateImageSelectionPreview() {
 	return showImageThumbnail(file);
 }
 
+function loadSelectedImageFromInput() {
+	var fileInput = id('image_file');
+	updateSelectedFileName();
+
+	if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+		clearImageThumbnail();
+		return false;
+	}
+
+	var file = imageValidation(fileInput.files[0]);
+
+	if (!file) {
+		clearImageThumbnail();
+		return false;
+	}
+
+	showImageThumbnail(file);
+	clearError();
+	return loadImageFile(file);
+}
+
 function updateSelectedFileName() {
 	var fileInput = id('image_file');
 	var fileName = id('selected-file-name');
@@ -312,6 +485,17 @@ function clearImageThumbnail() {
 	}
 }
 
+function updateCheckerResult(message) {
+	var result = id('checker-result');
+
+	if (!result) {
+		return false;
+	}
+
+	result.textContent = message || '';
+	return true;
+}
+
 window.updateSelectedFileName = updateSelectedFileName;
 window.clearImageThumbnail = clearImageThumbnail;
 
@@ -328,7 +512,7 @@ function initImageChooser() {
 	var fileInput = id('image_file');
 
 	if (fileInput) {
-		fileInput.addEventListener('change', updateImageSelectionPreview);
+		fileInput.addEventListener('change', loadSelectedImageFromInput);
 	}
 
 	document.addEventListener('dragenter', function (event) {
@@ -374,7 +558,7 @@ function initImageChooser() {
 
 		var file = getImageFileFromTransfer(event.dataTransfer);
 		if (file) {
-			setImageFile(file);
+			setImageFile(file, true);
 		}
 	});
 }

@@ -45,7 +45,16 @@ function hexToRgb(hex) {
 		g: parseInt(result[2], 16),
 		b: parseInt(result[3], 16)
 	} : null;
-  }
+}
+
+function contrastRatio(color1, color2) {
+	var color1Luminance = luminance(color1.r, color1.g, color1.b);
+	var color2Luminance = luminance(color2.r, color2.g, color2.b);
+	var lighter = Math.max(color1Luminance, color2Luminance);
+	var darker = Math.min(color1Luminance, color2Luminance);
+
+	return round((lighter + 0.05) / (darker + 0.05), 2);
+}
 
 function luminance(r, g, b) {
 	var a = [r, g, b].map(function (v) {
