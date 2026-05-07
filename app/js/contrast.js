@@ -32,30 +32,34 @@ function initRenderContrast() {
 }
 
 function renderContrastIssues(context) {
-	if (!cachedPixels) {
-		cachePixels(context);
-	}
+	updatePreviewCanvas({ preserveHighlights: false });
 
-	updatePreviewCanvas();
+	image.contrastTest = {
+		contrast: getTestContrast(),
+		color: getTestColor()
+	};
+	image.hasContrastHighlights = true;
 
+	var failedPixels = applyContrastHighlights(context, image.contrastTest, true);
+	showResetBtn();
+	setLoadingState(false);
+	announceContrastResult(failedPixels, image.dimensions.width * image.dimensions.height, image.contrastTest.contrast);
+}
+
+function applyContrastHighlights(context, test, shouldAnnounce) {
 	var width = image.dimensions.width;
 	var height = image.dimensions.height;
-
-	var testContrast = getTestContrast();
-	var testColor = getTestColor();
 	var failedPixels = 0;
 
 	for (var x = 0; x < width; x++) {
 		for (var y = 0; y < height; y++) {
-			if (renderContrastIssue(context, testContrast, testColor, x, y)) {
+			if (renderContrastIssue(context, test.contrast, test.color, x, y)) {
 				failedPixels++;
 			}
 		}
 	}
 
-	showResetBtn();
-	setLoadingState(false);
-	announceContrastResult(failedPixels, width * height, testContrast);
+	return failedPixels;
 }
 
 function renderContrastIssue(context, contrast, color1, x, y) {
@@ -74,6 +78,8 @@ function renderContrastIssue(context, contrast, color1, x, y) {
 
 	return false;
 }
+
+window.applyContrastHighlights = applyContrastHighlights;
 
 function announceContrastResult(failedPixels, totalPixels, testContrast) {
 	var color = selector('[name=color]').value;

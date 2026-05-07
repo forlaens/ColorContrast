@@ -708,6 +708,54 @@ test('image preview supports zoom and only shows pan controls when the image ove
   }
 });
 
+test('zooming keeps active contrast highlights until the image is reset', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 640, height: 720 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
+
+    const originalCanvas = await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL());
+    await page.locator('[name=color]').evaluate((input) => {
+      input.value = '#ffffff';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    await page.locator('[name=contrast]').selectOption('7');
+    await page.getByRole('button', { name: 'Run test' }).click();
+    await page.waitForFunction(() => !document.querySelector('#reset-image').hidden);
+
+    const resultBeforeZoom = await page.locator('#checker-result').textContent();
+    const highlightedCanvas = await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL());
+    assert.notEqual(highlightedCanvas, originalCanvas);
+
+    await page.getByRole('button', { name: 'Zoom in' }).click();
+    await page.waitForFunction(() => document.querySelector('#settings-status').textContent.includes('Zoom'));
+
+    assert.equal(await page.locator('#reset-image').isVisible(), true);
+    assert.equal(await page.locator('#checker-result').textContent(), resultBeforeZoom);
+    assert.notEqual(await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL()), originalCanvas);
+
+    await page.locator('#reset-image').click();
+    assert.equal(await page.locator('#reset-image').isHidden(), true);
+    assert.equal(await page.locator('#checker-result').textContent(), '');
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
 test('small images expand to the full preview width before zooming', async () => {
   buildApp();
 
