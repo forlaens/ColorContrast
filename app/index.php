@@ -54,8 +54,10 @@
 				<span class="upload-file-row">
 					<img hidden id="image-thumbnail" class="upload-thumbnail" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" alt="">
 					<input id="image_file" class="file-input-native" type="file" name="image" accept="image/*" aria-describedby="selected-file-name">
-					<label for="image_file" class="file-picker-button" data-i18n="chooseFile">Choose file</label>
-					<span id="selected-file-name" class="selected-file-name" data-i18n-file-empty="noFileChosen">No file chosen</span>
+					<label for="image_file" class="file-picker-control">
+						<span class="file-picker-button" data-i18n="chooseFile">Choose file</span>
+						<span id="selected-file-name" class="selected-file-name" data-i18n-file-empty="noFileChosen">No file chosen</span>
+					</label>
 				</span>
 			</div>
 			<button class="cta" type="submit" data-i18n="loadImage">Load image</button>

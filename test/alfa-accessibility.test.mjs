@@ -233,7 +233,7 @@ test('built app supports every language in the switcher', async () => {
       await page.waitForFunction((expected) => document.documentElement.lang === expected, language);
 
       const heading = await page.locator('#app-title').textContent();
-      const fileLabel = await page.locator('label[for="image_file"]').textContent();
+      const fileLabel = await page.locator('.file-picker-button').textContent();
       const fileName = await page.locator('#selected-file-name').textContent();
       const checkerLabel = await page.locator('#preview_area').getAttribute('aria-label');
       const toolbarLabel = await page.locator('[role="toolbar"]').getAttribute('aria-label');
@@ -251,7 +251,7 @@ test('built app supports every language in the switcher', async () => {
     await page.selectOption('#language-switcher', 'da');
     await page.waitForFunction(() => document.documentElement.lang === 'da');
     await page.waitForFunction(() => document.querySelector('#settings-status').textContent === 'Sprog ændret til Dansk.');
-    assert.equal(await page.locator('label[for="image_file"]').textContent(), 'Vælg fil');
+    assert.equal(await page.locator('.file-picker-button').textContent(), 'Vælg fil');
     assert.equal(await page.locator('#selected-file-name').textContent(), 'Ingen fil valgt');
     assert.equal(await page.locator('#preview_area').getAttribute('aria-label'), 'Kontrasttjek');
     assert.equal(await page.locator('[role="toolbar"]').getAttribute('aria-label'), 'Indstillinger for tjek');
@@ -367,7 +367,10 @@ test('choosing an image opens the checker and keeps the image chooser available'
     const page = await context.newPage();
     await page.goto(server.url, { waitUntil: 'networkidle' });
 
-    await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
+    const fileChooserPromise = page.waitForEvent('filechooser');
+    await page.locator('#selected-file-name').click();
+    const fileChooser = await fileChooserPromise;
+    await fileChooser.setFiles(resolve('dist/img/social-card.png'));
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
 
     assert.equal(await page.locator('#step-2').isVisible(), true);
