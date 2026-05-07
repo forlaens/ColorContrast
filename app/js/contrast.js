@@ -87,8 +87,6 @@ function announceContrastResult(failedPixels, totalPixels, testContrast) {
 	var percentage = totalPixels ? round((failedPixels / totalPixels) * 100, 1) : 0;
 	var key = failedPixels > 0 ? 'testCompleteStatus' : 'testCompleteNoIssuesStatus';
 	var message = translate(key)
-		.replace('{failed}', formatNumber(failedPixels))
-		.replace('{total}', formatNumber(totalPixels))
 		.replace('{percent}', formatNumber(percentage))
 		.replace('{color}', color)
 		.replace('{ratio}', testContrast)
