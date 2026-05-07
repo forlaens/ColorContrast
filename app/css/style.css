@@ -325,8 +325,8 @@ h2 {
 }
 
 .accessibility-page {
-	max-width: 780px;
-	padding: 24px;
+	max-width: 860px;
+	padding: 28px;
 	box-shadow: none;
 }
 
@@ -336,6 +336,13 @@ h2 {
 	line-height: 1.05;
 }
 
+.accessibility-page h3 {
+	margin: 0 0 6px;
+	color: var(--text);
+	font-size: 1.12rem;
+	line-height: 1.25;
+}
+
 .accessibility-page p {
 	margin: 0;
 	color: var(--muted);
@@ -343,8 +350,17 @@ h2 {
 	line-height: 1.6;
 }
 
-.accessibility-page p + p {
-	margin-top: 14px;
+.accessibility-lede {
+	max-width: 720px;
+}
+
+.accessibility-section {
+	margin-top: 22px;
+}
+
+.accessibility-updated {
+	margin-top: 22px !important;
+	font-size: 0.95rem !important;
 }
 
 .accessibility-page a {
@@ -357,6 +373,7 @@ h2 {
 .accessibility-page .back-link {
 	display: inline-flex;
 	align-items: center;
+	margin-top: 18px;
 	min-height: 44px;
 }
 
