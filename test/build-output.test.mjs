@@ -179,7 +179,8 @@ test('document includes language switcher support', async () => {
   assert.match(index, /<select id="language-switcher" name="language" autocomplete="off"><\/select>/);
   assert.match(index, /<div id="settings-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"><\/div>/);
   assert.match(index, /<p id="checker-result" class="sr-only" role="status" aria-live="polite" aria-atomic="true"><\/p>/);
-  assert.match(index, /<label for="image_file" class="file-picker-button" data-i18n="chooseFile">Choose file<\/label>/);
+  assert.match(index, /<label for="image_file" class="file-picker-control">/);
+  assert.match(index, /<span class="file-picker-button" data-i18n="chooseFile">Choose file<\/span>/);
   assert.match(index, /data-i18n-file-empty="noFileChosen"/);
   assert.match(index, /data-i18n-aria-label="checkerRegion"/);
   assert.match(index, /data-i18n-aria-label="settingsToolbar"/);

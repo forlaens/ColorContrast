@@ -584,8 +584,16 @@ input[type=file] {
 	margin-top: 10px;
 }
 
-.file-picker-button {
+.file-picker-control {
 	cursor: pointer;
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+	max-width: 100%;
+}
+
+.file-picker-button {
 	display: inline-flex;
 	align-items: center;
 	min-height: 44px;
@@ -597,7 +605,7 @@ input[type=file] {
 	font-weight: 700;
 }
 
-.file-input-native:focus-visible + .file-picker-button {
+.file-input-native:focus-visible + .file-picker-control .file-picker-button {
 	outline: 4px solid var(--focus-ring);
 	outline-offset: 4px;
 }
