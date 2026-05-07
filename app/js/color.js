@@ -72,6 +72,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	en: {
 		black: 'black', white: 'white', gray: 'gray', silver: 'silver', brown: 'brown',
 		cream: 'cream', beige: 'beige', tan: 'tan', peach: 'peach', copper: 'copper',
+		coral: 'coral', salmon: 'salmon', terracotta: 'terracotta', rust: 'rust', brick: 'brick',
 		red: 'red', rose: 'rose', orange: 'orange', amber: 'amber', yellow: 'yellow',
 		lime: 'lime', green: 'green', teal: 'teal', turquoise: 'turquoise', cyan: 'cyan',
 		skyBlue: 'sky blue', blue: 'blue', indigo: 'indigo', violet: 'violet',
@@ -81,6 +82,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	da: {
 		black: 'sort', white: 'hvid', gray: 'grå', silver: 'sølv', brown: 'brun',
 		cream: 'creme', beige: 'beige', tan: 'tan', peach: 'fersken', copper: 'kobber',
+		coral: 'koral', salmon: 'laks', terracotta: 'terracotta', rust: 'rust', brick: 'tegl',
 		red: 'rød', rose: 'rosa', orange: 'orange', amber: 'ravgul', yellow: 'gul',
 		lime: 'limegrøn', green: 'grøn', teal: 'teal', turquoise: 'turkis', cyan: 'cyan',
 		skyBlue: 'himmelblå', blue: 'blå', indigo: 'indigo', violet: 'violet',
@@ -90,6 +92,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	no: {
 		black: 'svart', white: 'hvit', gray: 'grå', silver: 'sølv', brown: 'brun',
 		cream: 'krem', beige: 'beige', tan: 'tan', peach: 'fersken', copper: 'kobber',
+		coral: 'korall', salmon: 'laks', terracotta: 'terrakotta', rust: 'rust', brick: 'tegl',
 		red: 'rød', rose: 'rosa', orange: 'oransje', amber: 'ravgul', yellow: 'gul',
 		lime: 'limegrønn', green: 'grønn', teal: 'teal', turquoise: 'turkis', cyan: 'cyan',
 		skyBlue: 'himmelblå', blue: 'blå', indigo: 'indigo', violet: 'fiolett',
@@ -99,6 +102,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	sv: {
 		black: 'svart', white: 'vit', gray: 'grå', silver: 'silver', brown: 'brun',
 		cream: 'kräm', beige: 'beige', tan: 'tan', peach: 'persika', copper: 'koppar',
+		coral: 'korall', salmon: 'lax', terracotta: 'terrakotta', rust: 'rost', brick: 'tegel',
 		red: 'röd', rose: 'rosa', orange: 'orange', amber: 'bärnsten', yellow: 'gul',
 		lime: 'limegrön', green: 'grön', teal: 'teal', turquoise: 'turkos', cyan: 'cyan',
 		skyBlue: 'himmelsblå', blue: 'blå', indigo: 'indigo', violet: 'violett',
@@ -108,6 +112,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	fi: {
 		black: 'musta', white: 'valkoinen', gray: 'harmaa', silver: 'hopea', brown: 'ruskea',
 		cream: 'kerma', beige: 'beige', tan: 'tan', peach: 'persikka', copper: 'kupari',
+		coral: 'koralli', salmon: 'lohi', terracotta: 'terrakotta', rust: 'ruoste', brick: 'tiili',
 		red: 'punainen', rose: 'roosa', orange: 'oranssi', amber: 'meripihka', yellow: 'keltainen',
 		lime: 'limenvihreä', green: 'vihreä', teal: 'sinivihreä', turquoise: 'turkoosi', cyan: 'syaani',
 		skyBlue: 'taivaansininen', blue: 'sininen', indigo: 'indigo', violet: 'violetti',
@@ -117,6 +122,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	kl: {
 		black: 'qernertoq', white: 'qaqortoq', gray: 'qasersoq', silver: 'sølv', brown: 'kajortoq',
 		cream: 'creme', beige: 'beige', tan: 'tan', peach: 'fersken', copper: 'kobber',
+		coral: 'koral', salmon: 'laks', terracotta: 'terracotta', rust: 'rust', brick: 'tegl',
 		red: 'aappaluttoq', rose: 'rose', orange: 'orange', amber: 'amber', yellow: 'sungaartoq',
 		lime: 'lime', green: 'qorsuk', teal: 'teal', turquoise: 'turkis', cyan: 'cyan',
 		skyBlue: 'tungujortoq qaamasoq', blue: 'tungujortoq', indigo: 'indigo', violet: 'violet',
@@ -126,6 +132,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	is: {
 		black: 'svartur', white: 'hvítur', gray: 'grár', silver: 'silfur', brown: 'brúnn',
 		cream: 'rjómi', beige: 'beige', tan: 'tan', peach: 'ferskja', copper: 'kopar',
+		coral: 'kórall', salmon: 'lax', terracotta: 'terracotta', rust: 'ryð', brick: 'múrsteinn',
 		red: 'rauður', rose: 'rósrauður', orange: 'appelsínugulur', amber: 'rafgulur', yellow: 'gulur',
 		lime: 'limegrænn', green: 'grænn', teal: 'teal', turquoise: 'túrkís', cyan: 'cyan',
 		skyBlue: 'himinblár', blue: 'blár', indigo: 'indigo', violet: 'fjólublár',
@@ -135,6 +142,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	fo: {
 		black: 'svartur', white: 'hvítur', gray: 'gráur', silver: 'silvur', brown: 'brúnur',
 		cream: 'krem', beige: 'beige', tan: 'tan', peach: 'fersken', copper: 'kopar',
+		coral: 'korall', salmon: 'laksur', terracotta: 'terracotta', rust: 'rust', brick: 'tegl',
 		red: 'reyður', rose: 'rosa', orange: 'appilsingulur', amber: 'ravlittur', yellow: 'gulur',
 		lime: 'limegrønur', green: 'grønur', teal: 'teal', turquoise: 'turkis', cyan: 'cyan',
 		skyBlue: 'himmalbláur', blue: 'bláur', indigo: 'indigo', violet: 'violettur',
@@ -144,6 +152,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	es: {
 		black: 'negro', white: 'blanco', gray: 'gris', silver: 'plateado', brown: 'marrón',
 		cream: 'crema', beige: 'beige', tan: 'tostado', peach: 'melocotón', copper: 'cobre',
+		coral: 'coral', salmon: 'salmón', terracotta: 'terracota', rust: 'óxido', brick: 'ladrillo',
 		red: 'rojo', rose: 'rosa', orange: 'naranja', amber: 'ámbar', yellow: 'amarillo',
 		lime: 'verde lima', green: 'verde', teal: 'verde azulado', turquoise: 'turquesa', cyan: 'cian',
 		skyBlue: 'azul cielo', blue: 'azul', indigo: 'índigo', violet: 'violeta',
@@ -153,6 +162,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	de: {
 		black: 'schwarz', white: 'weiß', gray: 'grau', silver: 'silber', brown: 'braun',
 		cream: 'creme', beige: 'beige', tan: 'hellbraun', peach: 'pfirsich', copper: 'kupfer',
+		coral: 'koralle', salmon: 'lachs', terracotta: 'terrakotta', rust: 'rost', brick: 'ziegel',
 		red: 'rot', rose: 'rosé', orange: 'orange', amber: 'bernstein', yellow: 'gelb',
 		lime: 'limettengrün', green: 'grün', teal: 'blaugrün', turquoise: 'türkis', cyan: 'cyan',
 		skyBlue: 'himmelblau', blue: 'blau', indigo: 'indigo', violet: 'violett',
@@ -162,6 +172,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	fr: {
 		black: 'noir', white: 'blanc', gray: 'gris', silver: 'argent', brown: 'brun',
 		cream: 'crème', beige: 'beige', tan: 'fauve', peach: 'pêche', copper: 'cuivre',
+		coral: 'corail', salmon: 'saumon', terracotta: 'terre cuite', rust: 'rouille', brick: 'brique',
 		red: 'rouge', rose: 'rose', orange: 'orange', amber: 'ambre', yellow: 'jaune',
 		lime: 'vert citron', green: 'vert', teal: 'bleu sarcelle', turquoise: 'turquoise', cyan: 'cyan',
 		skyBlue: 'bleu ciel', blue: 'bleu', indigo: 'indigo', violet: 'violet',
@@ -171,6 +182,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	pt: {
 		black: 'preto', white: 'branco', gray: 'cinzento', silver: 'prateado', brown: 'castanho',
 		cream: 'creme', beige: 'bege', tan: 'tan', peach: 'pêssego', copper: 'cobre',
+		coral: 'coral', salmon: 'salmão', terracotta: 'terracota', rust: 'ferrugem', brick: 'tijolo',
 		red: 'vermelho', rose: 'rosa', orange: 'laranja', amber: 'âmbar', yellow: 'amarelo',
 		lime: 'verde lima', green: 'verde', teal: 'azul-petróleo', turquoise: 'turquesa', cyan: 'ciano',
 		skyBlue: 'azul-céu', blue: 'azul', indigo: 'índigo', violet: 'violeta',
@@ -180,6 +192,7 @@ var COLOR_NAME_TRANSLATIONS = {
 	it: {
 		black: 'nero', white: 'bianco', gray: 'grigio', silver: 'argento', brown: 'marrone',
 		cream: 'crema', beige: 'beige', tan: 'tan', peach: 'pesca', copper: 'rame',
+		coral: 'corallo', salmon: 'salmone', terracotta: 'terracotta', rust: 'ruggine', brick: 'mattone',
 		red: 'rosso', rose: 'rosa', orange: 'arancione', amber: 'ambra', yellow: 'giallo',
 		lime: 'verde lime', green: 'verde', teal: 'verde petrolio', turquoise: 'turchese', cyan: 'ciano',
 		skyBlue: 'azzurro cielo', blue: 'blu', indigo: 'indaco', violet: 'viola',
@@ -284,8 +297,31 @@ function warmNeutralName(hsl) {
 	return '';
 }
 
+function warmRedOrangeName(hsl) {
+	if (hsl.h < 6 || hsl.h > 22 || hsl.s < 0.42) {
+		return '';
+	}
+
+	if (hsl.l >= 0.68) {
+		return hsl.h <= 12 ? 'salmon' : 'coral';
+	}
+
+	if (hsl.l >= 0.55) {
+		return 'coral';
+	}
+
+	if (hsl.l >= 0.43) {
+		return hsl.h <= 12 ? 'brick' : 'terracotta';
+	}
+
+	return hsl.h <= 12 ? 'rust' : 'terracotta';
+}
+
 function shouldModifyColorName(name) {
-	return !['black', 'white', 'silver', 'cream', 'beige', 'tan', 'peach', 'copper'].includes(name);
+	return ![
+		'black', 'white', 'silver', 'cream', 'beige', 'tan', 'peach',
+		'copper', 'coral', 'salmon', 'terracotta', 'rust', 'brick'
+	].includes(name);
 }
 
 function describeRgbColor(color) {
@@ -308,7 +344,7 @@ function describeRgbColor(color) {
 			name = 'gray';
 		}
 	} else {
-		name = warmNeutralName(hsl) || baseColorName(hsl.h);
+		name = warmNeutralName(hsl) || warmRedOrangeName(hsl) || baseColorName(hsl.h);
 	}
 
 	if (!modifier || !shouldModifyColorName(name)) {

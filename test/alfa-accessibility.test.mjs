@@ -312,7 +312,12 @@ test('live status text describes hex colors with approximate names', async () =>
       tan: formatColorForStatus('#d8b08c'),
       peach: formatColorForStatus('#f1d2b6'),
       copper: formatColorForStatus('#b87333'),
-      brown: formatColorForStatus('#8b5a2b')
+      brown: formatColorForStatus('#8b5a2b'),
+      salmon: formatColorForStatus('#e39a8b'),
+      coral: formatColorForStatus('#ff7f50'),
+      terracotta: formatColorForStatus('#cc451d'),
+      rust: formatColorForStatus('#b72f14'),
+      brick: formatColorForStatus('#c43a1a')
     })), {
       black: '#000000 (black)',
       white: '#ffffff (white)',
@@ -327,7 +332,12 @@ test('live status text describes hex colors with approximate names', async () =>
       tan: '#d8b08c (tan)',
       peach: '#f1d2b6 (peach)',
       copper: '#b87333 (copper)',
-      brown: '#8b5a2b (brown)'
+      brown: '#8b5a2b (brown)',
+      salmon: '#e39a8b (salmon)',
+      coral: '#ff7f50 (coral)',
+      terracotta: '#cc451d (terracotta)',
+      rust: '#b72f14 (rust)',
+      brick: '#c43a1a (brick)'
     });
 
     await page.selectOption('#language-switcher', 'da');
@@ -338,13 +348,17 @@ test('live status text describes hex colors with approximate names', async () =>
       rose: formatColorForStatus('#e11d48'),
       silver: formatColorForStatus('#c0c0c0'),
       peach: formatColorForStatus('#f1d2b6'),
-      copper: formatColorForStatus('#b87333')
+      copper: formatColorForStatus('#b87333'),
+      coral: formatColorForStatus('#ff7f50'),
+      brick: formatColorForStatus('#c43a1a')
     })), {
       lightRed: '#ff6666 (lys rød)',
       rose: '#e11d48 (rosa)',
       silver: '#c0c0c0 (sølv)',
       peach: '#f1d2b6 (fersken)',
-      copper: '#b87333 (kobber)'
+      copper: '#b87333 (kobber)',
+      coral: '#ff7f50 (koral)',
+      brick: '#c43a1a (tegl)'
     });
 
     await context.close();
