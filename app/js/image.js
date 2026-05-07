@@ -42,6 +42,8 @@ function loadImagePreview() {
 
 function loadImageFile(file) {
 	cachedPixels = false;
+	image.hasContrastHighlights = false;
+	image.contrastTest = null;
 
 	var reader = new FileReader();
 	reader.onload = function(event) {
@@ -107,8 +109,8 @@ function showEmptyPreviewCanvas() {
 	updateCheckerResult('');
 }
 
-function updatePreviewCanvas() {
-	hideResetBtn();
+function updatePreviewCanvas(options) {
+	options = options || {};
 
 	var canvas = getCanvas();
 	var context = getContext();
@@ -121,6 +123,7 @@ function updatePreviewCanvas() {
 		throw new Error(translate('noReadableImageError'));
 	}
 
+	var shouldPreserveHighlights = options.preserveHighlights !== false && image.hasContrastHighlights && image.contrastTest;
 	image.dimensions = scaleImage(canvas);
 
 	if (!image.dimensions.width || !image.dimensions.height) {
@@ -137,12 +140,23 @@ function updatePreviewCanvas() {
 	renderImage(context, image.file);
 	cachePixels(context);
 	updatePreviewControls();
-	updateCheckerResult('');
+
+	if (shouldPreserveHighlights && window.applyContrastHighlights) {
+		applyContrastHighlights(context, image.contrastTest, false);
+		showResetBtn();
+	} else {
+		image.hasContrastHighlights = false;
+		image.contrastTest = null;
+		hideResetBtn();
+		updateCheckerResult('');
+	}
 }
 
 function resetPreviewImage() {
 	try {
-		updatePreviewCanvas();
+		image.hasContrastHighlights = false;
+		image.contrastTest = null;
+		updatePreviewCanvas({ preserveHighlights: false });
 		announceStatus(translate('imageResetStatus'));
 	} catch (error) {
 		showError(error.message);
