@@ -166,7 +166,7 @@ select {
 .language-switcher {
 	display: grid;
 	gap: 6px;
-	min-width: 180px;
+	min-width: 220px;
 	color: var(--muted);
 	font-size: 0.78rem;
 	font-weight: 750;
@@ -174,10 +174,12 @@ select {
 
 .header-controls {
 	display: flex;
+	flex: 0 0 auto;
 	flex-wrap: wrap;
 	justify-content: flex-end;
 	align-items: end;
-	gap: 14px;
+	gap: 10px;
+	padding-top: 6px;
 }
 
 .theme-control {
@@ -207,8 +209,8 @@ select {
 	cursor: pointer;
 	display: inline-grid;
 	place-items: center;
-	width: 44px;
-	min-height: 44px;
+	width: 52px;
+	min-height: 46px;
 	padding: 0;
 	border: 1px solid var(--border-strong);
 	border-radius: 6px;
@@ -828,11 +830,12 @@ input[type=color] {
 
 	.language-switcher {
 		min-width: 0;
-		max-width: 240px;
+		max-width: none;
 	}
 
 	.header-controls {
 		justify-content: start;
+		align-items: end;
 	}
 
 	.upload-panel,
