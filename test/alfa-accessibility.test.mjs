@@ -301,8 +301,9 @@ test('load image without a selected file opens an empty checker canvas', async (
     await page.getByRole('button', { name: 'Load image' }).click();
 
     assert.equal(await page.locator('#step-2').isVisible(), true);
-    assert.equal(await page.locator('#step-1').evaluate((element) => element.hidden), true);
-    assert.equal(await page.locator('#step-1').isHidden(), true);
+    assert.equal(await page.locator('#step-1').evaluate((element) => element.hidden), false);
+    assert.equal(await page.locator('#step-1').isVisible(), true);
+    assert.equal(await page.locator('#intro-panel').isHidden(), true);
     assert.equal(await page.locator('#app-error').evaluate((element) => element.hidden), true);
     assert.equal(await page.locator('#image_preview').evaluate((canvas) => canvas.height), 320);
     await page.waitForFunction(() => document.querySelector('#settings-status').textContent.includes('empty canvas'));
@@ -354,7 +355,7 @@ test('intro heading remains a heading when collapsed', async () => {
   }
 });
 
-test('loading a selected image hides the image chooser in canvas view', async () => {
+test('choosing an image opens the checker and keeps the image chooser available', async () => {
   buildApp();
 
   const server = await startStaticServer();
@@ -367,13 +368,13 @@ test('loading a selected image hides the image chooser in canvas view', async ()
     await page.goto(server.url, { waitUntil: 'networkidle' });
 
     await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
-    await page.getByRole('button', { name: 'Load image' }).click();
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
 
     assert.equal(await page.locator('#step-2').isVisible(), true);
-    assert.equal(await page.locator('#step-1').evaluate((element) => element.hidden), true);
-    assert.equal(await page.locator('#step-1').isHidden(), true);
-    assert.equal(await page.locator('#step-1').getAttribute('aria-hidden'), 'true');
+    assert.equal(await page.locator('#step-1').evaluate((element) => element.hidden), false);
+    assert.equal(await page.locator('#step-1').isVisible(), true);
+    assert.equal(await page.locator('#step-1').getAttribute('aria-hidden'), null);
+    assert.equal(await page.locator('#intro-panel').isHidden(), true);
     assert.equal(await page.locator('#image_preview').evaluate((canvas) => canvas.height > 0), true);
     await page.waitForFunction(() => document.querySelector('#settings-status').textContent.includes('Loaded social-card.png'));
     assert.equal(await page.locator('#settings-status').textContent(), 'Loaded social-card.png. Original size: 1,200 by 630 pixels.');
@@ -387,7 +388,7 @@ test('loading a selected image hides the image chooser in canvas view', async ()
   }
 });
 
-test('image chooser previews selected images and dropped images load immediately', async () => {
+test('image chooser loads selected and dropped images immediately', async () => {
   buildApp();
 
   const server = await startStaticServer();
@@ -400,7 +401,9 @@ test('image chooser previews selected images and dropped images load immediately
     await page.goto(server.url, { waitUntil: 'networkidle' });
 
     await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
-    await page.locator('#image_file').dispatchEvent('change');
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
+    assert.equal(await page.locator('#step-2').isVisible(), true);
+    assert.equal(await page.locator('#step-1').isVisible(), true);
     assert.equal(await page.locator('#image-thumbnail').isVisible(), true);
     assert.match(await page.locator('#image-thumbnail').getAttribute('src'), /^blob:/);
     assert.equal(await page.locator('#selected-file-name').textContent(), 'social-card.png');
@@ -413,7 +416,7 @@ test('image chooser previews selected images and dropped images load immediately
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
 
     assert.equal(await page.locator('#step-2').isVisible(), true);
-    assert.equal(await page.locator('#step-1').isHidden(), true);
+    assert.equal(await page.locator('#step-1').isVisible(), true);
     assert.equal(await page.locator('#image_file').evaluate((input) => input.files[0].name), 'dropped-social-card.png');
     assert.equal(await page.locator('#selected-file-name').textContent(), 'dropped-social-card.png');
     assert.match(await page.locator('#image-thumbnail').getAttribute('src'), /^blob:/);
@@ -422,7 +425,7 @@ test('image chooser previews selected images and dropped images load immediately
     await page.dispatchEvent('body', 'drop', { dataTransfer: secondDragData });
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
     assert.equal(await page.locator('#step-2').isVisible(), true);
-    assert.equal(await page.locator('#step-1').isHidden(), true);
+    assert.equal(await page.locator('#step-1').isVisible(), true);
 
     await context.close();
   } finally {
@@ -479,7 +482,6 @@ test('color picker supports keyboard placement and selection', async () => {
     await page.goto(server.url, { waitUntil: 'networkidle' });
 
     await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
-    await page.getByRole('button', { name: 'Load image' }).click();
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
 
     await page.locator('#colorpicker').click();
@@ -581,7 +583,6 @@ test('contrast rendering changes the canvas and reset restores the source image'
     await page.goto(server.url, { waitUntil: 'networkidle' });
 
     await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
-    await page.getByRole('button', { name: 'Load image' }).click();
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
 
     const originalCanvas = await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL());
@@ -642,7 +643,6 @@ test('image preview supports zoom and only shows pan controls when the image ove
     await page.goto(server.url, { waitUntil: 'networkidle' });
 
     await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
-    await page.getByRole('button', { name: 'Load image' }).click();
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
 
     const initialState = await page.evaluate(() => {
@@ -721,7 +721,6 @@ test('loaded image preview stays within the viewport on small screens and resize
     await page.goto(server.url, { waitUntil: 'networkidle' });
 
     await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
-    await page.getByRole('button', { name: 'Load image' }).click();
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
 
     async function assertNoHorizontalOverflow() {

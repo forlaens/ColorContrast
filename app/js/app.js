@@ -1,14 +1,28 @@
 function showStep(stepNumber) {
 	var step1 = id('step-1');
 	var step2 = id('step-2');
-	var newStep = id('step-' + stepNumber);
+	var intro = id('intro-panel');
+	var isCheckerView = stepNumber === 2;
 
-	step1.hidden = true;
-	step1.setAttribute('aria-hidden', 'true');
-	step2.hidden = true;
-	step2.setAttribute('aria-hidden', 'true');
-	newStep.hidden = false;
-	newStep.removeAttribute('aria-hidden');
+	step1.hidden = false;
+	step1.removeAttribute('aria-hidden');
+	step2.hidden = !isCheckerView;
+	document.body.classList.toggle('is-checker-view', isCheckerView);
+
+	if (isCheckerView) {
+		step2.removeAttribute('aria-hidden');
+	} else {
+		step2.setAttribute('aria-hidden', 'true');
+	}
+
+	if (intro) {
+		intro.hidden = isCheckerView;
+		if (isCheckerView) {
+			intro.setAttribute('aria-hidden', 'true');
+		} else {
+			intro.removeAttribute('aria-hidden');
+		}
+	}
 }
 
 function isAccessibilityStatementView() {

@@ -511,6 +511,20 @@ h2 {
 	padding: 16px;
 }
 
+body.is-checker-view .upload-panel {
+	margin-bottom: 12px;
+	box-shadow: none;
+}
+
+body.is-checker-view .upload-dropzone {
+	min-height: auto;
+	padding: 16px 18px;
+}
+
+body.is-checker-view .upload-panel .cta {
+	display: none;
+}
+
 .intro-panel {
 	margin-bottom: 18px;
 }
