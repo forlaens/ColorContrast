@@ -11,7 +11,9 @@
 
 	<header class="hero" aria-labelledby="app-title">
 		<div>
-			<h1 id="app-title" data-i18n="title">Image contrast checker</h1>
+			<h1 id="app-title">
+				<a class="home-title-link" href="/" onclick="return showFrontView();" data-i18n="title">Image contrast checker</a>
+			</h1>
 			<p class="lede" data-i18n="lede">Choose a color from the image, run the test, then check whether that color would still be readable or visible on the highlighted areas.</p>
 		</div>
 		<div class="header-controls">
