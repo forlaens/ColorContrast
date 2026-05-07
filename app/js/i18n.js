@@ -87,7 +87,7 @@
 			accessibilityFeedbackTitle: 'Feedback and contact',
 			accessibilityFeedbackCopy: 'If you find an accessibility problem, have trouble using the app, or have a suggestion, email',
 			accessibilityUpdated: 'Last updated: May 7, 2026.',
-			accessibilityLink: 'Accessibility statement',
+			accessibilityLink: 'Accessibility Statement',
 			accessibilityBack: 'Back to checker'
 		},
 		da: {
@@ -457,7 +457,7 @@
 			accessibilityFeedbackTitle: 'Feedback aamma attavissaq',
 			accessibilityFeedbackCopy: 'Accessibility-imut ajornartorsiummik nassaaruit, appimik atuineq ajornartorsiutigigukku imaluunniit siunnersuuteqaruit, emailerfigiuk',
 			accessibilityUpdated: 'Kingullermik nutarterneqarpoq: 7. maj 2026.',
-			accessibilityLink: 'Accessibility statement',
+			accessibilityLink: 'Accessibility Statement',
 			accessibilityBack: 'Kontrastimik misissuinermut uterit'
 		},
 		is: {
