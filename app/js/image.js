@@ -36,6 +36,10 @@ function loadImagePreview() {
 		return false;
 	}
 
+	return loadImageFile(file);
+}
+
+function loadImageFile(file) {
 	cachedPixels = false;
 
 	var reader = new FileReader();
@@ -73,6 +77,7 @@ function loadImagePreview() {
 	};
 
 	reader.readAsDataURL(file);
+	return true;
 }
 
 // The empty canvas keeps the checker forgiving: users can enter the canvas view
@@ -363,7 +368,7 @@ function hasImageDrag(dataTransfer) {
 	return dataTransfer.types && Array.prototype.indexOf.call(dataTransfer.types, 'Files') !== -1;
 }
 
-function setImageFile(file) {
+function setImageFile(file, shouldLoadPreview) {
 	var fileInput = id('image_file');
 
 	if (!fileInput || !imageValidation(file)) {
@@ -381,8 +386,13 @@ function setImageFile(file) {
 
 	showImageThumbnail(file);
 	updateSelectedFileName();
-	showStep(1);
 	clearError();
+
+	if (shouldLoadPreview) {
+		return loadImageFile(file);
+	}
+
+	showStep(1);
 	return true;
 }
 
@@ -523,7 +533,7 @@ function initImageChooser() {
 
 		var file = getImageFileFromTransfer(event.dataTransfer);
 		if (file) {
-			setImageFile(file);
+			setImageFile(file, true);
 		}
 	});
 }
