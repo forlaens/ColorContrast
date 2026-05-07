@@ -387,7 +387,7 @@ test('loading a selected image hides the image chooser in canvas view', async ()
   }
 });
 
-test('image chooser previews selected and dropped images', async () => {
+test('image chooser previews selected images and dropped images load immediately', async () => {
   buildApp();
 
   const server = await startStaticServer();
@@ -410,20 +410,19 @@ test('image chooser previews selected and dropped images', async () => {
     assert.equal(await page.locator('body').evaluate((body) => body.classList.contains('is-dragging-image')), true);
     assert.equal(await page.locator('.upload-dropzone').evaluate((dropzone) => dropzone.classList.contains('is-drag-target')), true);
     await page.dispatchEvent('body', 'drop', { dataTransfer: dragData });
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
 
-    assert.equal(await page.locator('#step-1').isVisible(), true);
+    assert.equal(await page.locator('#step-2').isVisible(), true);
+    assert.equal(await page.locator('#step-1').isHidden(), true);
     assert.equal(await page.locator('#image_file').evaluate((input) => input.files[0].name), 'dropped-social-card.png');
     assert.equal(await page.locator('#selected-file-name').textContent(), 'dropped-social-card.png');
-    assert.equal(await page.locator('#image-thumbnail').isVisible(), true);
-
-    await page.getByRole('button', { name: 'Load image' }).click();
-    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
-    assert.equal(await page.locator('#step-2').isVisible(), true);
+    assert.match(await page.locator('#image-thumbnail').getAttribute('src'), /^blob:/);
 
     const secondDragData = await createImageDataTransfer(page);
     await page.dispatchEvent('body', 'drop', { dataTransfer: secondDragData });
-    assert.equal(await page.locator('#step-1').isVisible(), true);
-    assert.equal(await page.locator('#step-2').isHidden(), true);
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
+    assert.equal(await page.locator('#step-2').isVisible(), true);
+    assert.equal(await page.locator('#step-1').isHidden(), true);
 
     await context.close();
   } finally {
@@ -607,6 +606,19 @@ test('contrast rendering changes the canvas and reset restores the source image'
     assert.equal(await page.locator('#checker-result').textContent(), '');
     await page.waitForFunction(() => document.querySelector('#settings-status').textContent.includes('Image reset'));
     assert.equal(await page.locator('#settings-status').textContent(), 'Image reset. Contrast highlights removed.');
+
+    await page.getByRole('button', { name: 'Run test' }).click();
+    await page.waitForFunction(() => !document.querySelector('#reset-image').hidden);
+    assert.notEqual(await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL()), originalCanvas);
+
+    const dragData = await createImageDataTransfer(page);
+    await page.dispatchEvent('body', 'drop', { dataTransfer: dragData });
+    await page.waitForFunction(() => document.querySelector('#settings-status').textContent.includes('Loaded dropped-social-card.png'));
+
+    assert.equal(await page.locator('#step-2').isVisible(), true);
+    assert.equal(await page.locator('#reset-image').isHidden(), true);
+    assert.equal(await page.locator('#checker-result').textContent(), '');
+    assert.equal(await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL()), originalCanvas);
 
     await context.close();
   } finally {
