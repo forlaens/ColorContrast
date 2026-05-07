@@ -708,6 +708,50 @@ test('image preview supports zoom and only shows pan controls when the image ove
   }
 });
 
+test('small images expand to the full preview width before zooming', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 900, height: 720 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    await page.locator('#image_file').setInputFiles({
+      name: 'small-preview.svg',
+      mimeType: 'image/svg+xml',
+      buffer: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="120" height="60"><rect width="120" height="60" fill="#ffffff"/><circle cx="30" cy="30" r="20" fill="#222222"/></svg>')
+    });
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
+
+    const previewState = await page.evaluate(() => {
+      const viewport = document.querySelector('#preview-viewport');
+      const canvas = document.querySelector('#image_preview');
+
+      return {
+        viewportWidth: viewport.clientWidth,
+        canvasCssWidth: Math.round(canvas.getBoundingClientRect().width),
+        canvasWidth: canvas.width,
+        zoomPercent: parseInt(document.querySelector('#zoom-output').textContent, 10)
+      };
+    });
+
+    assert.equal(previewState.canvasCssWidth, previewState.viewportWidth);
+    assert.equal(previewState.canvasWidth, previewState.canvasCssWidth);
+    assert.equal(previewState.zoomPercent > 100, true);
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
 test('loaded image preview stays within the viewport on small screens and resize', async () => {
   buildApp();
 

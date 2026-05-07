@@ -154,7 +154,7 @@ function scaleImage(canvas) {
 
 	var viewport = id('preview-viewport');
 	var viewportWidth = viewport ? viewport.clientWidth : canvas.offsetWidth;
-	var fitScale = Math.min(1, viewportWidth / image.file.width);
+	var fitScale = viewportWidth / image.file.width;
 	var scale = image.zoom || fitScale;
 
 	var width = Math.floor(image.file.width * scale);
@@ -174,7 +174,7 @@ function getCurrentZoom() {
 
 	var viewport = id('preview-viewport');
 	var viewportWidth = viewport ? viewport.clientWidth : 1;
-	return Math.min(1, viewportWidth / image.file.width);
+	return viewportWidth / image.file.width;
 }
 
 function setPreviewZoom(zoom, shouldAnnounce) {
@@ -286,8 +286,7 @@ function resizePreviewFrame() {
 		parseFloat(areaStyles.borderRightWidth);
 	var availableWidth = Math.floor(scrollArea.getBoundingClientRect().width);
 	var contentWidth = Math.max(1, availableWidth - horizontalSpacing);
-	var preferredWidth = image.file ? Math.min(image.file.width, contentWidth) : contentWidth;
-	var width = Math.max(1, Math.min(preferredWidth + horizontalSpacing, availableWidth));
+	var width = Math.max(1, Math.min(contentWidth + horizontalSpacing, availableWidth));
 
 	previewArea.style.setProperty('--checker-min-width', '0px');
 	previewArea.style.width = width + 'px';
