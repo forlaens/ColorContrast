@@ -94,6 +94,15 @@ async function removeUnbundledScripts() {
     .map((file) => rm(resolve(jsDir, file), { force: true })));
 }
 
+async function cleanupBuildArtifacts() {
+  const jsDir = resolve(distDir, 'js');
+  
+  await Promise.all([
+    rm(resolve(jsDir, 'app.bundle.js.map'), { force: true }),
+    rm(resolve(jsDir, 'app.bundle.meta.json'), { force: true })
+  ]);
+}
+
 async function removeUnusedReleaseImages() {
   await Promise.all([
     rm(resolve(distDir, 'img/steps/step-1-upload.png'), { force: true }),
@@ -134,6 +143,7 @@ html = await bundleScripts(html);
 
 await optimizeServiceWorker();
 await removeUnbundledScripts();
+await cleanupBuildArtifacts();
 await removeUnusedReleaseImages();
 await writeFile(resolve(distDir, 'index.html'), html);
 
