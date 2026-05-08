@@ -307,17 +307,37 @@ test('live status text describes hex colors with approximate names', async () =>
       teal: formatColorForStatus('#14b8a6'),
       turquoise: formatColorForStatus('#00ced1'),
       silver: formatColorForStatus('#c0c0c0'),
+      charcoal: formatColorForStatus('#1f2937'),
+      slate: formatColorForStatus('#334155'),
+      ivory: formatColorForStatus('#fffff0'),
       cream: formatColorForStatus('#f8ead8'),
       beige: formatColorForStatus('#f5deb3'),
+      sand: formatColorForStatus('#e9dcc2'),
       tan: formatColorForStatus('#d8b08c'),
       peach: formatColorForStatus('#f1d2b6'),
       copper: formatColorForStatus('#b87333'),
+      chocolate: formatColorForStatus('#381f13'),
+      burgundy: formatColorForStatus('#800020'),
+      maroon: formatColorForStatus('#5a1717'),
+      wine: formatColorForStatus('#4b0f1e'),
+      crimson: formatColorForStatus('#dc143c'),
       brown: formatColorForStatus('#8b5a2b'),
       salmon: formatColorForStatus('#e39a8b'),
       coral: formatColorForStatus('#ff7f50'),
       terracotta: formatColorForStatus('#cc451d'),
       rust: formatColorForStatus('#b72f14'),
-      brick: formatColorForStatus('#c43a1a')
+      brick: formatColorForStatus('#c43a1a'),
+      ochre: formatColorForStatus('#d4a017'),
+      mustard: formatColorForStatus('#8a6f12'),
+      olive: formatColorForStatus('#556b2f'),
+      mint: formatColorForStatus('#a8e6cf'),
+      forestGreen: formatColorForStatus('#0b3d0b'),
+      seaGreen: formatColorForStatus('#2e8b57'),
+      navy: formatColorForStatus('#001f3f'),
+      lavender: formatColorForStatus('#c7b7ff'),
+      lilac: formatColorForStatus('#d8bfd8'),
+      mauve: formatColorForStatus('#b784a7'),
+      plum: formatColorForStatus('#4b2142')
     })), {
       black: '#000000 (black)',
       white: '#ffffff (white)',
@@ -327,17 +347,37 @@ test('live status text describes hex colors with approximate names', async () =>
       teal: '#14b8a6 (teal)',
       turquoise: '#00ced1 (turquoise)',
       silver: '#c0c0c0 (silver)',
+      charcoal: '#1f2937 (charcoal)',
+      slate: '#334155 (slate)',
+      ivory: '#fffff0 (ivory)',
       cream: '#f8ead8 (cream)',
       beige: '#f5deb3 (beige)',
+      sand: '#e9dcc2 (sand)',
       tan: '#d8b08c (tan)',
       peach: '#f1d2b6 (peach)',
       copper: '#b87333 (copper)',
+      chocolate: '#381f13 (chocolate)',
+      burgundy: '#800020 (burgundy)',
+      maroon: '#5a1717 (maroon)',
+      wine: '#4b0f1e (wine)',
+      crimson: '#dc143c (crimson)',
       brown: '#8b5a2b (brown)',
       salmon: '#e39a8b (salmon)',
       coral: '#ff7f50 (coral)',
       terracotta: '#cc451d (terracotta)',
       rust: '#b72f14 (rust)',
-      brick: '#c43a1a (brick)'
+      brick: '#c43a1a (brick)',
+      ochre: '#d4a017 (ochre)',
+      mustard: '#8a6f12 (mustard)',
+      olive: '#556b2f (olive)',
+      mint: '#a8e6cf (mint)',
+      forestGreen: '#0b3d0b (forest green)',
+      seaGreen: '#2e8b57 (sea green)',
+      navy: '#001f3f (navy)',
+      lavender: '#c7b7ff (lavender)',
+      lilac: '#d8bfd8 (lilac)',
+      mauve: '#b784a7 (mauve)',
+      plum: '#4b2142 (plum)'
     });
 
     await page.selectOption('#language-switcher', 'da');
@@ -347,7 +387,15 @@ test('live status text describes hex colors with approximate names', async () =>
       lightRed: formatColorForStatus('#ff6666'),
       rose: formatColorForStatus('#e11d48'),
       silver: formatColorForStatus('#c0c0c0'),
+      charcoal: formatColorForStatus('#1f2937'),
+      ivory: formatColorForStatus('#fffff0'),
       peach: formatColorForStatus('#f1d2b6'),
+      chocolate: formatColorForStatus('#381f13'),
+      crimson: formatColorForStatus('#dc143c'),
+      mustard: formatColorForStatus('#8a6f12'),
+      mint: formatColorForStatus('#a8e6cf'),
+      navy: formatColorForStatus('#001f3f'),
+      plum: formatColorForStatus('#4b2142'),
       copper: formatColorForStatus('#b87333'),
       coral: formatColorForStatus('#ff7f50'),
       brick: formatColorForStatus('#c43a1a')
@@ -355,7 +403,15 @@ test('live status text describes hex colors with approximate names', async () =>
       lightRed: '#ff6666 (lys rød)',
       rose: '#e11d48 (rosa)',
       silver: '#c0c0c0 (sølv)',
+      charcoal: '#1f2937 (koksgrå)',
+      ivory: '#fffff0 (elfenben)',
       peach: '#f1d2b6 (fersken)',
+      chocolate: '#381f13 (chokoladebrun)',
+      crimson: '#dc143c (karmosinrød)',
+      mustard: '#8a6f12 (sennepsgul)',
+      mint: '#a8e6cf (mintgrøn)',
+      navy: '#001f3f (marineblå)',
+      plum: '#4b2142 (blomme)',
       copper: '#b87333 (kobber)',
       coral: '#ff7f50 (koral)',
       brick: '#c43a1a (tegl)'
@@ -818,6 +874,8 @@ test('tall images fit the initial canvas viewport without scrolling', async () =
     const previewState = await page.evaluate(() => {
       const viewport = document.querySelector('#preview-viewport');
       const canvas = document.querySelector('#image_preview');
+      const viewportRect = viewport.getBoundingClientRect();
+      const canvasRect = canvas.getBoundingClientRect();
 
       return {
         panHidden: document.querySelector('#pan-controls').hidden,
@@ -826,7 +884,9 @@ test('tall images fit the initial canvas viewport without scrolling', async () =
         scrollWidth: viewport.scrollWidth,
         clientWidth: viewport.clientWidth,
         canvasCssHeight: Math.round(canvas.getBoundingClientRect().height),
-        viewportCssHeight: Math.round(viewport.getBoundingClientRect().height)
+        viewportCssHeight: Math.round(viewport.getBoundingClientRect().height),
+        canvasCenter: Math.round(canvasRect.left + (canvasRect.width / 2)),
+        viewportCenter: Math.round(viewportRect.left + (viewportRect.width / 2))
       };
     });
 
@@ -834,6 +894,7 @@ test('tall images fit the initial canvas viewport without scrolling', async () =
     assert.equal(previewState.scrollHeight <= previewState.clientHeight + 1, true);
     assert.equal(previewState.scrollWidth <= previewState.clientWidth + 1, true);
     assert.equal(previewState.canvasCssHeight <= previewState.viewportCssHeight + 1, true);
+    assert.equal(Math.abs(previewState.canvasCenter - previewState.viewportCenter) <= 1, true);
 
     await context.close();
   } finally {
