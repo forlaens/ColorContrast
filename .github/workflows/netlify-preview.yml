@@ -35,6 +35,5 @@ jobs:
         run: |
           npx netlify deploy \
             --dir=dist \
-            --draft \
             --message "Preview for PR #${{ github.event.number }}" \
             --site="$NETLIFY_SITE_ID"
