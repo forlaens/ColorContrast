@@ -796,6 +796,54 @@ test('image preview supports zoom and only shows pan controls when the image ove
   }
 });
 
+test('tall images fit the initial canvas viewport without scrolling', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 900, height: 720 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+
+    await page.locator('#image_file').setInputFiles({
+      name: 'tall-preview.svg',
+      mimeType: 'image/svg+xml',
+      buffer: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="1600"><rect width="400" height="1600" fill="#ffffff"/><rect y="600" width="400" height="400" fill="#111111"/></svg>')
+    });
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
+
+    const previewState = await page.evaluate(() => {
+      const viewport = document.querySelector('#preview-viewport');
+      const canvas = document.querySelector('#image_preview');
+
+      return {
+        panHidden: document.querySelector('#pan-controls').hidden,
+        scrollHeight: viewport.scrollHeight,
+        clientHeight: viewport.clientHeight,
+        scrollWidth: viewport.scrollWidth,
+        clientWidth: viewport.clientWidth,
+        canvasCssHeight: Math.round(canvas.getBoundingClientRect().height),
+        viewportCssHeight: Math.round(viewport.getBoundingClientRect().height)
+      };
+    });
+
+    assert.equal(previewState.panHidden, true);
+    assert.equal(previewState.scrollHeight <= previewState.clientHeight + 1, true);
+    assert.equal(previewState.scrollWidth <= previewState.clientWidth + 1, true);
+    assert.equal(previewState.canvasCssHeight <= previewState.viewportCssHeight + 1, true);
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
 test('zooming keeps active contrast highlights until the image is reset', async () => {
   buildApp();
 
