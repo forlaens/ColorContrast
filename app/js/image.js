@@ -168,13 +168,34 @@ function scaleImage(canvas) {
 
 	var viewport = id('preview-viewport');
 	var viewportWidth = viewport ? viewport.clientWidth : canvas.offsetWidth;
-	var fitScale = viewportWidth / image.file.width;
+	var viewportHeight = getPreviewFitHeight(viewport);
+	var widthFitScale = viewportWidth / image.file.width;
+	var heightFitScale = viewportHeight / image.file.height;
+	var fitScale = Math.min(widthFitScale, heightFitScale);
 	var scale = image.zoom || fitScale;
 
-	var width = Math.floor(image.file.width * scale);
-	var height = Math.floor(image.file.height * scale);
+	var width = Math.max(1, Math.floor(image.file.width * scale));
+	var height = Math.max(1, Math.floor(image.file.height * scale));
 
 	return { width, height };
+}
+
+function getPreviewFitHeight(viewport) {
+	if (!viewport) {
+		return 320;
+	}
+
+	var style = window.getComputedStyle(viewport);
+	var maxHeight = parseFloat(style.maxHeight);
+
+	if (Number.isFinite(maxHeight) && maxHeight > 0) {
+		return maxHeight;
+	}
+
+	var rect = viewport.getBoundingClientRect();
+	var availableHeight = window.innerHeight - rect.top - 24;
+
+	return Math.max(240, availableHeight);
 }
 
 function getCurrentZoom() {
@@ -188,7 +209,8 @@ function getCurrentZoom() {
 
 	var viewport = id('preview-viewport');
 	var viewportWidth = viewport ? viewport.clientWidth : 1;
-	return viewportWidth / image.file.width;
+	var viewportHeight = getPreviewFitHeight(viewport);
+	return Math.min(viewportWidth / image.file.width, viewportHeight / image.file.height);
 }
 
 function setPreviewZoom(zoom, shouldAnnounce) {
