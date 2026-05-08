@@ -140,7 +140,7 @@
 								<button id="zoom-out" class="icon-button" type="button" aria-label="Zoom out" data-i18n-aria-label="zoomOut" onclick="zoomPreview(-1);">−</button>
 								<output id="zoom-output" for="image_preview" aria-live="polite">100%</output>
 								<button id="zoom-in" class="icon-button" type="button" aria-label="Zoom in" data-i18n-aria-label="zoomIn" onclick="zoomPreview(1);">+</button>
-								<button id="zoom-reset" class="icon-button text-icon-button" type="button" aria-label="Reset zoom" data-i18n-aria-label="resetZoom" onclick="resetPreviewZoom();">1:1</button>
+								<button id="zoom-reset" class="icon-button text-icon-button" type="button" aria-label="Reset zoom to 1:1" data-i18n-aria-label="resetZoom" onclick="resetPreviewZoom();">1:1</button>
 							</div>
 						</div>
 						<div hidden id="pan-controls" class="pan-controls" role="group" aria-label="Pan image" data-i18n-aria-label="panControls">

@@ -60,7 +60,7 @@
 			zoomLabel: 'Zoom',
 			zoomOut: 'Zoom out',
 			zoomIn: 'Zoom in',
-			resetZoom: 'Reset zoom',
+			resetZoom: 'Reset zoom to 1:1',
 			zoomStatus: 'Zoom {zoom}%.',
 			previewViewport: 'Zoomable image preview',
 			previewHelp: 'Use the zoom controls to inspect the image. If the image is larger than the visible preview, use the pan buttons or scroll the preview. Focus the image preview and use arrow keys to move the color picker.',
