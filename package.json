@@ -13,7 +13,9 @@
     "test:accessibility": "node --test --test-concurrency=1 test/alfa-accessibility.test.mjs",
     "test": "node --test --test-concurrency=1 test/alfa-accessibility.test.mjs test/build-output.test.mjs test/html-validation.test.mjs",
     "clean": "node scripts/clean.mjs",
-    "build": "node scripts/build.mjs"
+    "build": "node scripts/build.mjs",
+    "analyze:bundle": "node scripts/analyze-bundle.mjs",
+    "analyze:assets": "node scripts/analyze-assets.mjs"
   },
   "engines": {
     "node": ">=20"
@@ -25,6 +27,8 @@
     "@siteimprove/alfa-refinement": "^0.114.3",
     "@siteimprove/alfa-test-utils": "^0.82.1",
     "@siteimprove/alfa-wcag": "^0.114.3",
+    "esbuild": "^0.28.0",
+    "netlify-cli": "^15.1.0",
     "html-validate": "^10.15.0"
   }
 }

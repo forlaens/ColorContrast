@@ -1,0 +1,40 @@
+name: Netlify Preview
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, reopened]
+
+jobs:
+  preview:
+    name: Deploy PR preview to Netlify
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Build app
+        run: npm run build
+
+      - name: Deploy preview to Netlify
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          npx netlify deploy \
+            --dir=dist \
+            --draft \
+            --message "Preview for PR #${{ github.event.number }}" \
+            --site="$NETLIFY_SITE_ID"

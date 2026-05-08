@@ -71,6 +71,10 @@ npm run clean
 
 `npm test` runs the full local test suite.
 
+`npm run analyze:bundle` prints a bundle size breakdown using the generated source map.
+
+`npm run analyze:assets` reports the built JS bundle size and the unminified CSS size.
+
 ## Change Guidelines
 
 - Keep the interface simple and avoid adding explanatory UI when existing labels or short copy can do the job.

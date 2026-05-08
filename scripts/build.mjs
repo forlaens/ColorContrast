@@ -1,6 +1,7 @@
 import { cp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
 import { resolve } from 'node:path';
+import { build as esbuild } from 'esbuild';
 
 function run(command, args) {
   const result = spawnSync(command, args, {
@@ -50,7 +51,23 @@ async function bundleScripts(html) {
     return `/* ${file} */\n${code.trim()}\n`;
   }));
 
-  await writeFile(resolve(distDir, 'js/app.bundle.js'), `${bundle.join('\n')}\n`);
+  const bundledSource = bundle.join('\n');
+
+  const result = await esbuild({
+    stdin: {
+      contents: bundledSource,
+      resolveDir: resolve('app/js'),
+      sourcefile: 'app.bundle.js',
+      loader: 'js'
+    },
+    bundle: false,
+    minify: true,
+    sourcemap: true,
+    metafile: true,
+    outfile: resolve(distDir, 'js/app.bundle.js')
+  });
+
+  await writeFile(resolve(distDir, 'js/app.bundle.meta.json'), JSON.stringify(result.metafile, null, 2));
 
   return html.replace(
     /(?:\n\t<script src="\/js\/[^"]+" defer><\/script>)+/,
