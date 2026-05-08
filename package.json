@@ -28,7 +28,6 @@
     "@siteimprove/alfa-test-utils": "^0.82.1",
     "@siteimprove/alfa-wcag": "^0.114.3",
     "esbuild": "^0.28.0",
-    "netlify-cli": "^15.1.0",
     "html-validate": "^10.15.0"
   }
 }
