@@ -146,7 +146,7 @@ function moveCrosshairs(canvas, x, y) {
 	crosshairs.setAttribute('data-posx', x);
 	crosshairs.setAttribute('data-posy', y);
 
-	crosshairs.style.left = x - (crosshairs.offsetWidth / 2) + 'px';
+	crosshairs.style.left = canvas.offsetLeft + x - (crosshairs.offsetWidth / 2) + 'px';
 	crosshairs.style.top = y - (crosshairs.offsetWidth / 2) + 'px';
 }
 
