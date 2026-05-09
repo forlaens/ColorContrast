@@ -223,11 +223,11 @@
 
 			<section class="accessibility-section" aria-labelledby="accessibility-testing-title">
 				<h3 id="accessibility-testing-title" data-i18n="accessibilityTestingTitle">Testing</h3>
-				<p data-i18n="accessibilityTestingCopy">The build pipeline tests the rendered app with Siteimprove Alfa, axe-core, Nu Html Checker, and browser tests. The tests cover WCAG AAA and best-practice checks, valid HTML, keyboard flows, focus behavior, language switching, theme switching, drag and drop, upload handling, empty-canvas handling, and contrast rendering.</p>
+				<p data-i18n="accessibilityTestingCopy">The build pipeline tests the rendered app with Siteimprove Alfa, axe-core, Nu Html Checker, and browser tests. The tests cover WCAG AAA and best-practice checks, valid HTML, keyboard flows, focus behavior, language switching, theme switching, drag and drop, upload handling, empty-canvas handling, and contrast rendering. The app is also manually tested with screen readers such as NVDA, JAWS, and VoiceOver, browser accessibility plugins, and keyboard-only use.</p>
 			</section>
 
 			<section class="accessibility-section" aria-labelledby="accessibility-limitations-title">
-				<h3 id="accessibility-limitations-title" data-i18n="accessibilityLimitationsTitle">Known limitations</h3>
+				<h3 id="accessibility-limitations-title" data-i18n="accessibilityLimitationsTitle">Tool limitations</h3>
 				<p data-i18n="accessibilityLimitationsCopy">The result depends on the quality of the uploaded image, the color selected by the user, and the contrast target chosen. Some native browser controls, such as the file picker button and file name text, are supplied by the browser and may look or behave slightly differently across platforms. Uploaded images stay in the browser and are not assessed as content covered by this statement.</p>
 			</section>
 
