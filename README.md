@@ -59,7 +59,7 @@ npm run build
 npm run clean
 ```
 
-`npm run dev` serves `app/` at `http://127.0.0.1:8000`.
+`npm run dev` starts a hot-reload dev server at `http://127.0.0.1:8000`. Changes to app files automatically rebuild and refresh the browser.
 
 `npm run check` validates JavaScript and PHP syntax.
 
