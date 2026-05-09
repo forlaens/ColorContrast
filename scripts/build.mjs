@@ -1,5 +1,6 @@
 import { cp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 import { build as esbuild } from 'esbuild';
 
@@ -75,10 +76,17 @@ async function bundleScripts(html) {
   );
 }
 
-async function optimizeServiceWorker() {
+async function optimizeServiceWorker(html) {
   const serviceWorkerPath = resolve(distDir, 'sw.js');
   const serviceWorker = await readFile(serviceWorkerPath, 'utf8');
+  const bundle = await readFile(resolve(distDir, 'js/app.bundle.js'), 'utf8');
+  const cacheHash = createHash('sha256')
+    .update(html)
+    .update(bundle)
+    .digest('hex')
+    .slice(0, 12);
   const optimized = serviceWorker
+    .replace(/colorcontrast-v[\w-]+/, `colorcontrast-${cacheHash}`)
     .replace('/css/style.css', '/js/app.bundle.js')
     .replace(/,\n\t'\/js\/(?:app|canvas|color|contrast|i18n|image|pwa|toolbar|util)\.js'/g, '');
 
@@ -141,7 +149,7 @@ if (rendered.status !== 0) {
 let html = await inlineStyles(rendered.stdout);
 html = await bundleScripts(html);
 
-await optimizeServiceWorker();
+await optimizeServiceWorker(html);
 await removeUnbundledScripts();
 await cleanupBuildArtifacts();
 await removeUnusedReleaseImages();

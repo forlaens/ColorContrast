@@ -62,6 +62,15 @@ test('release config forces HTTPS and removes www', async () => {
   assert.match(htaccess, /RewriteRule \^ https:\/\/%1%\{REQUEST_URI\} \[L,NE,R=301\]/);
   assert.match(htaccess, /ExpiresByType image\/webp "access plus 1 year"/);
   assert.match(htaccess, /Cache-Control "public, max-age=31536000, immutable"/);
+  assert.match(htaccess, /<FilesMatch "\^\(index\\\.html\|sw\\\.js\)\$">/);
+  assert.match(htaccess, /Cache-Control "no-cache, no-store, must-revalidate"/);
+});
+
+test('service worker cache changes with built content', async () => {
+  const serviceWorker = await readFile(join(distDir, 'sw.js'), 'utf8');
+
+  assert.match(serviceWorker, /const CACHE_NAME = 'colorcontrast-[a-f0-9]{12}';/);
+  assert.doesNotMatch(serviceWorker, /colorcontrast-v3/);
 });
 
 test('social card asset has expected dimensions', async () => {
@@ -258,7 +267,7 @@ test('build includes PWA files', async () => {
   assert.equal(manifest.display, 'standalone');
   assert.equal(manifest.start_url, '/');
   assert.equal(manifest.icons.length >= 2, true);
-  assert.match(serviceWorker, /colorcontrast-v3/);
+  assert.match(serviceWorker, /colorcontrast-[a-f0-9]{12}/);
   assert.match(serviceWorker, /\/js\/app\.bundle\.js/);
   assert.match(serviceWorker, /fetch\(event\.request\)/);
   assert.match(serviceWorker, /caches\.match\(event\.request\)/);
