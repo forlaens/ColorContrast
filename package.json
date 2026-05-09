@@ -6,14 +6,16 @@
   "type": "module",
   "scripts": {
     "assets": "php scripts/generate-social-card.php",
-    "dev": "php -S 127.0.0.1:8000 -t app",
+    "dev": "node scripts/dev-server.mjs",
     "check": "node scripts/check.mjs",
     "test:html": "node --test test/html-validation.test.mjs",
     "test:structure": "node --test test/build-output.test.mjs",
     "test:accessibility": "node --test --test-concurrency=1 test/alfa-accessibility.test.mjs",
     "test": "node --test --test-concurrency=1 test/alfa-accessibility.test.mjs test/build-output.test.mjs test/html-validation.test.mjs",
     "clean": "node scripts/clean.mjs",
-    "build": "node scripts/build.mjs"
+    "build": "node scripts/build.mjs",
+    "analyze:bundle": "node scripts/analyze-bundle.mjs",
+    "analyze:assets": "node scripts/analyze-assets.mjs"
   },
   "engines": {
     "node": ">=20"
@@ -25,6 +27,9 @@
     "@siteimprove/alfa-refinement": "^0.114.3",
     "@siteimprove/alfa-test-utils": "^0.82.1",
     "@siteimprove/alfa-wcag": "^0.114.3",
-    "html-validate": "^10.15.0"
+    "chokidar": "^5.0.0",
+    "express": "^5.2.1",
+    "html-validate": "^10.15.0",
+    "ws": "^8.20.0"
   }
 }
