@@ -111,7 +111,7 @@ test('document includes contact footer', async () => {
   assert.match(index, /<h3 id="accessibility-standard-title" data-i18n="accessibilityStandardTitle">Accessibility approach<\/h3>/);
   assert.match(index, /<h3 id="accessibility-measures-title" data-i18n="accessibilityMeasuresTitle">What the tool can and cannot do<\/h3>/);
   assert.match(index, /<h3 id="accessibility-testing-title" data-i18n="accessibilityTestingTitle">Testing<\/h3>/);
-  assert.match(index, /<h3 id="accessibility-limitations-title" data-i18n="accessibilityLimitationsTitle">Known limitations<\/h3>/);
+  assert.match(index, /<h3 id="accessibility-limitations-title" data-i18n="accessibilityLimitationsTitle">Tool limitations<\/h3>/);
   assert.match(index, /<h3 id="accessibility-feedback-title" data-i18n="accessibilityFeedbackTitle">Feedback and contact<\/h3>/);
   assert.match(index, /<span data-i18n="accessibilityFeedbackCopy">If you find an accessibility problem, have trouble using the app, or have a suggestion, email<\/span>/);
   assert.match(index, /<p class="accessibility-updated" data-i18n="accessibilityUpdated">Last updated: May 7, 2026\.<\/p>/);
@@ -135,6 +135,7 @@ test('document includes contact footer', async () => {
   assert.match(i18n, /accessibilityMeasuresTitle:/);
   assert.match(i18n, /accessibilityTestingTitle:/);
   assert.match(i18n, /accessibilityLimitationsTitle:/);
+  assert.match(i18n, /manually tested with screen readers such as NVDA, JAWS, and VoiceOver/);
   assert.match(i18n, /accessibilityFeedbackTitle:/);
   assert.match(i18n, /accessibilityUpdated:/);
   assert.match(i18n, /accessibilityLink:/);
