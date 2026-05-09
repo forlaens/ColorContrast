@@ -144,3 +144,28 @@ jobs:
             test-results/
             playwright-report/
           if-no-files-found: ignore
+
+  required-status:
+    name: Check, build, and test
+    runs-on: ubuntu-latest
+    needs: [check, build, structure, accessibility]
+    if: always()
+
+    steps:
+      - name: Confirm required checks passed
+        env:
+          NEEDS_JSON: ${{ toJson(needs) }}
+        run: |
+          node <<'NODE'
+          const needs = JSON.parse(process.env.NEEDS_JSON);
+          const failed = Object.entries(needs)
+            .filter(([, job]) => job.result !== 'success')
+            .map(([name, job]) => `${name}: ${job.result}`);
+
+          if (failed.length > 0) {
+            console.error(`Required CI jobs did not all pass: ${failed.join(', ')}`);
+            process.exit(1);
+          }
+
+          console.log('Required CI jobs passed.');
+          NODE
