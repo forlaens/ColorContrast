@@ -8,44 +8,85 @@
     "group:monorepos"
   ],
   "timezone": "Europe/Copenhagen",
-  "labels": ["dependencies"],
-  "schedule": ["before 6am every weekday"],
+  "labels": [
+    "dependencies"
+  ],
+  "schedule": [
+    "before 6am every weekday"
+  ],
   "prHourlyLimit": 2,
   "prConcurrentLimit": 10,
   "rangeStrategy": "bump",
   "lockFileMaintenance": {
     "enabled": true,
-    "schedule": ["before 6am on monday"],
+    "schedule": [
+      "before 6am on monday"
+    ],
     "automerge": true,
     "automergeType": "pr",
     "platformAutomerge": true,
-    "addLabels": ["automerge"]
+    "addLabels": [
+      "automerge"
+    ]
   },
   "packageRules": [
     {
-      "description": "Automerge safe non-major updates after CI passes.",
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "description": "Wait three days before npm updates are eligible for merge.",
+      "matchDatasources": [
+        "npm"
+      ],
+      "minimumReleaseAge": "3 days"
+    },
+    {
+      "description": "Automerge stable non-major updates after CI passes.",
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "matchCurrentVersion": "!/^0/",
       "automerge": true,
       "automergeType": "pr",
       "platformAutomerge": true,
-      "addLabels": ["automerge"]
+      "addLabels": [
+        "automerge"
+      ]
     },
     {
-      "description": "Automerge patch updates for 0.x packages only.",
-      "matchUpdateTypes": ["patch"],
+      "description": "Automerge patch, pin, and digest updates for 0.x packages after CI passes.",
+      "matchUpdateTypes": [
+        "patch",
+        "pin",
+        "digest"
+      ],
       "matchCurrentVersion": "/^0/",
       "automerge": true,
       "automergeType": "pr",
       "platformAutomerge": true,
-      "addLabels": ["automerge"]
+      "addLabels": [
+        "automerge"
+      ]
     },
     {
-      "description": "Automerge major updates after CI passes.",
-      "matchUpdateTypes": ["major"],
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true,
-      "addLabels": ["major", "automerge"]
+      "description": "Keep major updates visible for manual review.",
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "automerge": false,
+      "dependencyDashboardApproval": true,
+      "addLabels": [
+        "major"
+      ]
     }
-  ]
+  ],
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "Dependency Dashboard",
+  "dependencyDashboardLabels": [
+    "dependencies"
+  ],
+  "assignees": [
+    "2biazdk"
+  ],
+  "internalChecksFilter": "strict"
 }
