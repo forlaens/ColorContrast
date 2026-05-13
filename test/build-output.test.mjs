@@ -171,6 +171,7 @@ test('document explains purpose and basic use without eyebrow labels', async () 
   assert.match(index, /<output id="zoom-output" for="image_preview" aria-live="polite">100%<\/output>/);
   assert.match(index, /<div class="zoom-controls" role="group" aria-labelledby="zoom-label">/);
   assert.match(index, /<div hidden id="pan-controls" class="pan-controls" role="group" aria-label="Pan image" data-i18n-aria-label="panControls">/);
+  assert.match(index, /<button id="hand-tool" class="icon-button" type="button" aria-label="Drag image" data-i18n-aria-label="dragImage" aria-pressed="false" onclick="toggleHandTool\(this\);">/);
   assert.match(index, /<section id="preview-viewport" class="preview-viewport" tabindex="0" aria-label="Zoomable image preview" data-i18n-aria-label="previewViewport" aria-describedby="preview-help">/);
   assert.match(index, /Choose a color from the image, run the test/);
   assert.match(index, /can I still read it or see what I am supposed to see/);
@@ -206,6 +207,7 @@ test('document includes language switcher support', async () => {
   assert.match(i18n, /themeChanged:/);
   assert.match(i18n, /nonText:"Graphics/);
   assert.match(i18n, /panControls:/);
+  assert.match(i18n, /dragImage:/);
   assert.match(i18n, /emptyCanvasStatus:/);
   assert.match(i18n, /imageLoadedStatus:/);
   assert.match(i18n, /colorSelectedStatus:/);

@@ -35,6 +35,10 @@ function getTestColor() {
 }
 
 function setTestColorFromCanvas(e, canvas) {
+	if (window.isHandToolActive && window.isHandToolActive()) {
+		return false;
+	}
+
 	var position = getCanvasCursorPosition(e, canvas);
 	var x = Math.floor(position.x);
 	var y = Math.floor(position.y);
