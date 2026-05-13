@@ -143,12 +143,6 @@
 								<button id="zoom-reset" class="icon-button text-icon-button" type="button" aria-label="Reset zoom to 1:1" data-i18n-aria-label="resetZoom" onclick="resetPreviewZoom();">1:1</button>
 							</div>
 						</div>
-						<div hidden id="pan-controls" class="pan-controls" role="group" aria-label="Pan image" data-i18n-aria-label="panControls">
-							<button class="icon-button" type="button" aria-label="Pan left" data-i18n-aria-label="panLeft" onclick="panPreview(-1, 0);">←</button>
-							<button class="icon-button" type="button" aria-label="Pan up" data-i18n-aria-label="panUp" onclick="panPreview(0, -1);">↑</button>
-							<button class="icon-button" type="button" aria-label="Pan down" data-i18n-aria-label="panDown" onclick="panPreview(0, 1);">↓</button>
-							<button class="icon-button" type="button" aria-label="Pan right" data-i18n-aria-label="panRight" onclick="panPreview(1, 0);">→</button>
-						</div>
 						<button class="cta" type="button" onclick="initRenderContrast();" data-i18n="runTest">Run test</button>
 					</div>
 				</div>
@@ -189,6 +183,17 @@
 								s19,27.7,19,45v143c107.3,24.7,200.2,76.2,278.5,154.5S1432.3,660.7,1457,768h143c17.3,0,32.3,6.3,45,19S1664,814.7,1664,832z"/>
 						</g>
 							</svg>
+						</div>
+						<div hidden id="pan-controls" class="pan-controls" role="group" aria-label="Pan image" data-i18n-aria-label="panControls">
+							<button id="hand-tool" class="icon-button" type="button" aria-label="Drag image" data-i18n-aria-label="dragImage" aria-pressed="false" onclick="toggleHandTool(this);">
+								<svg role="presentation" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+									<path d="M8 11.5V6.75a1.25 1.25 0 0 1 2.5 0v4h1v-6a1.25 1.25 0 0 1 2.5 0v6h1v-5a1.25 1.25 0 0 1 2.5 0v6.5h1v-3a1.25 1.25 0 0 1 2.5 0v5.85c0 4.05-2.65 6.9-6.75 6.9h-2.3a6.1 6.1 0 0 1-4.72-2.23l-4.42-5.2a1.45 1.45 0 0 1 2.17-1.92L8 15.7v-4.2z" />
+								</svg>
+							</button>
+							<button class="icon-button" type="button" aria-label="Pan left" data-i18n-aria-label="panLeft" onclick="panPreview(-1, 0);">←</button>
+							<button class="icon-button" type="button" aria-label="Pan up" data-i18n-aria-label="panUp" onclick="panPreview(0, -1);">↑</button>
+							<button class="icon-button" type="button" aria-label="Pan down" data-i18n-aria-label="panDown" onclick="panPreview(0, 1);">↓</button>
+							<button class="icon-button" type="button" aria-label="Pan right" data-i18n-aria-label="panRight" onclick="panPreview(1, 0);">→</button>
 						</div>
 					</div>
 				</section>

@@ -800,6 +800,8 @@ test('image preview supports zoom and only shows pan controls when the image ove
 
       return {
         panHidden: document.querySelector('#pan-controls').hidden,
+        handPressed: document.querySelector('#hand-tool').getAttribute('aria-pressed'),
+        handDisabled: document.querySelector('#hand-tool').disabled,
         viewportName: viewport.getAttribute('aria-label'),
         describedBy: canvas.getAttribute('aria-describedby'),
         zoom: document.querySelector('#zoom-output').textContent.trim(),
@@ -811,6 +813,8 @@ test('image preview supports zoom and only shows pan controls when the image ove
     });
 
     assert.equal(initialState.panHidden, true);
+    assert.equal(initialState.handPressed, 'false');
+    assert.equal(initialState.handDisabled, true);
     assert.equal(initialState.viewportName, 'Zoomable image preview');
     assert.equal(initialState.describedBy, 'preview-help');
     assert.match(initialState.zoom, /%$/);
@@ -826,6 +830,9 @@ test('image preview supports zoom and only shows pan controls when the image ove
       return {
         panHidden: document.querySelector('#pan-controls').hidden,
         panLabel: document.querySelector('#pan-controls').getAttribute('aria-label'),
+        handLabel: document.querySelector('#hand-tool').getAttribute('aria-label'),
+        handPressed: document.querySelector('#hand-tool').getAttribute('aria-pressed'),
+        handDisabled: document.querySelector('#hand-tool').disabled,
         zoom: document.querySelector('#zoom-output').textContent.trim(),
         scrollWidth: viewport.scrollWidth,
         clientWidth: viewport.clientWidth,
@@ -840,10 +847,34 @@ test('image preview supports zoom and only shows pan controls when the image ove
 
     assert.equal(zoomedState.panHidden, false);
     assert.equal(zoomedState.panLabel, 'Pan image');
+    assert.equal(zoomedState.handLabel, 'Drag image');
+    assert.equal(zoomedState.handPressed, 'false');
+    assert.equal(zoomedState.handDisabled, false);
     assert.equal(zoomedState.zoom, '100%');
     assert.equal(zoomedState.scrollWidth > zoomedState.clientWidth || zoomedState.scrollHeight > zoomedState.clientHeight, true);
     assert.equal(zoomedState.canvasWidth, zoomedState.canvasCssWidth);
     assert.equal(zoomedState.documentWidth <= zoomedState.viewportWidth, true);
+
+    await page.getByRole('button', { name: 'Drag image' }).click();
+
+    const pressedHandState = await page.evaluate(() => ({
+      handPressed: document.querySelector('#hand-tool').getAttribute('aria-pressed'),
+      handMode: document.querySelector('#preview-viewport').classList.contains('is-hand-tool')
+    }));
+
+    assert.equal(pressedHandState.handPressed, 'true');
+    assert.equal(pressedHandState.handMode, true);
+
+    const viewportBox = await page.locator('#preview-viewport').boundingBox();
+    await page.mouse.move(viewportBox.x + viewportBox.width / 2, viewportBox.y + viewportBox.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(viewportBox.x + viewportBox.width / 2 - 140, viewportBox.y + viewportBox.height / 2);
+    await page.mouse.up();
+    await page.waitForFunction(() => document.querySelector('#preview-viewport').scrollLeft > 0);
+
+    await page.evaluate(() => {
+      document.querySelector('#preview-viewport').scrollLeft = 0;
+    });
 
     await page.getByRole('button', { name: 'Pan right' }).click();
     await page.waitForFunction(() => document.querySelector('#preview-viewport').scrollLeft > 0);
