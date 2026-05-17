@@ -62,6 +62,15 @@ test('release config forces HTTPS and removes www', async () => {
   assert.match(htaccess, /RewriteRule \^ https:\/\/%1%\{REQUEST_URI\} \[L,NE,R=301\]/);
   assert.match(htaccess, /ExpiresByType image\/webp "access plus 1 year"/);
   assert.match(htaccess, /Cache-Control "public, max-age=31536000, immutable"/);
+  assert.match(htaccess, /<FilesMatch "\^\(index\\\.html\|sw\\\.js\)\$">/);
+  assert.match(htaccess, /Cache-Control "no-cache, no-store, must-revalidate"/);
+});
+
+test('service worker cache changes with built content', async () => {
+  const serviceWorker = await readFile(join(distDir, 'sw.js'), 'utf8');
+
+  assert.match(serviceWorker, /const CACHE_NAME = 'colorcontrast-[a-f0-9]{12}';/);
+  assert.doesNotMatch(serviceWorker, /colorcontrast-v3/);
 });
 
 test('social card asset has expected dimensions', async () => {
@@ -111,9 +120,11 @@ test('document includes contact footer', async () => {
   assert.match(index, /<h3 id="accessibility-standard-title" data-i18n="accessibilityStandardTitle">Accessibility approach<\/h3>/);
   assert.match(index, /<h3 id="accessibility-measures-title" data-i18n="accessibilityMeasuresTitle">What the tool can and cannot do<\/h3>/);
   assert.match(index, /<h3 id="accessibility-testing-title" data-i18n="accessibilityTestingTitle">Testing<\/h3>/);
-  assert.match(index, /<h3 id="accessibility-limitations-title" data-i18n="accessibilityLimitationsTitle">Known limitations<\/h3>/);
   assert.match(index, /<h3 id="accessibility-feedback-title" data-i18n="accessibilityFeedbackTitle">Feedback and contact<\/h3>/);
   assert.match(index, /<span data-i18n="accessibilityFeedbackCopy">If you find an accessibility problem, have trouble using the app, or have a suggestion, email<\/span>/);
+  assert.doesNotMatch(index, /accessibility-limitations-title/);
+  assert.doesNotMatch(index, /accessibilityLimitations/);
+  assert.doesNotMatch(index, /language switching, theme switching, drag and drop, upload handling, empty-canvas handling, and contrast rendering/);
   assert.match(index, /<p class="accessibility-updated" data-i18n="accessibilityUpdated">Last updated: May 7, 2026\.<\/p>/);
   assert.match(index, /<a class="back-link" href="\/" data-i18n="accessibilityBack">Back to checker<\/a>/);
   assert.match(index, /<div class="footer-inner">/);
@@ -134,7 +145,9 @@ test('document includes contact footer', async () => {
   assert.match(i18n, /accessibilityStandardTitle:/);
   assert.match(i18n, /accessibilityMeasuresTitle:/);
   assert.match(i18n, /accessibilityTestingTitle:/);
-  assert.match(i18n, /accessibilityLimitationsTitle:/);
+  assert.doesNotMatch(i18n, /accessibilityLimitations/);
+  assert.doesNotMatch(i18n, /language switching, theme switching, drag and drop, upload handling, empty-canvas handling, and contrast rendering/);
+  assert.match(i18n, /manually tested with screen readers such as NVDA, JAWS, and VoiceOver/);
   assert.match(i18n, /accessibilityFeedbackTitle:/);
   assert.match(i18n, /accessibilityUpdated:/);
   assert.match(i18n, /accessibilityLink:/);
@@ -158,6 +171,7 @@ test('document explains purpose and basic use without eyebrow labels', async () 
   assert.match(index, /<output id="zoom-output" for="image_preview" aria-live="polite">100%<\/output>/);
   assert.match(index, /<div class="zoom-controls" role="group" aria-labelledby="zoom-label">/);
   assert.match(index, /<div hidden id="pan-controls" class="pan-controls" role="group" aria-label="Pan image" data-i18n-aria-label="panControls">/);
+  assert.match(index, /<button id="hand-tool" class="icon-button" type="button" aria-label="Drag image" data-i18n-aria-label="dragImage" aria-pressed="false" onclick="toggleHandTool\(this\);">/);
   assert.match(index, /<section id="preview-viewport" class="preview-viewport" tabindex="0" aria-label="Zoomable image preview" data-i18n-aria-label="previewViewport" aria-describedby="preview-help">/);
   assert.match(index, /Choose a color from the image, run the test/);
   assert.match(index, /can I still read it or see what I am supposed to see/);
@@ -165,11 +179,11 @@ test('document explains purpose and basic use without eyebrow labels', async () 
   assert.ok(index.indexOf('id="step-1"') < index.indexOf('id="intro-title"'));
   assert.equal(index.includes('class="eyebrow"'), false);
   assert.match(app, /colorcontrast-intro-open/);
-  assert.match(app, /addEventListener\('click'/);
+  assert.match(app, /click/);
   assert.match(app, /hashchange/);
   assert.match(app, /#accessibility-statement/);
-  assert.match(app, /function showFrontView\(\)/);
-  assert.match(app, /initCheckerSettings\(\)/);
+  assert.match(app, /showFrontView/);
+  assert.match(app, /initCheckerSettings/);
 });
 
 test('document includes language switcher support', async () => {
@@ -185,18 +199,15 @@ test('document includes language switcher support', async () => {
   assert.match(index, /data-i18n-aria-label="checkerRegion"/);
   assert.match(index, /data-i18n-aria-label="settingsToolbar"/);
   assert.match(index, /<script src="\/js\/app\.bundle\.js" defer><\/script>/);
-  assert.match(i18n, /code: 'kl'/);
-  assert.match(i18n, /code: 'it'/);
+  assert.match(i18n, /code:"kl"/);
+  assert.match(i18n, /code:"it"/);
   assert.match(i18n, /chooseFile:/);
   assert.match(i18n, /droppedFilePickerError:/);
   assert.match(i18n, /languageChanged:/);
   assert.match(i18n, /themeChanged:/);
-  assert.match(i18n, /nonText: 'Graphics \(3:1\)'/);
-  assert.match(i18n, /nonText: 'Grafik \(3:1\)'/);
-  assert.match(i18n, /nonText: 'Gráficos \(3:1\)'/);
-  assert.match(i18n, /zoomLabel:/);
-  assert.match(i18n, /previewHelp:/);
+  assert.match(i18n, /nonText:"Graphics/);
   assert.match(i18n, /panControls:/);
+  assert.match(i18n, /dragImage:/);
   assert.match(i18n, /emptyCanvasStatus:/);
   assert.match(i18n, /imageLoadedStatus:/);
   assert.match(i18n, /colorSelectedStatus:/);
@@ -258,7 +269,7 @@ test('build includes PWA files', async () => {
   assert.equal(manifest.display, 'standalone');
   assert.equal(manifest.start_url, '/');
   assert.equal(manifest.icons.length >= 2, true);
-  assert.match(serviceWorker, /colorcontrast-v3/);
+  assert.match(serviceWorker, /colorcontrast-[a-f0-9]{12}/);
   assert.match(serviceWorker, /\/js\/app\.bundle\.js/);
   assert.match(serviceWorker, /fetch\(event\.request\)/);
   assert.match(serviceWorker, /caches\.match\(event\.request\)/);

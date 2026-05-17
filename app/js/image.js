@@ -168,13 +168,34 @@ function scaleImage(canvas) {
 
 	var viewport = id('preview-viewport');
 	var viewportWidth = viewport ? viewport.clientWidth : canvas.offsetWidth;
-	var fitScale = viewportWidth / image.file.width;
+	var viewportHeight = getPreviewFitHeight(viewport);
+	var widthFitScale = viewportWidth / image.file.width;
+	var heightFitScale = viewportHeight / image.file.height;
+	var fitScale = Math.min(widthFitScale, heightFitScale);
 	var scale = image.zoom || fitScale;
 
-	var width = Math.floor(image.file.width * scale);
-	var height = Math.floor(image.file.height * scale);
+	var width = Math.max(1, Math.floor(image.file.width * scale));
+	var height = Math.max(1, Math.floor(image.file.height * scale));
 
 	return { width, height };
+}
+
+function getPreviewFitHeight(viewport) {
+	if (!viewport) {
+		return 320;
+	}
+
+	var style = window.getComputedStyle(viewport);
+	var maxHeight = parseFloat(style.maxHeight);
+
+	if (Number.isFinite(maxHeight) && maxHeight > 0) {
+		return maxHeight;
+	}
+
+	var rect = viewport.getBoundingClientRect();
+	var availableHeight = window.innerHeight - rect.top - 24;
+
+	return Math.max(240, availableHeight);
 }
 
 function getCurrentZoom() {
@@ -188,7 +209,8 @@ function getCurrentZoom() {
 
 	var viewport = id('preview-viewport');
 	var viewportWidth = viewport ? viewport.clientWidth : 1;
-	return viewportWidth / image.file.width;
+	var viewportHeight = getPreviewFitHeight(viewport);
+	return Math.min(viewportWidth / image.file.width, viewportHeight / image.file.height);
 }
 
 function setPreviewZoom(zoom, shouldAnnounce) {
@@ -242,9 +264,44 @@ function panPreview(xDirection, yDirection) {
 	return true;
 }
 
+function isPreviewDraggable() {
+	var viewport = id('preview-viewport');
+
+	return !!(viewport && viewport.classList.contains('can-pan'));
+}
+
+function isHandToolActive() {
+	var button = id('hand-tool');
+	var viewport = id('preview-viewport');
+
+	return !!(button && viewport && button.getAttribute('aria-pressed') === 'true' && isPreviewDraggable());
+}
+
+function setHandToolActive(active) {
+	var button = id('hand-tool');
+	var viewport = id('preview-viewport');
+
+	if (!button || !viewport) {
+		return false;
+	}
+
+	active = active === true && isPreviewDraggable();
+	button.setAttribute('aria-pressed', active ? 'true' : 'false');
+	viewport.classList.toggle('is-hand-tool', active);
+	viewport.classList.remove('is-dragging-preview');
+	return true;
+}
+
+function toggleHandTool(button) {
+	return setHandToolActive(button && button.getAttribute('aria-pressed') !== 'true');
+}
+
+window.isHandToolActive = isHandToolActive;
+
 function updatePreviewControls() {
 	var viewport = id('preview-viewport');
 	var panControls = id('pan-controls');
+	var handTool = id('hand-tool');
 	var zoomOutput = id('zoom-output');
 	var zoomOut = id('zoom-out');
 	var zoomIn = id('zoom-in');
@@ -280,6 +337,15 @@ function updatePreviewControls() {
 
 	panControls.hidden = !canPan;
 	viewport.classList.toggle('can-pan', canPan);
+
+	if (handTool) {
+		handTool.disabled = !canPan;
+	}
+
+	if (!canPan) {
+		setHandToolActive(false);
+	}
+
 	return true;
 }
 
@@ -508,6 +574,67 @@ function setImageDragState(active) {
 	}
 }
 
+function initPreviewDragging() {
+	var viewport = id('preview-viewport');
+	var dragState = null;
+
+	if (!viewport) {
+		return false;
+	}
+
+	viewport.addEventListener('pointerdown', function (event) {
+		if (!isHandToolActive() || event.button !== 0 || event.target.closest('button')) {
+			return;
+		}
+
+		event.preventDefault();
+		dragState = {
+			pointerId: event.pointerId,
+			x: event.clientX,
+			y: event.clientY,
+			scrollLeft: viewport.scrollLeft,
+			scrollTop: viewport.scrollTop
+		};
+		viewport.classList.add('is-dragging-preview');
+
+		if (viewport.setPointerCapture) {
+			viewport.setPointerCapture(event.pointerId);
+		}
+	});
+
+	viewport.addEventListener('pointermove', function (event) {
+		if (!dragState || event.pointerId !== dragState.pointerId) {
+			return;
+		}
+
+		event.preventDefault();
+		viewport.scrollLeft = dragState.scrollLeft + (dragState.x - event.clientX);
+		viewport.scrollTop = dragState.scrollTop + (dragState.y - event.clientY);
+	});
+
+	function stopDragging(event) {
+		if (!dragState || event.pointerId !== dragState.pointerId) {
+			return;
+		}
+
+		if (viewport.releasePointerCapture) {
+			viewport.releasePointerCapture(event.pointerId);
+		}
+
+		dragState = null;
+		viewport.classList.remove('is-dragging-preview');
+	}
+
+	viewport.addEventListener('pointerup', stopDragging);
+	viewport.addEventListener('pointercancel', stopDragging);
+	viewport.addEventListener('lostpointercapture', function () {
+		dragState = null;
+		viewport.classList.remove('is-dragging-preview');
+	});
+
+	return true;
+}
+
 function initImageChooser() {
 	var fileInput = id('image_file');
 
@@ -564,7 +691,11 @@ function initImageChooser() {
 }
 
 if (document.readyState === 'loading') {
-	document.addEventListener('DOMContentLoaded', initImageChooser);
+	document.addEventListener('DOMContentLoaded', function () {
+		initImageChooser();
+		initPreviewDragging();
+	});
 } else {
 	initImageChooser();
+	initPreviewDragging();
 }

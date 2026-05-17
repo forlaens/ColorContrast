@@ -791,8 +791,7 @@ input[type=color] {
 	gap: 12px;
 }
 
-.zoom-controls,
-.pan-controls {
+.zoom-controls {
 	display: flex;
 	align-items: center;
 	gap: 6px;
@@ -839,19 +838,56 @@ input[type=color] {
 	scrollbar-color: var(--border-strong) var(--panel-soft);
 }
 
+.preview-viewport.is-hand-tool {
+	cursor: grab;
+}
+
+.preview-viewport.is-hand-tool.is-dragging-preview {
+	cursor: grabbing;
+	user-select: none;
+}
+
 .preview-canvas-layer {
 	position: relative;
 	min-width: 100%;
 	min-height: 1px;
 }
 
+.pan-controls {
+	position: absolute;
+	right: 12px;
+	bottom: 12px;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px;
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	background: color-mix(in srgb, var(--panel) 88%, transparent);
+	box-shadow: var(--shadow);
+}
+
+.pan-controls[hidden] {
+	display: none;
+}
+
 .preview {
 	cursor: crosshair;
 	display: block;
+	margin-inline: auto;
 	background-color: var(--panel);
 	background-image: linear-gradient(45deg, var(--checkerboard) 25%, transparent 25%), linear-gradient(-45deg, var(--checkerboard) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, var(--checkerboard) 75%), linear-gradient(-45deg, transparent 75%, var(--checkerboard) 75%);
 	background-size: 32px 32px;
 	background-position: 0 0, 0 16px, 16px -16px, -16px 0;
+}
+
+.preview-viewport.is-hand-tool .preview {
+	cursor: grab;
+}
+
+.preview-viewport.is-hand-tool.is-dragging-preview .preview {
+	cursor: grabbing;
 }
 
 [role=toolbar] .cta {

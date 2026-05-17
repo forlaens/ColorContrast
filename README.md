@@ -59,7 +59,7 @@ npm run build
 npm run clean
 ```
 
-`npm run dev` serves `app/` at `http://127.0.0.1:8000`.
+`npm run dev` starts a hot-reload dev server at `http://127.0.0.1:8000`. Changes to app files automatically rebuild and refresh the browser.
 
 `npm run check` validates JavaScript and PHP syntax.
 
@@ -70,6 +70,10 @@ npm run clean
 `npm run test:accessibility` builds the static app and runs Siteimprove Alfa plus axe-core checks through Playwright. These checks target WCAG AAA and accessibility best-practice coverage.
 
 `npm test` runs the full local test suite.
+
+`npm run analyze:bundle` prints a bundle size breakdown using the generated source map.
+
+`npm run analyze:assets` reports the built JS bundle size and the unminified CSS size.
 
 ## Change Guidelines
 

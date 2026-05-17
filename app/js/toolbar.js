@@ -35,6 +35,10 @@ function getTestColor() {
 }
 
 function setTestColorFromCanvas(e, canvas) {
+	if (window.isHandToolActive && window.isHandToolActive()) {
+		return false;
+	}
+
 	var position = getCanvasCursorPosition(e, canvas);
 	var x = Math.floor(position.x);
 	var y = Math.floor(position.y);
@@ -53,7 +57,7 @@ function setTestColor(hex, shouldAnnounce) {
 	storeCheckerSettings();
 
 	if (shouldAnnounce) {
-		announceStatus(translate('colorSelectedStatus').replace('{color}', hex));
+		announceStatus(translate('colorSelectedStatus').replace('{color}', formatColorForStatus(hex)));
 	}
 }
 
@@ -146,7 +150,7 @@ function moveCrosshairs(canvas, x, y) {
 	crosshairs.setAttribute('data-posx', x);
 	crosshairs.setAttribute('data-posy', y);
 
-	crosshairs.style.left = x - (crosshairs.offsetWidth / 2) + 'px';
+	crosshairs.style.left = canvas.offsetLeft + x - (crosshairs.offsetWidth / 2) + 'px';
 	crosshairs.style.top = y - (crosshairs.offsetWidth / 2) + 'px';
 }
 
