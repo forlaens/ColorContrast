@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
-    "@playwright/test": "^1.59.1",
+    "@playwright/test": "^1.60.0",
     "@siteimprove/alfa-playwright": "^0.82.1",
     "@siteimprove/alfa-refinement": "^0.114.3",
     "@siteimprove/alfa-test-utils": "^0.82.1",
@@ -30,7 +30,7 @@
     "chokidar": "^5.0.0",
     "express": "^5.2.1",
     "esbuild": "^0.28.0",
-    "html-validate": "^10.15.0",
-    "ws": "^8.20.0"
+    "html-validate": "^10.17.0",
+    "ws": "^8.20.1"
   }
 }
