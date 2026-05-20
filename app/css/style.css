@@ -564,11 +564,11 @@ h2 {
 
 .simple-contrast-result {
 	display: grid;
-	grid-template-columns: minmax(180px, 0.72fr) minmax(360px, 1.5fr);
-	align-items: start;
-	gap: 18px;
+	grid-template-columns: minmax(220px, 0.9fr) minmax(360px, 1.4fr);
+	align-items: stretch;
+	gap: 16px;
 	min-width: 0;
-	padding: 16px;
+	padding: 18px;
 	border: 1px solid var(--border);
 	border-radius: var(--radius);
 	background: var(--panel-soft);
@@ -578,12 +578,16 @@ h2 {
 
 .simple-contrast-summary {
 	display: grid;
-	gap: 10px;
+	align-content: start;
+	gap: 12px;
+	padding: 18px;
+	border-radius: 8px;
+	background: var(--panel);
 }
 
 .simple-contrast-ratio-group {
 	display: grid;
-	gap: 2px;
+	gap: 4px;
 	min-width: 7.5rem;
 }
 
@@ -596,88 +600,101 @@ h2 {
 }
 
 .simple-contrast-ratio {
-	font-size: clamp(1.6rem, 3vw, 2.35rem);
+	font-size: clamp(2.4rem, 6vw, 4rem);
 	font-weight: 850;
-	line-height: 1;
+	line-height: 0.95;
 }
 
 .simple-contrast-message {
 	max-width: 24rem;
-	font-size: 1rem;
+	font-size: 1.1rem;
 	font-weight: 750;
 }
 
-.simple-contrast-table {
-	width: 100%;
+.simple-contrast-badge {
+	width: fit-content;
+	padding: 6px 10px;
+	border-radius: 999px;
+	background: #d1fae5;
+	color: #064e3b;
+	font-size: 0.9rem;
+	font-weight: 850;
+}
+
+[data-theme="dark"] .simple-contrast-badge {
+	background: #064e3b;
+	color: #d1fae5;
+}
+
+.simple-contrast-badge[data-state="fail"] {
+	background: #fee2e2;
+	color: #7f1d1d;
+}
+
+[data-theme="dark"] .simple-contrast-badge[data-state="fail"] {
+	background: #7f1d1d;
+	color: #fee2e2;
+}
+
+.simple-contrast-outcomes {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 10px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.simple-contrast-outcome {
+	display: grid;
+	grid-template-rows: auto auto 1fr auto;
+	gap: 8px;
 	min-width: 0;
-	table-layout: fixed;
-	border-collapse: collapse;
+	padding: 16px;
+	border: 1px solid var(--border);
+	border-radius: 8px;
 	background: var(--panel);
 }
 
-.simple-contrast-table th,
-.simple-contrast-table td {
-	padding: 10px 12px;
-	border-bottom: 1px solid var(--border);
-	text-align: left;
-	vertical-align: middle;
-	overflow-wrap: anywhere;
+.simple-contrast-outcome[data-state="pass"] {
+	border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
 }
 
-.simple-contrast-table thead th {
+.simple-contrast-outcome-label {
 	color: var(--muted);
-	font-size: 0.78rem;
-	font-weight: 850;
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
+	font-size: 0.88rem;
+	font-weight: 800;
 }
 
-.simple-contrast-table tbody th {
+.simple-contrast-outcome-status {
+	font-size: clamp(1.35rem, 2.4vw, 2rem);
+	font-weight: 850;
+	line-height: 1.05;
+}
+
+.simple-contrast-outcome-detail {
+	color: var(--muted);
+	font-size: 0.9rem;
 	font-weight: 750;
-}
-
-.simple-contrast-table tbody tr:last-child th,
-.simple-contrast-table tbody tr:last-child td {
-	border-bottom: 0;
-}
-
-.simple-contrast-check {
-	display: inline-flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 7px;
-	font-weight: 850;
 }
 
 .simple-contrast-check-mark {
 	display: inline-grid;
-	place-items: center;
-	width: 22px;
-	height: 22px;
+	align-items: center;
+	justify-items: center;
+	width: 32px;
+	height: 32px;
 	border-radius: 999px;
-	color: var(--accent-text);
 	background: var(--accent);
-	font-size: 0.82rem;
+	color: var(--accent-text);
+	font-size: 1rem;
 	font-weight: 900;
 	line-height: 1;
 }
 
-.simple-contrast-check-cell[data-state="fail"] .simple-contrast-check-mark {
+.simple-contrast-outcome[data-state="fail"] .simple-contrast-check-mark {
 	background: var(--error-border);
 	color: #ffffff;
-}
-
-.simple-contrast-check-required {
-	display: block;
-	margin-top: 2px;
-	color: var(--muted);
-	font-size: 0.78rem;
-	font-weight: 750;
-}
-
-.simple-contrast-check-cell-unavailable {
-	color: var(--muted);
-	font-weight: 750;
 }
 
 .simple-contrast-sample {
@@ -1423,9 +1440,8 @@ input[type=color] {
 		grid-template-columns: 1fr;
 	}
 
-	.simple-contrast-table th,
-	.simple-contrast-table td {
-		padding: 8px 6px;
+	.simple-contrast-outcomes {
+		grid-template-columns: 1fr;
 	}
 
 	.stage-actions {

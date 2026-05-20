@@ -259,11 +259,12 @@ test('built app supports every language in the switcher', async () => {
     assert.equal(await page.locator('a[href="#accessibility-statement"]').textContent(), 'Tilgængelighedserklæring');
     assert.equal(await page.locator('#simple-contrast-result').getAttribute('aria-label'), 'Kontrastforhold: 17,73:1. Består AAA for almindelig tekst.');
     assert.equal(await page.locator('#simple-contrast-result .simple-contrast-ratio').textContent(), '17,73:1');
+    assert.equal(await page.locator('#simple-contrast-result .simple-contrast-badge').textContent(), 'AAA');
     assert.equal(await page.locator('#simple-contrast-result .simple-contrast-message').textContent(), 'Består AAA for almindelig tekst.');
-    assert.deepEqual(await page.locator('#simple-contrast-result tbody tr').allTextContents(), [
-      'Lille tekst✓Består≥ 4,5:1✓Består≥ 7:1',
-      'Stor tekst✓Består≥ 3:1✓Består≥ 4,5:1',
-      'Grafik✓Består≥ 3:1—'
+    assert.deepEqual(await page.locator('#simple-contrast-result .simple-contrast-outcome').allTextContents(), [
+      '✓Lille tekstAAA≥ 7:1',
+      '✓Stor tekstAAA≥ 4,5:1',
+      '✓GrafikBestår≥ 3:1'
     ]);
 
 	    await page.locator('a[href="#accessibility-statement"]').click();
