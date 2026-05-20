@@ -321,99 +321,103 @@ function renderSimpleContrastResult(result, ratio, message) {
 		return translate(key).replace(/\s*\([^)]*\)/, '');
 	}
 
-	function conformanceCell(requiredRatio) {
-		var passed = ratio >= requiredRatio;
-		var cell = document.createElement('td');
-		var status = document.createElement('span');
+	function outcomeLabel(requiredRatio, enhancedRatio) {
+		if (ratio >= enhancedRatio) {
+			return 'AAA';
+		}
+
+		if (ratio >= requiredRatio) {
+			return 'AA';
+		}
+
+		return translate('paletteFail');
+	}
+
+	function outcomeCard(item) {
+		var passed = ratio >= item.requiredRatio;
+		var enhanced = item.enhancedRatio && ratio >= item.enhancedRatio;
+		var card = document.createElement('li');
 		var mark = document.createElement('span');
-		var text = document.createElement('span');
-		var requirement = document.createElement('span');
+		var label = document.createElement('span');
+		var status = document.createElement('strong');
+		var detail = document.createElement('span');
 
-		cell.className = 'simple-contrast-check-cell';
-		cell.setAttribute('data-state', passed ? 'pass' : 'fail');
-
-		status.className = 'simple-contrast-check';
+		card.className = 'simple-contrast-outcome';
+		card.setAttribute('data-state', passed ? 'pass' : 'fail');
 		mark.className = 'simple-contrast-check-mark';
 		mark.textContent = passed ? '✓' : '×';
 		mark.setAttribute('aria-hidden', 'true');
-		text.textContent = translate(passed ? 'palettePass' : 'paletteFail');
 
-		requirement.className = 'simple-contrast-check-required';
-		requirement.textContent = '≥ ' + formatNumber(requiredRatio) + ':1';
+		label.className = 'simple-contrast-outcome-label';
+		label.textContent = item.label;
 
-		status.append(mark, text);
-		cell.append(status, requirement);
-		return cell;
+		status.className = 'simple-contrast-outcome-status';
+		status.textContent = passed
+			? (item.enhancedRatio ? outcomeLabel(item.requiredRatio, item.enhancedRatio) : translate('palettePass'))
+			: translate('paletteFail');
+
+		detail.className = 'simple-contrast-outcome-detail';
+		detail.textContent = '≥ ' + formatNumber(enhanced ? item.enhancedRatio : item.requiredRatio) + ':1';
+
+		card.append(mark, label, status, detail);
+		return card;
 	}
 
-	function unavailableCell() {
-		var cell = document.createElement('td');
+	function outcomeSummary(ratio) {
+		if (ratio >= 7) {
+			return 'AAA';
+		}
 
-		cell.className = 'simple-contrast-check-cell simple-contrast-check-cell-unavailable';
-		cell.textContent = '—';
-		return cell;
+		if (ratio >= 4.5) {
+			return 'AA';
+		}
+
+		if (ratio >= 3) {
+			return translate('largeTextAA').replace(/\s*\([^)]*\)/, '');
+		}
+
+		return translate('paletteFail');
 	}
 
 	var ratioText = formatNumber(ratio) + ':1';
-	var rows = [
-		{ label: shortRequirementLabel('smallTextAA'), aa: 4.5, aaa: 7 },
-		{ label: shortRequirementLabel('largeTextAA'), aa: 3, aaa: 4.5 },
-		{ label: shortRequirementLabel('nonText'), aa: 3, aaa: null }
+	var items = [
+		{ label: shortRequirementLabel('smallTextAA'), requiredRatio: 4.5, enhancedRatio: 7 },
+		{ label: shortRequirementLabel('largeTextAA'), requiredRatio: 3, enhancedRatio: 4.5 },
+		{ label: shortRequirementLabel('nonText'), requiredRatio: 3 }
 	];
 	var resultMessage = getSimpleContrastMessage(ratio);
 	var summary = document.createElement('div');
 	var ratioGroup = document.createElement('div');
-	var ratioLabel = document.createElement('span');
 	var ratioElement = document.createElement('strong');
 	var messageElement = document.createElement('span');
-	var table = document.createElement('table');
-	var tableHead = document.createElement('thead');
-	var tableHeadRow = document.createElement('tr');
-	var emptyHead = document.createElement('th');
-	var aaHead = document.createElement('th');
-	var aaaHead = document.createElement('th');
-	var tableBody = document.createElement('tbody');
+	var outcomeBadge = document.createElement('span');
+	var outcomeList = document.createElement('ul');
 
 	summary.className = 'simple-contrast-summary';
 	ratioGroup.className = 'simple-contrast-ratio-group';
-	ratioLabel.className = 'simple-contrast-ratio-label';
-	ratioLabel.textContent = 'WCAG';
 
 	ratioElement.className = 'simple-contrast-ratio';
 	ratioElement.textContent = ratioText;
 	ratioElement.setAttribute('aria-hidden', 'true');
 
+	outcomeBadge.className = 'simple-contrast-badge';
+	outcomeBadge.textContent = outcomeSummary(ratio);
+	outcomeBadge.setAttribute('data-state', ratio >= 3 ? 'pass' : 'fail');
+
 	messageElement.className = 'simple-contrast-message';
 	messageElement.textContent = resultMessage;
 
-	table.className = 'simple-contrast-table';
-	emptyHead.scope = 'col';
-	emptyHead.textContent = 'Type';
-	aaHead.scope = 'col';
-	aaHead.textContent = 'AA';
-	aaaHead.scope = 'col';
-	aaaHead.textContent = 'AAA';
-	tableHeadRow.append(emptyHead, aaHead, aaaHead);
-	tableHead.append(tableHeadRow);
-
-	for (var i = 0; i < rows.length; i++) {
-		var row = rows[i];
-		var tableRow = document.createElement('tr');
-		var rowHead = document.createElement('th');
-
-		rowHead.scope = 'row';
-		rowHead.textContent = row.label;
-		tableRow.append(rowHead, conformanceCell(row.aa), row.aaa === null ? unavailableCell() : conformanceCell(row.aaa));
-		tableBody.append(tableRow);
+	outcomeList.className = 'simple-contrast-outcomes';
+	for (var i = 0; i < items.length; i++) {
+		outcomeList.append(outcomeCard(items[i]));
 	}
 
-	table.append(tableHead, tableBody);
 	result.textContent = '';
 	result.setAttribute('aria-label', message);
 	result.title = message;
-	ratioGroup.append(ratioLabel, ratioElement);
-	summary.append(ratioGroup, messageElement);
-	result.append(summary, table);
+	ratioGroup.append(ratioElement);
+	summary.append(ratioGroup, outcomeBadge, messageElement);
+	result.append(summary, outcomeList);
 }
 
 function updateSimpleContrast(shouldAnnounce) {
