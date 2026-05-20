@@ -41,7 +41,7 @@ async function getInterfaceTranslations() {
     source,
     'var languages = ',
     'function getTranslation',
-    '({ languages, translations });'
+    '({ languages, translations, localizedTranslationUpdates });'
   );
 }
 
@@ -95,7 +95,7 @@ function assertMatchingPlaceholders(actual, expected, keys, context) {
 
 function collectReferencedInterfaceKeys(sources) {
   const patterns = [
-    /\bdata-i18n(?:-(?:value|label|aria-label|file-empty))?="([^"]+)"/g,
+    /\bdata-i18n(?:-(?:value|label|aria-label|file-empty|placeholder))?="([^"]+)"/g,
     /\b(?:translate|getTranslation)\('([^']+)'\)/g
   ];
   const keys = new Set();
@@ -136,6 +136,28 @@ test('every referenced interface translation key exists in every supported langu
   for (const code of languages.map((language) => language.code)) {
     const missing = referencedKeys.filter((key) => !Object.hasOwn(translations[code], key));
     assert.deepEqual(missing, [], `${code} is missing keys referenced by the app`);
+  }
+});
+
+test('new interface strings are localized instead of copied from English', async () => {
+  const { languages, translations, localizedTranslationUpdates } = await getInterfaceTranslations();
+  const nonEnglishCodes = languages
+    .map((language) => language.code)
+    .filter((code) => code !== 'en');
+
+  assert.deepEqual(
+    Array.from(Object.keys(localizedTranslationUpdates)).sort(),
+    Array.from(nonEnglishCodes).sort()
+  );
+
+  for (const code of nonEnglishCodes) {
+    for (const key of Object.keys(localizedTranslationUpdates[code])) {
+      assert.notEqual(
+        translations[code][key],
+        translations.en[key],
+        `${code}.${key} must be localized, not copied from English`
+      );
+    }
   }
 });
 

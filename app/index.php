@@ -1,7 +1,5 @@
 <?php include($_SERVER['DOCUMENT_ROOT'] . '/include/layout/head.php'); ?>
 
-<a class="skip-link" href="#main-content" onclick="markSkipLinkTarget();" data-i18n="skipLink">Skip to main content</a>
-
 <div class="app-shell">
 	<noscript>
 		<div class="notice">For this tool to work, your browser must have JavaScript enabled.</div>
@@ -10,11 +8,12 @@
 	<div hidden id="app-error" class="error-panel" role="alert" tabindex="-1"></div>
 
 	<header class="hero" aria-labelledby="app-title">
+		<a class="skip-link" href="#main-content" onclick="markSkipLinkTarget();" data-i18n="skipLink">Skip to main content</a>
 		<div>
 			<h1 id="app-title">
-				<a class="home-title-link" href="/" onclick="return showFrontView();" data-i18n="title">Image contrast checker</a>
+				<a class="home-title-link" href="/" onclick="return showFrontView();" data-i18n="title">Color contrast checker</a>
 			</h1>
-			<p class="lede" data-i18n="lede">Choose a color from the image, run the test, then check whether that color would still be readable or visible on the highlighted areas.</p>
+			<p class="lede" data-i18n="lede">Check two colors quickly, or choose an image to find places where a color may be hard to read or see.</p>
 		</div>
 		<div class="header-controls">
 			<label class="language-switcher">
@@ -47,10 +46,39 @@
 
 	<main id="main-content" class="app-main" tabindex="-1">
 		<div id="home-view">
+		<section id="simple-contrast" class="simple-contrast" aria-labelledby="simple-contrast-title" tabindex="-1">
+			<div class="simple-contrast-header">
+				<div>
+					<h2 id="simple-contrast-title" data-i18n="simpleContrastTitle">Check two colors</h2>
+					<p data-i18n="simpleContrastCopy">Choose a foreground color and a background color to see whether they have enough contrast.</p>
+				</div>
+			</div>
+			<div class="simple-contrast-form">
+				<div class="field simple-color-field">
+					<span id="simple-foreground-label" data-i18n="simpleForegroundLabel">Foreground color</span>
+					<span class="color-input-pair">
+						<input id="simple-foreground" class="hex-color-control" type="text" name="foreground" value="#111827" inputmode="text" spellcheck="false" autocomplete="off" aria-labelledby="simple-foreground-label">
+						<input id="simple-foreground-native" class="native-color-control" type="color" value="#111827" aria-label="Choose foreground color visually" data-i18n-aria-label="chooseForegroundVisually">
+					</span>
+				</div>
+				<div class="field simple-color-field">
+					<span id="simple-background-label" data-i18n="simpleBackgroundLabel">Background color</span>
+					<span class="color-input-pair">
+						<input id="simple-background" class="hex-color-control" type="text" name="background" value="#ffffff" inputmode="text" spellcheck="false" autocomplete="off" aria-labelledby="simple-background-label">
+						<input id="simple-background-native" class="native-color-control" type="color" value="#ffffff" aria-label="Choose background color visually" data-i18n-aria-label="chooseBackgroundVisually">
+					</span>
+				</div>
+				<div id="simple-contrast-sample" class="simple-contrast-sample">
+					<span data-i18n="simpleSampleText">Sample text</span>
+				</div>
+			</div>
+			<div id="simple-contrast-result" class="simple-contrast-result" role="status" aria-live="polite" aria-atomic="true"></div>
+		</section>
+
 		<form id="step-1" class="step upload-panel" method="POST" enctype="multipart/form-data" aria-labelledby="upload-title" onsubmit="loadImagePreview(); return false;">
 			<div class="upload-dropzone">
-				<h2 id="upload-title" class="upload-title" data-i18n="chooseImage">Choose an image</h2>
-				<span class="upload-copy" data-i18n="uploadCopy">PNG, JPG, GIF, or SVG. The file stays in your browser.</span>
+				<h2 id="upload-title" class="upload-title" data-i18n="chooseImage">Check contrast in an image</h2>
+				<span class="upload-copy" data-i18n="uploadCopy">Want to test color contrasts in an image? Choose an image on your machine here. PNG, JPG, GIF, or SVG. The file stays in your browser.</span>
 				<span class="upload-file-row">
 					<img hidden id="image-thumbnail" class="upload-thumbnail" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" alt="">
 					<input id="image_file" class="file-input-native" type="file" name="image" accept="image/*" aria-describedby="selected-file-name">
@@ -59,33 +87,17 @@
 						<span id="selected-file-name" class="selected-file-name" data-i18n-file-empty="noFileChosen">No file chosen</span>
 					</label>
 				</span>
+				<div class="upload-url-row">
+					<label class="field upload-url-field">
+						<span data-i18n="imageUrlLabel">Image URL</span>
+						<input id="image_url" type="url" inputmode="url" autocomplete="url" placeholder="https://example.com/image.png" data-i18n-placeholder="imageUrlPlaceholder">
+					</label>
+					<button class="cta secondary" type="button" onclick="loadImageFromUrl();" data-i18n="loadImageUrl">Load URL</button>
+				</div>
+				<p class="paste-hint" data-i18n="pasteHint">You can also paste an image from your clipboard, or paste an image URL.</p>
 			</div>
 			<button class="cta" type="submit" data-i18n="loadImage">Load image</button>
 		</form>
-
-	<section id="intro-panel" class="intro-panel" aria-labelledby="intro-title">
-		<div class="intro-header">
-			<h2 id="intro-title" data-i18n="introTitle">How to use it</h2>
-			<button id="intro-toggle" class="intro-toggle" type="button" aria-expanded="true" aria-controls="intro-steps" aria-labelledby="intro-title"></button>
-		</div>
-		<ol id="intro-steps" class="steps">
-			<li>
-				<h3 data-i18n="stepUploadTitle">Upload an image</h3>
-				<span data-i18n="stepUploadCopy">Use a screenshot, design export, or content image.</span>
-				<img class="step-illustration" src="/img/steps/step-1-upload.webp" width="807" height="715" alt="" fetchpriority="high" decoding="async">
-			</li>
-			<li>
-				<h3 data-i18n="stepColorTitle">Choose the color to check</h3>
-				<span data-i18n="stepColorCopy">Pick the text, icon, or background color people need to read or see.</span>
-				<img class="step-illustration step-illustration-spaced" src="/img/steps/step-2-pick-color.webp" width="875" height="628" alt="" loading="lazy" decoding="async">
-			</li>
-			<li>
-				<h3 data-i18n="stepRunTitle">Run the test</h3>
-				<span data-i18n="stepRunCopy">The preview marks places where that color may disappear into the image. Ask: can I still read it or see what I am supposed to see?</span>
-				<img class="step-illustration" src="/img/steps/step-3-result.webp" width="852" height="745" alt="" loading="lazy" decoding="async">
-			</li>
-		</ol>
-	</section>
 
 	<section hidden id="step-2" class="step checker-stage" aria-labelledby="checker-title">
 		<div class="stage-header">
@@ -108,7 +120,8 @@
 						<div class="field color-field">
 							<span id="testcolor-label" data-i18n="colorLabel">Color to check</span>
 							<span class="control-row">
-								<input type="color" name="color" aria-labelledby="testcolor-label">
+								<input id="test-color" class="hex-color-control" type="text" name="color" value="#000000" inputmode="text" spellcheck="false" autocomplete="off" aria-labelledby="testcolor-label">
+								<input id="test-color-native" class="native-color-control" type="color" value="#000000" aria-label="Choose color visually" data-i18n-aria-label="chooseColorVisually">
 								<button id="colorpicker" class="icon-button" type="button" aria-label="Pick a color from the image" data-i18n-aria-label="pickColor" aria-pressed="false" onclick="toggleColorPicker(this);">
 									<svg role="presentation" focusable="false" version="1.1" viewBox="0 0 32 32" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 										<path d="M27.7,3.3c-1.5-1.5-3.9-1.5-5.4,0L17,8.6l-1.3-1.3c-0.4-0.4-1-0.4-1.4,0s-0.4,1,0,1.4l1.3,1.3L5,20.6  c-0.6,0.6-1,1.4-1.1,2.3C3.3,23.4,3,24.2,3,25c0,1.7,1.3,3,3,3c0.8,0,1.6-0.3,2.2-0.9C9,27,9.8,26.6,10.4,26L21,15.4l1.3,1.3  c0.2,0.2,0.5,0.3,0.7,0.3s0.5-0.1,0.7-0.3c0.4-0.4,0.4-1,0-1.4L22.4,14l5.3-5.3C29.2,7.2,29.2,4.8,27.7,3.3z M9,24.6  c-0.4,0.4-0.8,0.6-1.3,0.5c-0.4,0-0.7,0.2-0.9,0.5C6.7,25.8,6.3,26,6,26c-0.6,0-1-0.4-1-1c0-0.3,0.2-0.7,0.5-0.8  c0.3-0.2,0.5-0.5,0.5-0.9c0-0.5,0.2-1,0.5-1.3L17,11.4l2.6,2.6L9,24.6z" />
@@ -140,7 +153,12 @@
 								<button id="zoom-out" class="icon-button" type="button" aria-label="Zoom out" data-i18n-aria-label="zoomOut" onclick="zoomPreview(-1);">−</button>
 								<output id="zoom-output" for="image_preview" aria-live="polite">100%</output>
 								<button id="zoom-in" class="icon-button" type="button" aria-label="Zoom in" data-i18n-aria-label="zoomIn" onclick="zoomPreview(1);">+</button>
-								<button id="zoom-reset" class="icon-button text-icon-button" type="button" aria-label="Reset zoom to 1:1" data-i18n-aria-label="resetZoom" onclick="resetPreviewZoom();">1:1</button>
+								<button id="zoom-reset" class="icon-button text-icon-button" type="button" onclick="resetPreviewZoom();">1:1<span class="sr-only" data-i18n="resetZoom"> Reset zoom</span></button>
+								<button id="hand-tool" class="icon-button" type="button" aria-label="Drag image" data-i18n-aria-label="dragImage" aria-pressed="false" onclick="toggleHandTool(this);">
+									<svg role="presentation" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+										<path d="M8 11.5V6.75a1.25 1.25 0 0 1 2.5 0v4h1v-6a1.25 1.25 0 0 1 2.5 0v6h1v-5a1.25 1.25 0 0 1 2.5 0v6.5h1v-3a1.25 1.25 0 0 1 2.5 0v5.85c0 4.05-2.65 6.9-6.75 6.9h-2.3a6.1 6.1 0 0 1-4.72-2.23l-4.42-5.2a1.45 1.45 0 0 1 2.17-1.92L8 15.7v-4.2z" />
+									</svg>
+								</button>
 							</div>
 						</div>
 						<button class="cta" type="button" onclick="initRenderContrast();" data-i18n="runTest">Run test</button>
@@ -148,11 +166,12 @@
 				</div>
 
 				<p id="preview-help" class="sr-only" data-i18n="previewHelp">Use the zoom controls to inspect the image. If the image is larger than the visible preview, use the pan buttons or scroll the preview. Focus the image preview and use arrow keys to move the color picker.</p>
-				<section id="preview-viewport" class="preview-viewport" tabindex="0" aria-label="Zoomable image preview" data-i18n-aria-label="previewViewport" aria-describedby="preview-help">
-					<div id="preview-canvas-layer" class="preview-canvas-layer">
-						<canvas id="image_preview" class="preview" tabindex="0" aria-label="Image preview" data-i18n-aria-label="imagePreview" aria-describedby="preview-help" onmousedown="setTestColorFromCanvas(event, this);" onfocus="placeCrosshairs(this);" onkeydown="canvasKeyDown(this, event);" onkeyup="canvasKeyUp(event);" onblur="canvasBlur();"></canvas>
+				<div class="preview-frame">
+					<section id="preview-viewport" class="preview-viewport" tabindex="0" aria-label="Zoomable image preview" data-i18n-aria-label="previewViewport" aria-describedby="preview-help">
+						<div id="preview-canvas-layer" class="preview-canvas-layer">
+							<canvas id="image_preview" class="preview" tabindex="0" aria-label="Image preview" data-i18n-aria-label="imagePreview" aria-describedby="preview-help" onmousedown="setTestColorFromCanvas(event, this);" onfocus="placeCrosshairs(this);" onkeydown="canvasKeyDown(this, event);" onkeyup="canvasKeyUp(event);" onblur="canvasBlur();"></canvas>
 
-						<div id="crosshairs">
+							<div id="crosshairs">
 					<svg aria-hidden="true" focusable="false" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1792 1792" xml:space="preserve">
 						<g>
 							<path class="white" d="M833.1,1691.6c-24.7,0-47.2-9.4-65-27.3c-17.9-17.9-27.3-40.4-27.3-65v-120.8
@@ -183,22 +202,54 @@
 								s19,27.7,19,45v143c107.3,24.7,200.2,76.2,278.5,154.5S1432.3,660.7,1457,768h143c17.3,0,32.3,6.3,45,19S1664,814.7,1664,832z"/>
 						</g>
 							</svg>
+							</div>
 						</div>
-						<div hidden id="pan-controls" class="pan-controls" role="group" aria-label="Pan image" data-i18n-aria-label="panControls">
-							<button id="hand-tool" class="icon-button" type="button" aria-label="Drag image" data-i18n-aria-label="dragImage" aria-pressed="false" onclick="toggleHandTool(this);">
-								<svg role="presentation" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
-									<path d="M8 11.5V6.75a1.25 1.25 0 0 1 2.5 0v4h1v-6a1.25 1.25 0 0 1 2.5 0v6h1v-5a1.25 1.25 0 0 1 2.5 0v6.5h1v-3a1.25 1.25 0 0 1 2.5 0v5.85c0 4.05-2.65 6.9-6.75 6.9h-2.3a6.1 6.1 0 0 1-4.72-2.23l-4.42-5.2a1.45 1.45 0 0 1 2.17-1.92L8 15.7v-4.2z" />
-								</svg>
-							</button>
-							<button class="icon-button" type="button" aria-label="Pan left" data-i18n-aria-label="panLeft" onclick="panPreview(-1, 0);">←</button>
-							<button class="icon-button" type="button" aria-label="Pan up" data-i18n-aria-label="panUp" onclick="panPreview(0, -1);">↑</button>
-							<button class="icon-button" type="button" aria-label="Pan down" data-i18n-aria-label="panDown" onclick="panPreview(0, 1);">↓</button>
-							<button class="icon-button" type="button" aria-label="Pan right" data-i18n-aria-label="panRight" onclick="panPreview(1, 0);">→</button>
-						</div>
+					</section>
+					<div hidden id="pan-controls" class="pan-controls" role="group" aria-label="Pan image" data-i18n-aria-label="panControls">
+						<button class="icon-button pan-up" type="button" aria-label="Pan up" data-i18n-aria-label="panUp" data-pan-direction="up" onclick="panPreview(0, -1);">↑</button>
+						<button class="icon-button pan-left" type="button" aria-label="Pan left" data-i18n-aria-label="panLeft" data-pan-direction="left" onclick="panPreview(-1, 0);">←</button>
+						<button class="icon-button pan-right" type="button" aria-label="Pan right" data-i18n-aria-label="panRight" data-pan-direction="right" onclick="panPreview(1, 0);">→</button>
+						<button class="icon-button pan-down" type="button" aria-label="Pan down" data-i18n-aria-label="panDown" data-pan-direction="down" onclick="panPreview(0, 1);">↓</button>
 					</div>
-				</section>
+				</div>
 			</section>
 		</div>
+	</section>
+
+	<section hidden id="palette-card" class="palette-card" aria-labelledby="palette-title">
+		<div class="palette-header">
+			<div>
+				<h2 id="palette-title" data-i18n="paletteTitle">Main colors in this image</h2>
+				<p data-i18n="paletteCopy">These are the strongest colors found in the image. The matrix shows which pairs have at least 4.5:1 contrast.</p>
+			</div>
+			<p id="palette-summary" class="palette-summary" aria-live="polite"></p>
+		</div>
+		<ul id="palette-swatches" class="palette-swatches"></ul>
+		<div id="palette-matrix" class="palette-matrix"></div>
+	</section>
+
+	<section hidden id="intro-panel" class="intro-panel" aria-labelledby="intro-title">
+		<div class="intro-header">
+			<h2 id="intro-title" data-i18n="introTitle">How to use it</h2>
+			<button id="intro-toggle" class="intro-toggle" type="button" aria-expanded="true" aria-controls="intro-steps" aria-labelledby="intro-title"></button>
+		</div>
+		<ol id="intro-steps" class="steps">
+			<li>
+				<h3 data-i18n="stepUploadTitle">Upload an image</h3>
+				<span data-i18n="stepUploadCopy">Use a screenshot, design export, or content image.</span>
+				<img class="step-illustration" src="/img/steps/step-1-upload.webp" width="807" height="715" alt="" fetchpriority="high" decoding="async">
+			</li>
+			<li>
+				<h3 data-i18n="stepColorTitle">Choose the color to check</h3>
+				<span data-i18n="stepColorCopy">Pick the text, icon, or background color people need to read or see.</span>
+				<img class="step-illustration step-illustration-spaced" src="/img/steps/step-2-pick-color.webp" width="875" height="628" alt="" loading="lazy" decoding="async">
+			</li>
+			<li>
+				<h3 data-i18n="stepRunTitle">Run the test</h3>
+				<span data-i18n="stepRunCopy">The preview marks places where that color may disappear into the image. Ask: can I still read it or see what I am supposed to see?</span>
+				<img class="step-illustration" src="/img/steps/step-3-result.webp" width="852" height="745" alt="" loading="lazy" decoding="async">
+			</li>
+		</ol>
 	</section>
 		</div>
 
@@ -213,7 +264,7 @@
 
 			<section class="accessibility-section" aria-labelledby="accessibility-scope-title">
 				<h3 id="accessibility-scope-title" data-i18n="accessibilityScopeTitle">Scope</h3>
-				<p data-i18n="accessibilityScopeCopy">This statement covers the public Image contrast checker web app at colorcontrast.2biaz.dk: the upload view, checker view, language and theme controls, footer, and accessibility statement page. It does not cover user-uploaded images or browser and operating system controls outside the app.</p>
+				<p data-i18n="accessibilityScopeCopy">This statement covers the public Image contrast checker web app at colorcontrast.forlaens.com: the upload view, checker view, language and theme controls, footer, and accessibility statement page. It does not cover user-uploaded images or browser and operating system controls outside the app.</p>
 			</section>
 
 			<section class="accessibility-section" aria-labelledby="accessibility-standard-title">

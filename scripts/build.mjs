@@ -133,7 +133,7 @@ const rendered = spawnSync('php', ['scripts/render-page.php'], {
   encoding: 'utf8',
   env: {
     ...process.env,
-    SITE_URL: process.env.SITE_URL ?? 'https://example.com'
+    SITE_URL: process.env.SITE_URL ?? 'https://colorcontrast.forlaens.com'
   }
 });
 
