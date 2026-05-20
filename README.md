@@ -40,10 +40,10 @@ The load order in `app/include/layout/foot.php` matters. If a module starts usin
 7. Updates the service worker cache list for the bundled release.
 8. Removes unused source PNG step illustrations from `dist/`.
 
-Set `SITE_URL` when building for production so social media card URLs use the deployed domain:
+Production builds default to `https://colorcontrast.forlaens.com`. Override `SITE_URL` only when building for another host:
 
 ```sh
-SITE_URL=https://colorcontrast.2biaz.dk npm run build
+SITE_URL=https://colorcontrast.forlaens.com npm run build
 ```
 
 ## Commands

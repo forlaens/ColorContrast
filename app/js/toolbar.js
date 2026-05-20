@@ -11,8 +11,39 @@ function resetFileInput() {
 	}
 }
 
+function setColorPickerActive(active) {
+	var button = id('colorpicker');
+	var viewport = id('preview-viewport');
+
+	if (!button) {
+		return false;
+	}
+
+	active = active === true;
+	button.setAttribute('aria-pressed', active ? 'true' : 'false');
+
+	if (viewport) {
+		viewport.classList.toggle('is-color-picker', active);
+	}
+
+	return true;
+}
+
+function isColorPickerActive() {
+	var button = id('colorpicker');
+
+	return !!(button && button.getAttribute('aria-pressed') === 'true');
+}
+
 function toggleColorPicker(button) {
 	var value = (button.getAttribute('aria-pressed') !== 'true');
+
+	if (value && window.setHandToolActive) {
+		window.setHandToolActive(false);
+	}
+
+	setColorPickerActive(value);
+
 	button.setAttribute('aria-pressed', value);
 	if (value) {
 		activateColorPicker(button);
@@ -30,12 +61,12 @@ function getTestContrast() {
 }
 
 function getTestColor() {
-	var testColor = selector('[name=color]').value;
+	var testColor = normalizeColorToHex(selector('[name=color]').value);
 	return hexToRgb(testColor);
 }
 
 function setTestColorFromCanvas(e, canvas) {
-	if (window.isHandToolActive && window.isHandToolActive()) {
+	if ((window.isHandToolActive && window.isHandToolActive()) || !isColorPickerActive()) {
 		return false;
 	}
 
@@ -49,15 +80,22 @@ function setTestColorFromCanvas(e, canvas) {
 	setTestColor(color, true);
 }
 
+window.setColorPickerActive = setColorPickerActive;
+
 function setTestColor(hex, shouldAnnounce) {
 	if (hex == 'transparent') {
 		hex = '#000000';
 	}
-	selector('[name=color]').value = hex;
+	var colorInput = selector('[name=color]');
+	var nativeInput = id('test-color-native');
+	var normalized = normalizeColorToHex(hex) || '#000000';
+
+	colorInput.value = normalized;
+	syncNativeColorControl(colorInput, nativeInput);
 	storeCheckerSettings();
 
 	if (shouldAnnounce) {
-		announceStatus(translate('colorSelectedStatus').replace('{color}', formatColorForStatus(hex)));
+		announceStatus(translate('colorSelectedStatus').replace('{color}', formatColorForStatus(normalized)));
 	}
 }
 
@@ -95,8 +133,10 @@ function storeCheckerSettings() {
 		return false;
 	}
 
-	if (isValidTestColor(colorInput.value)) {
-		setStoredValue(STORAGE_KEYS.testColor, colorInput.value);
+	var normalized = normalizeColorToHex(colorInput.value);
+
+	if (isValidTestColor(normalized)) {
+		setStoredValue(STORAGE_KEYS.testColor, normalized);
 	}
 
 	setStoredValue(STORAGE_KEYS.conformanceLevel, String(contrastSelect.selectedIndex));
@@ -105,6 +145,7 @@ function storeCheckerSettings() {
 
 function initCheckerSettings() {
 	var colorInput = selector('[name=color]');
+	var nativeInput = id('test-color-native');
 	var contrastSelect = selector('[name=contrast]');
 
 	if (!colorInput || !contrastSelect) {
@@ -112,9 +153,10 @@ function initCheckerSettings() {
 	}
 
 	restoreCheckerSettings();
+	initHexColorField(colorInput, nativeInput, function () {
+		storeCheckerSettings();
+	});
 
-	colorInput.addEventListener('input', storeCheckerSettings);
-	colorInput.addEventListener('change', storeCheckerSettings);
 	contrastSelect.addEventListener('change', storeCheckerSettings);
 
 	return true;
