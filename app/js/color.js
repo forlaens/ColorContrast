@@ -362,7 +362,7 @@ function normalizeColorToHex(value) {
 
 	var rgb = parseRgbColor(raw) || parseHslColor(raw) || namedColorToRgb(raw) || browserColorToRgb(raw);
 
-	return rgb ? rgbToHex(rgb) : '#000000';
+	return rgb ? rgbToHex(rgb) : null;
 }
 
 function syncNativeColorControl(textInput, nativeInput) {
@@ -454,6 +454,7 @@ function hexToRgb(hex) {
 	}
 
 	var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+	hex = String(hex || '');
 	hex = hex.replace(shorthandRegex, function(m, r, g, b) {
 		return r + r + g + g + b + b;
 	});

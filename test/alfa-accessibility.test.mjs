@@ -772,14 +772,22 @@ test('checker remembers the last color and conformance level', async () => {
       input.value = 'not a color';
       input.dispatchEvent(new Event('change', { bubbles: true }));
     });
-    assert.equal(await page.locator('[name=color]').inputValue(), '#000000');
-    assert.equal(await page.locator('#test-color-native').inputValue(), '#000000');
+    assert.equal(await page.locator('[name=color]').inputValue(), 'not a color');
+    assert.equal(await page.locator('#test-color-native').inputValue(), '#000080');
 
     await page.locator('[name=color]').evaluate((input) => {
       input.value = 'rgb(nope, 102, 153)';
       input.dispatchEvent(new Event('change', { bubbles: true }));
     });
-    assert.equal(await page.locator('[name=color]').inputValue(), '#000000');
+    assert.equal(await page.locator('[name=color]').inputValue(), 'rgb(nope, 102, 153)');
+    assert.equal(await page.locator('#test-color-native').inputValue(), '#000080');
+
+    await page.locator('[name=color]').evaluate((input) => {
+      input.value = '#33';
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    assert.equal(await page.locator('[name=color]').inputValue(), '#33');
+    assert.equal(await page.locator('#test-color-native').inputValue(), '#000080');
 
     await page.locator('[name=color]').evaluate((input) => {
       input.value = 'rgb(51, 102, 153)';
