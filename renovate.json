@@ -69,14 +69,16 @@
       ]
     },
     {
-      "description": "Keep major updates visible for manual review.",
+      "description": "Automerge major updates after CI passes.",
       "matchUpdateTypes": [
         "major"
       ],
-      "automerge": false,
-      "dependencyDashboardApproval": true,
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true,
       "addLabels": [
-        "major"
+        "major",
+        "automerge"
       ]
     }
   ],
