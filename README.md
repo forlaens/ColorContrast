@@ -40,10 +40,10 @@ The load order in `app/include/layout/foot.php` matters. If a module starts usin
 7. Updates the service worker cache list for the bundled release.
 8. Removes unused source PNG step illustrations from `dist/`.
 
-Set `SITE_URL` when building for production so social media card URLs use the deployed domain:
+Production builds default to `https://colorcontrast.forlaens.com`. Override `SITE_URL` only when building for another host:
 
 ```sh
-SITE_URL=https://colorcontrast.2biaz.dk npm run build
+SITE_URL=https://colorcontrast.forlaens.com npm run build
 ```
 
 ## Commands
@@ -59,7 +59,7 @@ npm run build
 npm run clean
 ```
 
-`npm run dev` serves `app/` at `http://127.0.0.1:8000`.
+`npm run dev` starts a hot-reload dev server at `http://127.0.0.1:8000`. Changes to app files automatically rebuild and refresh the browser.
 
 `npm run check` validates JavaScript and PHP syntax.
 
@@ -70,6 +70,10 @@ npm run clean
 `npm run test:accessibility` builds the static app and runs Siteimprove Alfa plus axe-core checks through Playwright. These checks target WCAG AAA and accessibility best-practice coverage.
 
 `npm test` runs the full local test suite.
+
+`npm run analyze:bundle` prints a bundle size breakdown using the generated source map.
+
+`npm run analyze:assets` reports the built JS bundle size and the unminified CSS size.
 
 ## Change Guidelines
 

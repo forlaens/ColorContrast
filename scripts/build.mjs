@@ -1,6 +1,8 @@
 import { cp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
+import { build as esbuild } from 'esbuild';
 
 function run(command, args) {
   const result = spawnSync(command, args, {
@@ -50,7 +52,23 @@ async function bundleScripts(html) {
     return `/* ${file} */\n${code.trim()}\n`;
   }));
 
-  await writeFile(resolve(distDir, 'js/app.bundle.js'), `${bundle.join('\n')}\n`);
+  const bundledSource = bundle.join('\n');
+
+  const result = await esbuild({
+    stdin: {
+      contents: bundledSource,
+      resolveDir: resolve('app/js'),
+      sourcefile: 'app.bundle.js',
+      loader: 'js'
+    },
+    bundle: false,
+    minify: true,
+    sourcemap: true,
+    metafile: true,
+    outfile: resolve(distDir, 'js/app.bundle.js')
+  });
+
+  await writeFile(resolve(distDir, 'js/app.bundle.meta.json'), JSON.stringify(result.metafile, null, 2));
 
   return html.replace(
     /(?:\n\t<script src="\/js\/[^"]+" defer><\/script>)+/,
@@ -58,10 +76,17 @@ async function bundleScripts(html) {
   );
 }
 
-async function optimizeServiceWorker() {
+async function optimizeServiceWorker(html) {
   const serviceWorkerPath = resolve(distDir, 'sw.js');
   const serviceWorker = await readFile(serviceWorkerPath, 'utf8');
+  const bundle = await readFile(resolve(distDir, 'js/app.bundle.js'), 'utf8');
+  const cacheHash = createHash('sha256')
+    .update(html)
+    .update(bundle)
+    .digest('hex')
+    .slice(0, 12);
   const optimized = serviceWorker
+    .replace(/colorcontrast-v[\w-]+/, `colorcontrast-${cacheHash}`)
     .replace('/css/style.css', '/js/app.bundle.js')
     .replace(/,\n\t'\/js\/(?:app|canvas|color|contrast|i18n|image|pwa|toolbar|util)\.js'/g, '');
 
@@ -75,6 +100,15 @@ async function removeUnbundledScripts() {
   await Promise.all(files
     .filter((file) => file.endsWith('.js') && file !== 'app.bundle.js')
     .map((file) => rm(resolve(jsDir, file), { force: true })));
+}
+
+async function cleanupBuildArtifacts() {
+  const jsDir = resolve(distDir, 'js');
+  
+  await Promise.all([
+    rm(resolve(jsDir, 'app.bundle.js.map'), { force: true }),
+    rm(resolve(jsDir, 'app.bundle.meta.json'), { force: true })
+  ]);
 }
 
 async function removeUnusedReleaseImages() {
@@ -99,7 +133,7 @@ const rendered = spawnSync('php', ['scripts/render-page.php'], {
   encoding: 'utf8',
   env: {
     ...process.env,
-    SITE_URL: process.env.SITE_URL ?? 'https://example.com'
+    SITE_URL: process.env.SITE_URL ?? 'https://colorcontrast.forlaens.com'
   }
 });
 
@@ -115,8 +149,9 @@ if (rendered.status !== 0) {
 let html = await inlineStyles(rendered.stdout);
 html = await bundleScripts(html);
 
-await optimizeServiceWorker();
+await optimizeServiceWorker(html);
 await removeUnbundledScripts();
+await cleanupBuildArtifacts();
 await removeUnusedReleaseImages();
 await writeFile(resolve(distDir, 'index.html'), html);
 

@@ -32,8 +32,10 @@ test('build creates a static release artifact', async () => {
   assert.equal(result.status, 0, [result.stdout, result.stderr].join('\n'));
 
   const index = await readFile(join(distDir, 'index.html'), 'utf8');
-  assert.match(index, /<title>Image contrast checker<\/title>/);
-  assert.match(index, /<meta property="og:image" content="https:\/\/example\.com\/img\/social-card\.png">/);
+  assert.match(index, /<title>Color contrast checker<\/title>/);
+  assert.match(index, /<meta property="og:url" content="https:\/\/colorcontrast\.forlaens\.com\/">/);
+  assert.match(index, /<meta property="og:image" content="https:\/\/colorcontrast\.forlaens\.com\/img\/social-card\.png">/);
+  assert.match(index, /<meta name="twitter:image" content="https:\/\/colorcontrast\.forlaens\.com\/img\/social-card\.png">/);
   assert.match(index, /<style>/);
   assert.match(index, /<script src="\/js\/app\.bundle\.js" defer><\/script>/);
   assert.equal(index.includes('<link href="/css/style.css" rel="stylesheet">'), false);
@@ -53,15 +55,24 @@ test('build includes backup folder placeholder', async () => {
   assert.deepEqual(files, ['.gitkeep']);
 });
 
-test('release config forces HTTPS and removes www', async () => {
+test('release config redirects to the canonical forlaens host', async () => {
   const htaccess = await readFile(join(distDir, '.htaccess'), 'utf8');
 
   assert.match(htaccess, /RewriteEngine On/);
   assert.match(htaccess, /RewriteCond %\{HTTPS\} off \[OR\]/);
-  assert.match(htaccess, /RewriteCond %\{HTTP_HOST\} \^www\\\. \[NC\]/);
-  assert.match(htaccess, /RewriteRule \^ https:\/\/%1%\{REQUEST_URI\} \[L,NE,R=301\]/);
+  assert.match(htaccess, /RewriteCond %\{HTTP_HOST\} !\^colorcontrast\\\.forlaens\\\.com\$ \[NC\]/);
+  assert.match(htaccess, /RewriteRule \^ https:\/\/colorcontrast\.forlaens\.com%\{REQUEST_URI\} \[L,NE,R=301\]/);
   assert.match(htaccess, /ExpiresByType image\/webp "access plus 1 year"/);
   assert.match(htaccess, /Cache-Control "public, max-age=31536000, immutable"/);
+  assert.match(htaccess, /<FilesMatch "\^\(index\\\.html\|sw\\\.js\)\$">/);
+  assert.match(htaccess, /Cache-Control "no-cache, no-store, must-revalidate"/);
+});
+
+test('service worker cache changes with built content', async () => {
+  const serviceWorker = await readFile(join(distDir, 'sw.js'), 'utf8');
+
+  assert.match(serviceWorker, /const CACHE_NAME = 'colorcontrast-[a-f0-9]{12}';/);
+  assert.doesNotMatch(serviceWorker, /colorcontrast-v3/);
 });
 
 test('social card asset has expected dimensions', async () => {
@@ -88,9 +99,11 @@ test('document provides a skip link to main content', async () => {
   assert.match(index, /<div class="app-shell">/);
   assert.match(index, /<header class="hero" aria-labelledby="app-title">/);
   assert.match(index, /<h1 id="app-title">/);
-  assert.match(index, /<a class="home-title-link" href="\/" onclick="return showFrontView\(\);" data-i18n="title">Image contrast checker<\/a>/);
+  assert.match(index, /<a class="home-title-link" href="\/" onclick="return showFrontView\(\);" data-i18n="title">Color contrast checker<\/a>/);
   assert.match(index, /<main id="main-content" class="app-main" tabindex="-1">/);
   assert.ok(index.indexOf('<header class="hero"') < index.indexOf('id="main-content"'));
+  assert.ok(index.indexOf('<header class="hero"') < index.indexOf('<a class="skip-link"'));
+  assert.ok(index.indexOf('<a class="skip-link"') < index.indexOf('<h1 id="app-title">'));
 });
 
 test('document provides an accessible error region', async () => {
@@ -111,9 +124,11 @@ test('document includes contact footer', async () => {
   assert.match(index, /<h3 id="accessibility-standard-title" data-i18n="accessibilityStandardTitle">Accessibility approach<\/h3>/);
   assert.match(index, /<h3 id="accessibility-measures-title" data-i18n="accessibilityMeasuresTitle">What the tool can and cannot do<\/h3>/);
   assert.match(index, /<h3 id="accessibility-testing-title" data-i18n="accessibilityTestingTitle">Testing<\/h3>/);
-  assert.match(index, /<h3 id="accessibility-limitations-title" data-i18n="accessibilityLimitationsTitle">Known limitations<\/h3>/);
   assert.match(index, /<h3 id="accessibility-feedback-title" data-i18n="accessibilityFeedbackTitle">Feedback and contact<\/h3>/);
   assert.match(index, /<span data-i18n="accessibilityFeedbackCopy">If you find an accessibility problem, have trouble using the app, or have a suggestion, email<\/span>/);
+  assert.doesNotMatch(index, /accessibility-limitations-title/);
+  assert.doesNotMatch(index, /accessibilityLimitations/);
+  assert.doesNotMatch(index, /language switching, theme switching, drag and drop, upload handling, empty-canvas handling, and contrast rendering/);
   assert.match(index, /<p class="accessibility-updated" data-i18n="accessibilityUpdated">Last updated: May 7, 2026\.<\/p>/);
   assert.match(index, /<a class="back-link" href="\/" data-i18n="accessibilityBack">Back to checker<\/a>/);
   assert.match(index, /<div class="footer-inner">/);
@@ -134,7 +149,9 @@ test('document includes contact footer', async () => {
   assert.match(i18n, /accessibilityStandardTitle:/);
   assert.match(i18n, /accessibilityMeasuresTitle:/);
   assert.match(i18n, /accessibilityTestingTitle:/);
-  assert.match(i18n, /accessibilityLimitationsTitle:/);
+  assert.doesNotMatch(i18n, /accessibilityLimitations/);
+  assert.doesNotMatch(i18n, /language switching, theme switching, drag and drop, upload handling, empty-canvas handling, and contrast rendering/);
+  assert.match(i18n, /manually tested with screen readers such as NVDA, JAWS, and VoiceOver/);
   assert.match(i18n, /accessibilityFeedbackTitle:/);
   assert.match(i18n, /accessibilityUpdated:/);
   assert.match(i18n, /accessibilityLink:/);
@@ -145,31 +162,56 @@ test('document explains purpose and basic use without eyebrow labels', async () 
   const index = await readFile(join(distDir, 'index.html'), 'utf8');
   const app = await readFile(join(distDir, 'js/app.bundle.js'), 'utf8');
 
-  assert.match(index, /<section id="intro-panel" class="intro-panel" aria-labelledby="intro-title">/);
+  assert.match(index, /<section hidden id="intro-panel" class="intro-panel" aria-labelledby="intro-title">/);
   assert.match(index, /<h2 id="intro-title" data-i18n="introTitle">How to use it<\/h2>/);
   assert.match(index, /<button id="intro-toggle" class="intro-toggle" type="button" aria-expanded="true" aria-controls="intro-steps" aria-labelledby="intro-title"><\/button>/);
   assert.match(index, /<h3 data-i18n="stepUploadTitle">Upload an image<\/h3>/);
   assert.match(index, /<h3 data-i18n="stepColorTitle">Choose the color to check<\/h3>/);
   assert.match(index, /<h3 data-i18n="stepRunTitle">Run the test<\/h3>/);
+  assert.match(index, /<section id="simple-contrast" class="simple-contrast" aria-labelledby="simple-contrast-title" tabindex="-1">/);
+  assert.match(index, /<h2 id="simple-contrast-title" data-i18n="simpleContrastTitle">Check two colors<\/h2>/);
+  assert.match(index, /<input id="simple-foreground" class="hex-color-control" type="text" name="foreground" value="#111827" inputmode="text" spellcheck="false" autocomplete="off" aria-labelledby="simple-foreground-label">/);
+  assert.match(index, /<input id="simple-foreground-native" class="native-color-control" type="color" value="#111827" aria-label="Choose foreground color visually" data-i18n-aria-label="chooseForegroundVisually">/);
+  assert.match(index, /<input id="simple-background" class="hex-color-control" type="text" name="background" value="#ffffff" inputmode="text" spellcheck="false" autocomplete="off" aria-labelledby="simple-background-label">/);
+  assert.match(index, /<input id="simple-background-native" class="native-color-control" type="color" value="#ffffff" aria-label="Choose background color visually" data-i18n-aria-label="chooseBackgroundVisually">/);
+  assert.match(index, /<div id="simple-contrast-result" class="simple-contrast-result" role="status" aria-live="polite" aria-atomic="true"><\/div>/);
   assert.match(index, /<form id="step-1" class="step upload-panel"[^>]+aria-labelledby="upload-title"/);
-  assert.match(index, /<h2 id="upload-title" class="upload-title" data-i18n="chooseImage">Choose an image<\/h2>/);
+  assert.match(index, /<h2 id="upload-title" class="upload-title" data-i18n="chooseImage">Check contrast in an image<\/h2>/);
+  assert.match(index, /<input id="image_url" type="url" inputmode="url" autocomplete="url" placeholder="https:\/\/example.com\/image.png" data-i18n-placeholder="imageUrlPlaceholder">/);
+  assert.match(index, /<button class="cta secondary" type="button" onclick="loadImageFromUrl\(\);" data-i18n="loadImageUrl">Load URL<\/button>/);
+  assert.match(index, /<p class="paste-hint" data-i18n="pasteHint">You can also paste an image from your clipboard, or paste an image URL\.<\/p>/);
   assert.match(index, /<option value="3" data-i18n="nonText">Graphics \(3:1\)<\/option>/);
+  assert.match(index, /<input id="test-color" class="hex-color-control" type="text" name="color" value="#000000" inputmode="text" spellcheck="false" autocomplete="off" aria-labelledby="testcolor-label">/);
+  assert.match(index, /<input id="test-color-native" class="native-color-control" type="color" value="#000000" aria-label="Choose color visually" data-i18n-aria-label="chooseColorVisually">/);
   assert.match(index, /<span id="zoom-label" data-i18n="zoomLabel">Zoom<\/span>/);
   assert.match(index, /<output id="zoom-output" for="image_preview" aria-live="polite">100%<\/output>/);
   assert.match(index, /<div class="zoom-controls" role="group" aria-labelledby="zoom-label">/);
+  assert.match(index, /<button id="hand-tool" class="icon-button" type="button" aria-label="Drag image" data-i18n-aria-label="dragImage" aria-pressed="false" onclick="toggleHandTool\(this\);">/);
   assert.match(index, /<div hidden id="pan-controls" class="pan-controls" role="group" aria-label="Pan image" data-i18n-aria-label="panControls">/);
+  assert.match(index, /data-pan-direction="right" onclick="panPreview\(1, 0\);">→<\/button>/);
   assert.match(index, /<section id="preview-viewport" class="preview-viewport" tabindex="0" aria-label="Zoomable image preview" data-i18n-aria-label="previewViewport" aria-describedby="preview-help">/);
-  assert.match(index, /Choose a color from the image, run the test/);
+  assert.match(index, /<section hidden id="palette-card" class="palette-card" aria-labelledby="palette-title">/);
+  assert.match(index, /<h2 id="palette-title" data-i18n="paletteTitle">Main colors in this image<\/h2>/);
+  assert.match(index, /<ul id="palette-swatches" class="palette-swatches"><\/ul>/);
+  assert.match(index, /Check two colors quickly, or choose an image/);
   assert.match(index, /can I still read it or see what I am supposed to see/);
-  assert.match(index, /The file stays in your browser/);
-  assert.ok(index.indexOf('id="step-1"') < index.indexOf('id="intro-title"'));
+  assert.match(index, /Want to test color contrasts in an image\? Choose an image on your machine here/);
+  assert.ok(index.indexOf('id="simple-contrast"') < index.indexOf('id="step-1"'));
+  assert.ok(index.indexOf('id="step-1"') < index.indexOf('id="step-2"'));
+  assert.ok(index.indexOf('id="step-2"') < index.indexOf('id="palette-card"'));
+  assert.ok(index.indexOf('id="palette-card"') < index.indexOf('id="intro-title"'));
   assert.equal(index.includes('class="eyebrow"'), false);
   assert.match(app, /colorcontrast-intro-open/);
-  assert.match(app, /addEventListener\('click'/);
+  assert.match(app, /click/);
   assert.match(app, /hashchange/);
   assert.match(app, /#accessibility-statement/);
-  assert.match(app, /function showFrontView\(\)/);
-  assert.match(app, /initCheckerSettings\(\)/);
+  assert.match(app, /#simple-contrast/);
+  assert.match(app, /showFrontView/);
+  assert.match(app, /updateSimpleContrast/);
+  assert.match(app, /loadImageFromUrl/);
+  assert.match(app, /updateImagePalette/);
+  assert.match(app, /extractImagePalette/);
+  assert.match(app, /initCheckerSettings/);
 });
 
 test('document includes language switcher support', async () => {
@@ -185,20 +227,26 @@ test('document includes language switcher support', async () => {
   assert.match(index, /data-i18n-aria-label="checkerRegion"/);
   assert.match(index, /data-i18n-aria-label="settingsToolbar"/);
   assert.match(index, /<script src="\/js\/app\.bundle\.js" defer><\/script>/);
-  assert.match(i18n, /code: 'kl'/);
-  assert.match(i18n, /code: 'it'/);
+  assert.match(i18n, /code:"kl"/);
+  assert.match(i18n, /code:"it"/);
   assert.match(i18n, /chooseFile:/);
   assert.match(i18n, /droppedFilePickerError:/);
+  assert.match(i18n, /imageUrlFetchError:/);
+  assert.match(i18n, /pasteImageStatus:/);
+  assert.match(i18n, /simpleContrastLink:/);
+  assert.match(i18n, /simpleContrastTitle:/);
+  assert.match(i18n, /chooseColorVisually:/);
+  assert.match(i18n, /chooseForegroundVisually:/);
+  assert.match(i18n, /chooseBackgroundVisually:/);
   assert.match(i18n, /languageChanged:/);
   assert.match(i18n, /themeChanged:/);
-  assert.match(i18n, /nonText: 'Graphics \(3:1\)'/);
-  assert.match(i18n, /nonText: 'Grafik \(3:1\)'/);
-  assert.match(i18n, /nonText: 'Gráficos \(3:1\)'/);
-  assert.match(i18n, /zoomLabel:/);
-  assert.match(i18n, /previewHelp:/);
+  assert.match(i18n, /nonText:"Graphics/);
   assert.match(i18n, /panControls:/);
+  assert.match(i18n, /dragImage:/);
   assert.match(i18n, /emptyCanvasStatus:/);
   assert.match(i18n, /imageLoadedStatus:/);
+  assert.match(i18n, /paletteTitle:/);
+  assert.match(i18n, /paletteMatrixCaption:/);
   assert.match(i18n, /colorSelectedStatus:/);
   assert.match(i18n, /testCompleteStatus:/);
   assert.match(i18n, /testCompleteNoIssuesStatus:/);
@@ -258,7 +306,7 @@ test('build includes PWA files', async () => {
   assert.equal(manifest.display, 'standalone');
   assert.equal(manifest.start_url, '/');
   assert.equal(manifest.icons.length >= 2, true);
-  assert.match(serviceWorker, /colorcontrast-v3/);
+  assert.match(serviceWorker, /colorcontrast-[a-f0-9]{12}/);
   assert.match(serviceWorker, /\/js\/app\.bundle\.js/);
   assert.match(serviceWorker, /fetch\(event\.request\)/);
   assert.match(serviceWorker, /caches\.match\(event\.request\)/);

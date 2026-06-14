@@ -1,7 +1,6 @@
 function showStep(stepNumber) {
 	var step1 = id('step-1');
 	var step2 = id('step-2');
-	var intro = id('intro-panel');
 	var isCheckerView = stepNumber === 2;
 
 	step1.hidden = false;
@@ -15,18 +14,33 @@ function showStep(stepNumber) {
 		step2.setAttribute('aria-hidden', 'true');
 	}
 
-	if (intro) {
-		intro.hidden = isCheckerView;
-		if (isCheckerView) {
-			intro.setAttribute('aria-hidden', 'true');
-		} else {
-			intro.removeAttribute('aria-hidden');
-		}
+	setIntroVisible(false);
+}
+
+function setIntroVisible(visible) {
+	var intro = id('intro-panel');
+
+	if (!intro) {
+		return false;
 	}
+
+	intro.hidden = !visible;
+
+	if (visible) {
+		intro.removeAttribute('aria-hidden');
+	} else {
+		intro.setAttribute('aria-hidden', 'true');
+	}
+
+	return true;
 }
 
 function isAccessibilityStatementView() {
 	return window.location.hash === '#accessibility-statement';
+}
+
+function isSimpleContrastView() {
+	return window.location.hash === '#simple-contrast';
 }
 
 function updateDocumentTitleForView() {
@@ -36,6 +50,8 @@ function updateDocumentTitleForView() {
 
 	if (isAccessibilityStatementView()) {
 		document.title = translate('accessibilityTitle') + ' - ' + translate('title');
+	} else if (isSimpleContrastView()) {
+		document.title = translate('simpleContrastTitle') + ' - ' + translate('title');
 	} else {
 		document.title = translate('title');
 	}
@@ -45,10 +61,12 @@ function updateDocumentTitleForView() {
 
 function updateAppView(shouldFocus) {
 	var homeView = id('home-view');
+	var simpleView = id('simple-contrast');
 	var statementView = id('accessibility-statement');
 	var showStatement = isAccessibilityStatementView();
+	var showSimple = isSimpleContrastView();
 
-	if (!homeView || !statementView) {
+	if (!homeView || !simpleView || !statementView) {
 		return false;
 	}
 
@@ -62,10 +80,12 @@ function updateAppView(shouldFocus) {
 		homeView.removeAttribute('aria-hidden');
 		statementView.setAttribute('aria-hidden', 'true');
 	}
+
+	simpleView.removeAttribute('aria-hidden');
 	updateDocumentTitleForView();
 
 	if (shouldFocus) {
-		(showStatement ? statementView : id('main-content')).focus();
+		(showStatement ? statementView : showSimple ? simpleView : id('main-content')).focus();
 	}
 
 	return true;
@@ -101,6 +121,20 @@ function markSkipLinkTarget() {
 	}
 
 	main.setAttribute('data-skip-link-focus', 'true');
+}
+
+function initMainFocusTarget() {
+	var main = id('main-content');
+
+	if (!main) {
+		return false;
+	}
+
+	main.addEventListener('blur', function () {
+		main.removeAttribute('data-skip-link-focus');
+	});
+
+	return true;
 }
 
 function showError(message) {
@@ -266,16 +300,208 @@ function initThemeToggle() {
 	return true;
 }
 
+function getSimpleContrastMessage(ratio) {
+	if (ratio >= 7) {
+		return translate('simpleContrastPassAAA');
+	}
+
+	if (ratio >= 4.5) {
+		return translate('simpleContrastPassAA');
+	}
+
+	if (ratio >= 3) {
+		return translate('simpleContrastPassLarge');
+	}
+
+	return translate('simpleContrastFail');
+}
+
+function renderSimpleContrastResult(result, ratio, message) {
+	function shortRequirementLabel(key) {
+		return translate(key).replace(/\s*\([^)]*\)/, '');
+	}
+
+	function outcomeLabel(requiredRatio, enhancedRatio) {
+		if (ratio >= enhancedRatio) {
+			return 'AAA';
+		}
+
+		if (ratio >= requiredRatio) {
+			return 'AA';
+		}
+
+		return translate('paletteFail');
+	}
+
+	function outcomeCard(item) {
+		var passed = ratio >= item.requiredRatio;
+		var enhanced = item.enhancedRatio && ratio >= item.enhancedRatio;
+		var card = document.createElement('li');
+		var mark = document.createElement('span');
+		var label = document.createElement('span');
+		var status = document.createElement('strong');
+		var detail = document.createElement('span');
+
+		card.className = 'simple-contrast-outcome';
+		card.setAttribute('data-state', passed ? 'pass' : 'fail');
+		mark.className = 'simple-contrast-check-mark';
+		mark.textContent = passed ? '✓' : '×';
+		mark.setAttribute('aria-hidden', 'true');
+
+		label.className = 'simple-contrast-outcome-label';
+		label.textContent = item.label;
+
+		status.className = 'simple-contrast-outcome-status';
+		status.textContent = passed
+			? (item.enhancedRatio ? outcomeLabel(item.requiredRatio, item.enhancedRatio) : translate('palettePass'))
+			: translate('paletteFail');
+
+		detail.className = 'simple-contrast-outcome-detail';
+		detail.textContent = '≥ ' + formatNumber(enhanced ? item.enhancedRatio : item.requiredRatio) + ':1';
+
+		card.append(mark, label, status, detail);
+		return card;
+	}
+
+	function outcomeSummary(ratio) {
+		if (ratio >= 7) {
+			return 'AAA';
+		}
+
+		if (ratio >= 4.5) {
+			return 'AA';
+		}
+
+		if (ratio >= 3) {
+			return translate('largeTextAA').replace(/\s*\([^)]*\)/, '');
+		}
+
+		return translate('paletteFail');
+	}
+
+	var ratioText = formatNumber(ratio) + ':1';
+	var items = [
+		{ label: shortRequirementLabel('smallTextAA'), requiredRatio: 4.5, enhancedRatio: 7 },
+		{ label: shortRequirementLabel('largeTextAA'), requiredRatio: 3, enhancedRatio: 4.5 },
+		{ label: shortRequirementLabel('nonText'), requiredRatio: 3 }
+	];
+	var resultMessage = getSimpleContrastMessage(ratio);
+	var summary = document.createElement('div');
+	var ratioGroup = document.createElement('div');
+	var ratioElement = document.createElement('strong');
+	var messageElement = document.createElement('span');
+	var outcomeBadge = document.createElement('span');
+	var outcomeList = document.createElement('ul');
+
+	summary.className = 'simple-contrast-summary';
+	ratioGroup.className = 'simple-contrast-ratio-group';
+
+	ratioElement.className = 'simple-contrast-ratio';
+	ratioElement.textContent = ratioText;
+	ratioElement.setAttribute('aria-hidden', 'true');
+
+	outcomeBadge.className = 'simple-contrast-badge';
+	outcomeBadge.textContent = outcomeSummary(ratio);
+	outcomeBadge.setAttribute('data-state', ratio >= 3 ? 'pass' : 'fail');
+
+	messageElement.className = 'simple-contrast-message';
+	messageElement.textContent = resultMessage;
+
+	outcomeList.className = 'simple-contrast-outcomes';
+	for (var i = 0; i < items.length; i++) {
+		outcomeList.append(outcomeCard(items[i]));
+	}
+
+	result.textContent = '';
+	result.setAttribute('aria-label', message);
+	result.title = message;
+	ratioGroup.append(ratioElement);
+	summary.append(ratioGroup, outcomeBadge, messageElement);
+	result.append(summary, outcomeList);
+}
+
+function updateSimpleContrast(shouldAnnounce) {
+	var foreground = id('simple-foreground');
+	var background = id('simple-background');
+	var result = id('simple-contrast-result');
+	var sample = id('simple-contrast-sample');
+
+	if (!foreground || !background || !result || !window.hexToRgb || !window.contrastRatio || !window.normalizeColorToHex) {
+		return false;
+	}
+
+	var foregroundColor = normalizeColorToHex(foreground.value);
+	var backgroundColor = normalizeColorToHex(background.value);
+
+	if (!foregroundColor || !backgroundColor) {
+		return false;
+	}
+
+	var ratio = contrastRatio(hexToRgb(foregroundColor), hexToRgb(backgroundColor));
+	var message = translate('simpleContrastResult')
+		.replace('{ratio}', formatNumber(ratio))
+		.replace('{message}', getSimpleContrastMessage(ratio));
+
+	renderSimpleContrastResult(result, ratio, message);
+
+	if (sample) {
+		sample.style.color = foregroundColor;
+		sample.style.backgroundColor = backgroundColor;
+	}
+
+	if (shouldAnnounce) {
+		announceStatus(message);
+	}
+
+	return true;
+}
+
+function initSimpleContrast() {
+	var foreground = id('simple-foreground');
+	var background = id('simple-background');
+	var foregroundPicker = id('simple-foreground-native');
+	var backgroundPicker = id('simple-background-native');
+
+	if (!foreground || !background) {
+		return false;
+	}
+
+	initHexColorField(foreground, foregroundPicker, updateSimpleContrast);
+	initHexColorField(background, backgroundPicker, updateSimpleContrast);
+	foreground.addEventListener('input', function () {
+		updateSimpleContrast(false);
+	});
+	background.addEventListener('input', function () {
+		updateSimpleContrast(false);
+	});
+	foreground.addEventListener('change', function () {
+		updateSimpleContrast(true);
+	});
+	background.addEventListener('change', function () {
+		updateSimpleContrast(true);
+	});
+
+	updateSimpleContrast(false);
+	return true;
+}
+
+window.updateSimpleContrast = updateSimpleContrast;
+window.setIntroVisible = setIntroVisible;
+
 if (document.readyState === 'loading') {
 	document.addEventListener('DOMContentLoaded', function () {
 		initViewRouting();
+		initMainFocusTarget();
 		initIntroPanel();
 		initThemeToggle();
+		initSimpleContrast();
 		initCheckerSettings();
 	});
 } else {
 	initViewRouting();
+	initMainFocusTarget();
 	initIntroPanel();
 	initThemeToggle();
+	initSimpleContrast();
 	initCheckerSettings();
 }

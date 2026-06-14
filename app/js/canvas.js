@@ -105,5 +105,11 @@ function canvasKeyUp(e) {
 
 function canvasBlur() {
 	shiftPressed = false;
+
+	if (window.setColorPickerActive) {
+		window.setColorPickerActive(false);
+		return;
+	}
+
 	selector('#colorpicker').setAttribute('aria-pressed', 'false');
 }

@@ -44,6 +44,7 @@ function loadImageFile(file) {
 	cachedPixels = false;
 	image.hasContrastHighlights = false;
 	image.contrastTest = null;
+	hideImagePalette();
 
 	var reader = new FileReader();
 	reader.onload = function(event) {
@@ -56,6 +57,10 @@ function loadImageFile(file) {
 
 			try {
 				updatePreviewCanvas();
+				updateImagePalette();
+				if (window.setIntroVisible) {
+					window.setIntroVisible(true);
+				}
 				announceStatus(translate('imageLoadedStatus')
 					.replace('{name}', file.name)
 					.replace('{width}', formatNumber(image.file.width))
@@ -83,6 +88,144 @@ function loadImageFile(file) {
 	return true;
 }
 
+function loadImageFromBlob(blob, name, options) {
+	options = options || {};
+
+	if (!blob) {
+		showError(translate('readImageError'));
+		return false;
+	}
+
+	var file;
+
+	try {
+		file = new File([blob], name || 'image-from-url', { type: blob.type || options.type || '' });
+	} catch (error) {
+		showError(translate('browserFileError'));
+		return false;
+	}
+
+	return setImageFile(file, true, {
+		allowUnknownType: options.allowUnknownType === true,
+		source: options.source
+	});
+}
+
+function clearFileSelectionDisplay() {
+	var fileInput = id('image_file');
+
+	if (fileInput) {
+		fileInput.value = '';
+	}
+
+	clearImageThumbnail();
+	updateSelectedFileName();
+}
+
+function clearImageUrlField() {
+	var input = id('image_url');
+
+	if (input) {
+		input.value = '';
+	}
+}
+
+function syncActiveImageSource(source) {
+	if (source === 'url') {
+		clearFileSelectionDisplay();
+	} else if (source === 'file') {
+		clearImageUrlField();
+	}
+}
+
+function getFileNameFromUrl(url) {
+	try {
+		var path = new URL(url).pathname;
+		var name = path.split('/').filter(Boolean).pop();
+		return name ? decodeURIComponent(name).replace(/[?#].*$/, '') : 'image-from-url';
+	} catch (error) {
+		return 'image-from-url';
+	}
+}
+
+function getValidatedImageUrl(value) {
+	var url = (value || '').trim();
+
+	if (!url) {
+		showError(translate('imageUrlEmptyError'));
+		return false;
+	}
+
+	try {
+		var parsed = new URL(url, window.location.href);
+
+		if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+			showError(translate('imageUrlInvalidError'));
+			return false;
+		}
+
+		return parsed.href;
+	} catch (error) {
+		showError(translate('imageUrlInvalidError'));
+		return false;
+	}
+}
+
+function isImageUrlTypeAllowed(type) {
+	return !type || type === 'application/octet-stream' || (/image/i).test(type);
+}
+
+function loadImageFromUrl(value) {
+	clearError();
+
+	var input = id('image_url');
+	var url = getValidatedImageUrl(typeof value === 'string' ? value : input && input.value);
+
+	if (!url) {
+		return false;
+	}
+
+	if (typeof fetch !== 'function') {
+		showError(translate('imageUrlFetchUnavailableError'));
+		return false;
+	}
+
+	if (input) {
+		input.value = url;
+	}
+
+	announceStatus(translate('imageUrlLoadingStatus'));
+
+	return fetch(url, { mode: 'cors' })
+		.then(function (response) {
+			if (!response.ok) {
+				throw new Error(translate('imageUrlHttpError').replace('{status}', response.status));
+			}
+
+			return response.blob();
+		})
+		.then(function (blob) {
+			if (!isImageUrlTypeAllowed(blob.type)) {
+				showError(translate('imageUrlTypeError'));
+				return false;
+			}
+
+			return loadImageFromBlob(blob, getFileNameFromUrl(url), {
+				allowUnknownType: true,
+				source: 'url'
+			});
+		})
+		.catch(function (error) {
+			showStep(1);
+			showError(error && error.message && error.message !== 'Failed to fetch'
+				? error.message
+				: translate('imageUrlFetchError'));
+			return false;
+		});
+}
+
+window.loadImageFromUrl = loadImageFromUrl;
+
 // The empty canvas keeps the checker forgiving: users can enter the canvas view
 // first and still upload or drag in an image later.
 function showEmptyPreviewCanvas() {
@@ -107,6 +250,253 @@ function showEmptyPreviewCanvas() {
 	context.clearRect(0, 0, canvas.width, canvas.height);
 	updatePreviewControls();
 	updateCheckerResult('');
+	hideImagePalette();
+	if (window.setIntroVisible) {
+		window.setIntroVisible(false);
+	}
+}
+
+function hideImagePalette() {
+	var card = id('palette-card');
+	var swatches = id('palette-swatches');
+	var matrix = id('palette-matrix');
+	var summary = id('palette-summary');
+
+	if (!card) {
+		return false;
+	}
+
+	card.hidden = true;
+	card.setAttribute('aria-hidden', 'true');
+
+	if (swatches) {
+		swatches.textContent = '';
+	}
+
+	if (matrix) {
+		matrix.textContent = '';
+	}
+
+	if (summary) {
+		summary.textContent = '';
+	}
+
+	return true;
+}
+
+function paletteColorDistance(color1, color2) {
+	var red = color1.r - color2.r;
+	var green = color1.g - color2.g;
+	var blue = color1.b - color2.b;
+
+	return Math.sqrt((red * red) + (green * green) + (blue * blue));
+}
+
+function quantizedPaletteKey(color) {
+	return [
+		Math.floor(color.r / 32),
+		Math.floor(color.g / 32),
+		Math.floor(color.b / 32)
+	].join(',');
+}
+
+function extractImagePalette(maxColors) {
+	if (!image.file || !image.file.width || !image.file.height) {
+		return [];
+	}
+
+	var sampleCanvas = document.createElement('canvas');
+	var sampleContext = sampleCanvas.getContext('2d', { willReadFrequently: true });
+	var maxSampleSize = 140;
+	var scale = Math.min(1, maxSampleSize / Math.max(image.file.width, image.file.height));
+	var width = Math.max(1, Math.round(image.file.width * scale));
+	var height = Math.max(1, Math.round(image.file.height * scale));
+	var bins = {};
+	var palette = [];
+
+	if (!sampleContext) {
+		return [];
+	}
+
+	sampleCanvas.width = width;
+	sampleCanvas.height = height;
+	sampleContext.drawImage(image.file, 0, 0, width, height);
+
+	var pixels = sampleContext.getImageData(0, 0, width, height).data;
+
+	for (var i = 0; i < pixels.length; i += 4) {
+		if (pixels[i + 3] < 160) {
+			continue;
+		}
+
+		var color = { r: pixels[i], g: pixels[i + 1], b: pixels[i + 2] };
+		var key = quantizedPaletteKey(color);
+
+		if (!bins[key]) {
+			bins[key] = { r: 0, g: 0, b: 0, count: 0 };
+		}
+
+		bins[key].r += color.r;
+		bins[key].g += color.g;
+		bins[key].b += color.b;
+		bins[key].count++;
+	}
+
+	var candidates = Object.keys(bins).map(function (key) {
+		var bin = bins[key];
+
+		return {
+			r: Math.round(bin.r / bin.count),
+			g: Math.round(bin.g / bin.count),
+			b: Math.round(bin.b / bin.count),
+			count: bin.count
+		};
+	}).sort(function (a, b) {
+		return b.count - a.count;
+	});
+
+	for (var c = 0; c < candidates.length && palette.length < maxColors; c++) {
+		var candidate = candidates[c];
+		var isDistinct = palette.every(function (selected) {
+			return paletteColorDistance(candidate, selected) >= 44;
+		});
+
+		if (isDistinct) {
+			palette.push(candidate);
+		}
+	}
+
+	for (var f = 0; f < candidates.length && palette.length < maxColors; f++) {
+		if (palette.indexOf(candidates[f]) === -1) {
+			palette.push(candidates[f]);
+		}
+	}
+
+	return palette;
+}
+
+function paletteHex(color) {
+	return rgbToHex({ r: color.r, g: color.g, b: color.b, a: 255 });
+}
+
+function appendPaletteSwatches(container, colors) {
+	colors.forEach(function (color) {
+		var hex = paletteHex(color);
+		var swatch = document.createElement('li');
+		var preview = document.createElement('span');
+		var code = document.createElement('span');
+		var name = document.createElement('span');
+
+		swatch.className = 'palette-swatch';
+		preview.className = 'palette-swatch-preview';
+		preview.style.backgroundColor = hex;
+		code.className = 'palette-swatch-code';
+		code.textContent = hex;
+		name.textContent = describeRgbColor(color);
+
+		swatch.appendChild(preview);
+		swatch.appendChild(code);
+		swatch.appendChild(name);
+		container.appendChild(swatch);
+	});
+}
+
+function createPaletteColorHeading(color) {
+	var hex = paletteHex(color);
+	var heading = document.createElement('span');
+	var preview = document.createElement('span');
+	var code = document.createElement('span');
+
+	heading.className = 'palette-color-heading';
+	preview.className = 'palette-swatch-preview';
+	preview.style.backgroundColor = hex;
+	code.className = 'palette-swatch-code';
+	code.textContent = hex;
+
+	heading.appendChild(preview);
+	heading.appendChild(code);
+	return heading;
+}
+
+function appendPaletteMatrix(container, colors) {
+	var table = document.createElement('table');
+	var caption = document.createElement('caption');
+	var thead = document.createElement('thead');
+	var headRow = document.createElement('tr');
+	var tbody = document.createElement('tbody');
+	var emptyHead = document.createElement('th');
+	var threshold = 4.5;
+
+	caption.className = 'sr-only';
+	caption.textContent = translate('paletteMatrixCaption');
+	table.appendChild(caption);
+	emptyHead.scope = 'col';
+	headRow.appendChild(emptyHead);
+
+	colors.forEach(function (color) {
+		var th = document.createElement('th');
+		th.scope = 'col';
+		th.appendChild(createPaletteColorHeading(color));
+		headRow.appendChild(th);
+	});
+
+	thead.appendChild(headRow);
+	table.appendChild(thead);
+
+	colors.forEach(function (rowColor) {
+		var row = document.createElement('tr');
+		var th = document.createElement('th');
+		th.scope = 'row';
+		th.appendChild(createPaletteColorHeading(rowColor));
+		row.appendChild(th);
+
+		colors.forEach(function (columnColor) {
+			var td = document.createElement('td');
+			var ratio = contrastRatio(rowColor, columnColor);
+			var passes = ratio >= threshold;
+
+			td.className = passes ? 'palette-pass' : 'palette-fail';
+			td.textContent = translate(passes ? 'palettePass' : 'paletteFail') + ' ' + formatNumber(ratio) + ':1';
+			row.appendChild(td);
+		});
+
+		tbody.appendChild(row);
+	});
+
+	table.appendChild(tbody);
+	container.appendChild(table);
+}
+
+function updateImagePalette() {
+	var card = id('palette-card');
+	var swatches = id('palette-swatches');
+	var matrix = id('palette-matrix');
+	var summary = id('palette-summary');
+
+	if (!card || !swatches || !matrix || !summary) {
+		return false;
+	}
+
+	try {
+		var colors = extractImagePalette(6);
+
+		if (!colors.length) {
+			hideImagePalette();
+			return false;
+		}
+
+		swatches.textContent = '';
+		matrix.textContent = '';
+		appendPaletteSwatches(swatches, colors);
+		appendPaletteMatrix(matrix, colors);
+		summary.textContent = translate('paletteSummary').replace('{count}', colors.length);
+		card.hidden = false;
+		card.removeAttribute('aria-hidden');
+		return true;
+	} catch (error) {
+		hideImagePalette();
+		return false;
+	}
 }
 
 function updatePreviewCanvas(options) {
@@ -140,6 +530,7 @@ function updatePreviewCanvas(options) {
 	renderImage(context, image.file);
 	cachePixels(context);
 	updatePreviewControls();
+	schedulePreviewControlsUpdate();
 
 	if (shouldPreserveHighlights && window.applyContrastHighlights) {
 		applyContrastHighlights(context, image.contrastTest, false);
@@ -168,13 +559,34 @@ function scaleImage(canvas) {
 
 	var viewport = id('preview-viewport');
 	var viewportWidth = viewport ? viewport.clientWidth : canvas.offsetWidth;
-	var fitScale = viewportWidth / image.file.width;
+	var viewportHeight = getPreviewFitHeight(viewport);
+	var widthFitScale = viewportWidth / image.file.width;
+	var heightFitScale = viewportHeight / image.file.height;
+	var fitScale = Math.min(widthFitScale, heightFitScale);
 	var scale = image.zoom || fitScale;
 
-	var width = Math.floor(image.file.width * scale);
-	var height = Math.floor(image.file.height * scale);
+	var width = Math.max(1, Math.floor(image.file.width * scale));
+	var height = Math.max(1, Math.floor(image.file.height * scale));
 
 	return { width, height };
+}
+
+function getPreviewFitHeight(viewport) {
+	if (!viewport) {
+		return 320;
+	}
+
+	var style = window.getComputedStyle(viewport);
+	var maxHeight = parseFloat(style.maxHeight);
+
+	if (Number.isFinite(maxHeight) && maxHeight > 0) {
+		return maxHeight;
+	}
+
+	var rect = viewport.getBoundingClientRect();
+	var availableHeight = window.innerHeight - rect.top - 24;
+
+	return Math.max(240, availableHeight);
 }
 
 function getCurrentZoom() {
@@ -188,7 +600,8 @@ function getCurrentZoom() {
 
 	var viewport = id('preview-viewport');
 	var viewportWidth = viewport ? viewport.clientWidth : 1;
-	return viewportWidth / image.file.width;
+	var viewportHeight = getPreviewFitHeight(viewport);
+	return Math.min(viewportWidth / image.file.width, viewportHeight / image.file.height);
 }
 
 function setPreviewZoom(zoom, shouldAnnounce) {
@@ -198,9 +611,12 @@ function setPreviewZoom(zoom, shouldAnnounce) {
 
 	image.zoom = Math.max(zoomSteps[0], Math.min(zoomSteps[zoomSteps.length - 1], zoom));
 	updatePreviewCanvas();
+	schedulePreviewControlsUpdate();
 
 	if (shouldAnnounce) {
-		announceStatus(translate('zoomStatus').replace('{zoom}', Math.round(image.zoom * 100)));
+		schedulePreviewStatusAnnouncement(function () {
+			return getZoomPreviewStatus();
+		});
 	}
 
 	return true;
@@ -238,13 +654,199 @@ function panPreview(xDirection, yDirection) {
 		top: yDirection * Math.max(80, viewport.clientHeight * 0.25),
 		behavior: 'smooth'
 	});
+	updatePanDirectionButtons();
+	schedulePreviewStatusAnnouncement(function () {
+		return getPanPreviewStatus();
+	});
 
+	return true;
+}
+
+function isPreviewDraggable() {
+	var viewport = id('preview-viewport');
+
+	return !!(viewport && viewport.classList.contains('can-pan'));
+}
+
+function hasPreviewImage() {
+	return !!(image.file && image.dimensions);
+}
+
+function isHandToolActive() {
+	var button = id('hand-tool');
+	var viewport = id('preview-viewport');
+
+	return !!(button && viewport && button.getAttribute('aria-pressed') === 'true' && hasPreviewImage());
+}
+
+function setHandToolActive(active) {
+	var button = id('hand-tool');
+	var viewport = id('preview-viewport');
+
+	if (!button || !viewport) {
+		return false;
+	}
+
+	active = active === true && hasPreviewImage();
+
+	if (active && window.setColorPickerActive) {
+		window.setColorPickerActive(false);
+	}
+
+	button.setAttribute('aria-pressed', active ? 'true' : 'false');
+	viewport.classList.toggle('is-hand-tool', active);
+	viewport.classList.remove('is-dragging-preview');
+	return true;
+}
+
+function toggleHandTool(button) {
+	return setHandToolActive(button && button.getAttribute('aria-pressed') !== 'true');
+}
+
+window.isHandToolActive = isHandToolActive;
+window.setHandToolActive = setHandToolActive;
+
+function updatePanDirectionButtons() {
+	var viewport = id('preview-viewport');
+	var controls = id('pan-controls');
+
+	if (!viewport || !controls) {
+		return false;
+	}
+
+	var maxScrollLeft = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+	var maxScrollTop = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
+	var canMove = {
+		left: viewport.scrollLeft > 1,
+		right: viewport.scrollLeft < maxScrollLeft - 1,
+		up: viewport.scrollTop > 1,
+		down: viewport.scrollTop < maxScrollTop - 1
+	};
+	var buttons = controls.querySelectorAll('[data-pan-direction]');
+
+	for (var i = 0; i < buttons.length; i++) {
+		var button = buttons[i];
+		var direction = button.getAttribute('data-pan-direction');
+		button.hidden = !canMove[direction];
+	}
+
+	return true;
+}
+
+function schedulePreviewStatusAnnouncement(getMessage) {
+	var delay = 260;
+
+	if (typeof window.setTimeout !== 'function') {
+		announceStatus(getMessage());
+		return true;
+	}
+
+	window.setTimeout(function () {
+		announceStatus(getMessage());
+	}, delay);
+	return true;
+}
+
+function getZoomPreviewStatus() {
+	var zoom = Math.round(getCurrentZoom() * 100);
+	var status = getPreviewVisibilityStatus();
+
+	return translate('zoomStatus')
+		.replace('{zoom}', zoom)
+		.replace('{visible}', status.visiblePercent)
+		.replace('{directions}', status.directionText);
+}
+
+function getPanPreviewStatus() {
+	return translate('panStatus').replace('{directions}', getPreviewVisibilityStatus().directionText);
+}
+
+function getPreviewVisibilityStatus() {
+	var viewport = id('preview-viewport');
+
+	if (!viewport) {
+		return {
+			visiblePercent: 100,
+			directionText: 'No scrolling available.'
+		};
+	}
+
+	var visibleArea = viewport.clientWidth * viewport.clientHeight;
+	var totalArea = Math.max(1, viewport.scrollWidth * viewport.scrollHeight);
+	var visiblePercent = Math.min(100, Math.max(1, Math.round((visibleArea / totalArea) * 100)));
+	var directions = getAvailableScrollDirections(viewport);
+
+	return {
+		visiblePercent: visiblePercent,
+		directionText: formatScrollDirections(directions)
+	};
+}
+
+function getAvailableScrollDirections(viewport) {
+	var maxScrollLeft = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+	var maxScrollTop = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
+	var directions = [];
+
+	if (viewport.scrollLeft > 1) {
+		directions.push('left');
+	}
+
+	if (viewport.scrollLeft < maxScrollLeft - 1) {
+		directions.push('right');
+	}
+
+	if (viewport.scrollTop > 1) {
+		directions.push('up');
+	}
+
+	if (viewport.scrollTop < maxScrollTop - 1) {
+		directions.push('down');
+	}
+
+	return directions;
+}
+
+function formatScrollDirections(directions) {
+	if (!directions.length) {
+		return translate('scrollNoDirections');
+	}
+
+	return translate('scrollDirections').replace('{directions}', formatDirectionList(directions));
+}
+
+function formatDirectionList(directions) {
+	var names = [];
+
+	for (var i = 0; i < directions.length; i++) {
+		names.push(translate('direction' + directions[i].charAt(0).toUpperCase() + directions[i].slice(1)));
+	}
+
+	if (names.length === 1) {
+		return names[0];
+	}
+
+	if (names.length === 2) {
+		return names[0] + ' and ' + names[1];
+	}
+
+	return names.slice(0, -1).join(', ') + ', and ' + names[names.length - 1];
+}
+
+function schedulePreviewControlsUpdate() {
+	if (typeof window.requestAnimationFrame !== 'function') {
+		return updatePreviewControls();
+	}
+
+	window.requestAnimationFrame(function () {
+		updatePreviewControls();
+	});
 	return true;
 }
 
 function updatePreviewControls() {
 	var viewport = id('preview-viewport');
 	var panControls = id('pan-controls');
+	var handTool = id('hand-tool');
 	var zoomOutput = id('zoom-output');
 	var zoomOut = id('zoom-out');
 	var zoomIn = id('zoom-in');
@@ -280,6 +882,17 @@ function updatePreviewControls() {
 
 	panControls.hidden = !canPan;
 	viewport.classList.toggle('can-pan', canPan);
+	updatePanDirectionButtons();
+
+	if (handTool) {
+		handTool.disabled = !canPan;
+		handTool.style.visibility = canPan ? '' : 'hidden';
+	}
+
+	if (!canPan) {
+		setHandToolActive(false);
+	}
+
 	return true;
 }
 
@@ -315,7 +928,9 @@ function getCachedPixel(x, y) {
 	};
 }
 
-function imageValidation(file) {
+function imageValidation(file, options) {
+	options = options || {};
+
 	if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
 		showError(translate('browserFileError'));
 		return false;
@@ -330,7 +945,7 @@ function imageValidation(file) {
 		return false;
 	}
 
-	if( !(/image/i).test(file.type) ) {
+	if( !(/image/i).test(file.type) && !(options.allowUnknownType && isImageUrlTypeAllowed(file.type)) ) {
 		showError(translate('imageTypeError'));
 		return false;
 	}
@@ -372,10 +987,12 @@ function hasImageDrag(dataTransfer) {
 	return dataTransfer.types && Array.prototype.indexOf.call(dataTransfer.types, 'Files') !== -1;
 }
 
-function setImageFile(file, shouldLoadPreview) {
+function setImageFile(file, shouldLoadPreview, options) {
+	options = options || {};
+
 	var fileInput = id('image_file');
 
-	if (!fileInput || !imageValidation(file)) {
+	if (!fileInput || !imageValidation(file, options)) {
 		return false;
 	}
 
@@ -390,6 +1007,7 @@ function setImageFile(file, shouldLoadPreview) {
 
 	showImageThumbnail(file);
 	updateSelectedFileName();
+	syncActiveImageSource(options.source === 'url' ? 'url' : 'file');
 	clearError();
 
 	if (shouldLoadPreview) {
@@ -450,8 +1068,46 @@ function loadSelectedImageFromInput() {
 	}
 
 	showImageThumbnail(file);
+	syncActiveImageSource('file');
 	clearError();
 	return loadImageFile(file);
+}
+
+function getImageFileFromClipboard(clipboardData) {
+	if (!clipboardData) {
+		return false;
+	}
+
+	if (clipboardData.files && clipboardData.files.length) {
+		return getImageFileFromTransfer(clipboardData);
+	}
+
+	if (clipboardData.items) {
+		for (var i = 0; i < clipboardData.items.length; i++) {
+			var item = clipboardData.items[i];
+
+			if (item.kind === 'file' && (/image/i).test(item.type)) {
+				return item.getAsFile();
+			}
+		}
+	}
+
+	return false;
+}
+
+function getUrlFromClipboard(clipboardData) {
+	if (!clipboardData || typeof clipboardData.getData !== 'function') {
+		return false;
+	}
+
+	return clipboardData.getData('text/uri-list') || clipboardData.getData('text/plain') || false;
+}
+
+function isEditablePasteTarget(target) {
+	return !!(target && (
+		target.matches('input, textarea, select') ||
+		target.isContentEditable
+	));
 }
 
 function updateSelectedFileName() {
@@ -508,12 +1164,115 @@ function setImageDragState(active) {
 	}
 }
 
+function initPreviewDragging() {
+	var viewport = id('preview-viewport');
+	var dragState = null;
+
+	if (!viewport) {
+		return false;
+	}
+
+	viewport.addEventListener('pointerdown', function (event) {
+		if (!isHandToolActive() || event.button !== 0 || event.target.closest('button')) {
+			return;
+		}
+
+		event.preventDefault();
+		dragState = {
+			pointerId: event.pointerId,
+			x: event.clientX,
+			y: event.clientY,
+			scrollLeft: viewport.scrollLeft,
+			scrollTop: viewport.scrollTop
+		};
+		viewport.classList.add('is-dragging-preview');
+
+		if (viewport.setPointerCapture) {
+			viewport.setPointerCapture(event.pointerId);
+		}
+	});
+
+	viewport.addEventListener('pointermove', function (event) {
+		if (!dragState || event.pointerId !== dragState.pointerId) {
+			return;
+		}
+
+		event.preventDefault();
+		viewport.scrollLeft = dragState.scrollLeft + (dragState.x - event.clientX);
+		viewport.scrollTop = dragState.scrollTop + (dragState.y - event.clientY);
+		updatePanDirectionButtons();
+	});
+
+	function stopDragging(event) {
+		if (!dragState || event.pointerId !== dragState.pointerId) {
+			return;
+		}
+
+		if (viewport.releasePointerCapture) {
+			viewport.releasePointerCapture(event.pointerId);
+		}
+
+		dragState = null;
+		viewport.classList.remove('is-dragging-preview');
+	}
+
+	viewport.addEventListener('pointerup', stopDragging);
+	viewport.addEventListener('pointercancel', stopDragging);
+	viewport.addEventListener('scroll', updatePanDirectionButtons);
+	window.addEventListener('scroll', updatePanDirectionButtons);
+	window.addEventListener('resize', updatePanDirectionButtons);
+	viewport.addEventListener('lostpointercapture', function () {
+		dragState = null;
+		viewport.classList.remove('is-dragging-preview');
+	});
+
+	return true;
+}
+
 function initImageChooser() {
 	var fileInput = id('image_file');
+	var urlInput = id('image_url');
 
 	if (fileInput) {
 		fileInput.addEventListener('change', loadSelectedImageFromInput);
 	}
+
+	if (urlInput) {
+		urlInput.addEventListener('input', function () {
+			if (urlInput.value.trim()) {
+				clearFileSelectionDisplay();
+			}
+		});
+
+		urlInput.addEventListener('keydown', function (event) {
+			if (event.key === 'Enter') {
+				event.preventDefault();
+				loadImageFromUrl();
+			}
+		});
+	}
+
+	document.addEventListener('paste', function (event) {
+		var file = getImageFileFromClipboard(event.clipboardData);
+
+		if (file) {
+			event.preventDefault();
+			setImageFile(file, true);
+			announceStatus(translate('pasteImageStatus'));
+			return;
+		}
+
+		if (isEditablePasteTarget(event.target)) {
+			return;
+		}
+
+		var url = getUrlFromClipboard(event.clipboardData);
+
+		if (url) {
+			event.preventDefault();
+			loadImageFromUrl(url);
+		}
+	});
 
 	document.addEventListener('dragenter', function (event) {
 		if (!hasImageDrag(event.dataTransfer)) {
@@ -564,7 +1323,11 @@ function initImageChooser() {
 }
 
 if (document.readyState === 'loading') {
-	document.addEventListener('DOMContentLoaded', initImageChooser);
+	document.addEventListener('DOMContentLoaded', function () {
+		initImageChooser();
+		initPreviewDragging();
+	});
 } else {
 	initImageChooser();
+	initPreviewDragging();
 }
