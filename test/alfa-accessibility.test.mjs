@@ -154,12 +154,14 @@ test('built app passes Siteimprove Alfa WCAG AAA and best-practice checks', asyn
     for (const route of renderedRoutes) {
       const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
       await page.goto(new URL(route.path, server.url).toString(), { waitUntil: 'networkidle' });
+      // Alfa 0.84's default iframe exclusion rejects its own selector; this app has no iframes.
+      assert.equal(await page.locator('iframe').count(), 0);
 
       const document = await page.evaluateHandle(() => window.document);
       const alfaPage = await Playwright.toPage(document);
       const audit = await Audit.run(alfaPage, {
         rules: { include: alfaAAAAndBestPracticeFilter },
-        outcomes: { include: Outcomes.failedFilter }
+        outcomes: { include: Outcomes.failedFilter, includeIFrames: true }
       });
 
       const failed = audit.resultAggregates.reduce((total, result) => total + result.failed, 0);
