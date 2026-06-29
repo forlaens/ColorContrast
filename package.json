@@ -21,7 +21,7 @@
     "node": ">=24.18.0"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.11.3",
+    "@axe-core/playwright": "^4.12.1",
     "@playwright/test": "^1.61.1",
     "@siteimprove/alfa-playwright": "^0.84.0",
     "@siteimprove/alfa-refinement": "^0.117.0",
