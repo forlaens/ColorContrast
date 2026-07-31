@@ -24,7 +24,7 @@
     "@axe-core/playwright": "^4.12.1",
     "@playwright/test": "^1.62.0",
     "@siteimprove/alfa-playwright": "^0.84.2",
-    "@siteimprove/alfa-refinement": "^0.118.0",
+    "@siteimprove/alfa-refinement": "^0.119.0",
     "@siteimprove/alfa-test-utils": "^0.84.2",
     "@siteimprove/alfa-wcag": "^0.118.0",
     "chokidar": "^5.0.0",
