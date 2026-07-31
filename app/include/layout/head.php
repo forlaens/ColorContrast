@@ -9,8 +9,8 @@
 		$baseUrl = $scheme . '://' . $host;
 		$pageUrl = $baseUrl . '/';
 		$socialImageUrl = $baseUrl . '/img/social-card.png';
-		$title = 'Image contrast checker';
-		$description = 'Choose a color from an image and check whether it stays readable or visible.';
+		$title = 'Color contrast checker';
+		$description = 'Check two colors quickly, or choose an image to find places where a color may be hard to read or see.';
 	?>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
