@@ -1,6 +1,13 @@
 # Color Contrast
 
-Image contrast checker web app.
+[![Tests](https://github.com/forlaens/ColorContrast/actions/workflows/tests.yml/badge.svg)](https://github.com/forlaens/ColorContrast/actions/workflows/tests.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+An accessible image contrast checker by [Forlæns](https://forlaens.com/).
+
+[Use Color Contrast](https://colorcontrast.forlaens.com)
+
+![Color Contrast image checker](app/img/social-card.png)
 
 The app lets someone upload or drop in an image, choose a text/icon/background color, and highlight image areas where that color may be hard to read or see. It is intentionally static at runtime: PHP is only used as a source template during local development and build rendering.
 
@@ -82,3 +89,7 @@ npm run clean
 - Keep focus behavior intentional. `:focus-visible` is used for normal controls, and the main landmark only receives visible focus after the skip link is used.
 - Prefer small plain-JavaScript helpers over new dependencies. The app should stay fast and easy to deploy as static files.
 - Run `npm test` before opening a PR.
+
+## License
+
+Color Contrast is available under the [MIT License](LICENSE).
