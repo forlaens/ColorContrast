@@ -4,5 +4,16 @@ test-results/
 .DS_Store
 npm-debug.log*
 
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+credentials.json
+service-account*.json
+
 # macOS/iCloud conflict copies
 * 2.*

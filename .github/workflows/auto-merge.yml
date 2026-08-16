@@ -18,10 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     if: >
       github.event.pull_request.draft == false &&
-      (
-        github.event.pull_request.user.login != 'renovate[bot]' ||
-        contains(github.event.pull_request.labels.*.name, 'automerge')
-      )
+      github.event.pull_request.user.login == '2biazdk' &&
+      github.event.pull_request.head.repo.full_name == github.repository
 
     steps:
       - name: Enable auto-merge
