@@ -4,6 +4,7 @@
     "config:recommended",
     ":dependencyDashboard",
     ":semanticCommits",
+    "helpers:pinGitHubActionDigests",
     "group:recommended",
     "group:monorepos"
   ],
@@ -70,16 +71,13 @@
       ]
     },
     {
-      "description": "Automerge major updates after CI passes.",
+      "description": "Require manual review for major updates.",
       "matchUpdateTypes": [
         "major"
       ],
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true,
+      "automerge": false,
       "addLabels": [
-        "major",
-        "automerge"
+        "major"
       ]
     }
   ],
