@@ -30,7 +30,7 @@
     "node": ">=24.19.0"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.12.1",
+    "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.62.1",
     "@siteimprove/alfa-playwright": "^0.84.2",
     "@siteimprove/alfa-refinement": "^0.119.0",
@@ -38,8 +38,8 @@
     "@siteimprove/alfa-wcag": "^0.119.0",
     "chokidar": "^5.0.0",
     "express": "^5.2.1",
-    "esbuild": "^0.28.1",
-    "html-validate": "^11.6.1",
-    "ws": "^8.21.1"
+    "esbuild": "^0.28.2",
+    "html-validate": "^11.6.2",
+    "ws": "^8.21.3"
   }
 }
