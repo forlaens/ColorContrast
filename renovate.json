@@ -1,0 +1,36 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "local>forlaens/.github:renovate-config"
+  ],
+  "labels": [
+    "dependencies"
+  ],
+  "packageRules": [
+    {
+      "description": "Automerge stable non-major updates after CI passes.",
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "matchCurrentVersion": "!/^0/",
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    },
+    {
+      "description": "Automerge patch, pin, and digest updates for 0.x packages after CI passes.",
+      "matchUpdateTypes": [
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "matchCurrentVersion": "/^0/",
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    }
+  ]
+}
