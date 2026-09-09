@@ -347,6 +347,71 @@ test('built app supports every language in the switcher', async () => {
   }
 });
 
+test('localized headings do not create horizontal page overflow at narrow widths', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 320, height: 900 } });
+    const page = await context.newPage();
+
+    for (const language of supportedLanguages) {
+      await page.goto(server.url, { waitUntil: 'networkidle' });
+      await page.selectOption('#language-switcher', language);
+      await page.waitForFunction((expected) => document.documentElement.lang === expected, language);
+
+      for (const route of renderedRoutes) {
+        await page.goto(new URL(route.path, server.url).toString(), { waitUntil: 'networkidle' });
+        const layout = await page.evaluate(() => {
+          const viewportWidth = window.innerWidth;
+          const overflowingElements = Array.from(document.querySelectorAll('body *'))
+            .map((element) => {
+              const rect = element.getBoundingClientRect();
+              const styles = window.getComputedStyle(element);
+
+              return {
+                selector: element.id ? `#${element.id}` : element.classList.length > 0
+                  ? `.${Array.from(element.classList).join('.')}`
+                  : element.tagName.toLowerCase(),
+                left: Math.round(rect.left),
+                right: Math.round(rect.right),
+                contentWidth: element.scrollWidth,
+                boxWidth: element.clientWidth,
+                overflowX: styles.overflowX
+              };
+            })
+            .filter((element) => element.left < 0
+              || element.right > viewportWidth
+              || (element.overflowX === 'visible' && element.contentWidth > element.boxWidth))
+            .slice(0, 5);
+
+          return {
+            documentWidth: document.documentElement.scrollWidth,
+            viewportWidth,
+            overflowingElements
+          };
+        });
+
+        assert.equal(
+          layout.documentWidth <= layout.viewportWidth,
+          true,
+          `${language} ${route.path} overflowed by ${layout.documentWidth - layout.viewportWidth}px: ${JSON.stringify(layout.overflowingElements)}`
+        );
+      }
+    }
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
 test('live status text describes hex colors with approximate names', async () => {
   buildApp();
 
@@ -967,6 +1032,21 @@ test('color picker supports keyboard placement and selection', async () => {
 
     await page.locator('#colorpicker').click();
     assert.equal(await page.evaluate(() => document.activeElement.id), 'image_preview');
+    const initialPickerPosition = await page.evaluate(() => {
+      const canvas = document.querySelector('#image_preview');
+      const crosshairs = document.querySelector('#crosshairs');
+
+      return {
+        x: Number(crosshairs.getAttribute('data-posx')),
+        y: Number(crosshairs.getAttribute('data-posy')),
+        expectedX: Math.floor(canvas.width / 2),
+        expectedY: Math.floor(canvas.height / 2)
+      };
+    });
+    assert.deepEqual(
+      { x: initialPickerPosition.x, y: initialPickerPosition.y },
+      { x: initialPickerPosition.expectedX, y: initialPickerPosition.expectedY }
+    );
 
     await page.keyboard.press('ArrowRight');
     await page.keyboard.press('Shift+ArrowDown');
@@ -987,7 +1067,10 @@ test('color picker supports keyboard placement and selection', async () => {
     });
 
     assert.equal(pickerState.pressed, 'true');
-    assert.deepEqual({ x: pickerState.x, y: pickerState.y }, { x: 21, y: 30 });
+    assert.deepEqual(
+      { x: pickerState.x, y: pickerState.y },
+      { x: initialPickerPosition.expectedX + 1, y: initialPickerPosition.expectedY + 10 }
+    );
     assert.equal(pickerState.actual, pickerState.expected);
     await page.waitForFunction((color) => document.querySelector('#settings-status').textContent.includes(color), pickerState.actual);
     const escapedColor = pickerState.actual.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

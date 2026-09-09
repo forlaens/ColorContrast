@@ -228,10 +228,16 @@ function hideResetBtn() {
 
 function placeCrosshairs(canvas) {
 	var crosshairs = selector('#crosshairs');
-	if (crosshairs.getAttribute('data-posx') === null) {
-		moveCrosshairs(canvas, 20, 20);
-		crosshairs.setAttribute('data-positioned', 'true');
+	var x = parseInt(crosshairs.getAttribute('data-posx'));
+	var y = parseInt(crosshairs.getAttribute('data-posy'));
+
+	if (Number.isNaN(x) || Number.isNaN(y) || x >= canvas.width || y >= canvas.height) {
+		x = Math.floor(canvas.width / 2);
+		y = Math.floor(canvas.height / 2);
 	}
+
+	moveCrosshairs(canvas, x, y);
+	crosshairs.setAttribute('data-positioned', 'true');
 }
 
 function moveCrosshairs(canvas, x, y) {
