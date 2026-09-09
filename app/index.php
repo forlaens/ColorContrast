@@ -67,7 +67,12 @@
 		</section>
 
 		<section hidden id="simple-contrast" class="simple-contrast" aria-labelledby="simple-contrast-title" tabindex="-1">
-			<a class="tool-switch-link" href="/" onclick="return showFrontView();" data-i18n="changeTool">Change tool</a>
+			<a class="tool-switch-link" href="/" onclick="return showFrontView();">
+				<svg class="tool-switch-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+					<path d="M19 12H5M11 6L5 12L11 18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" />
+				</svg>
+				<span data-i18n="changeTool">Back to tools</span>
+			</a>
 			<div class="simple-contrast-header">
 				<div>
 					<h2 id="simple-contrast-title" data-i18n="simpleContrastTitle">Check two colors</h2>
@@ -108,7 +113,12 @@
 
 	<div hidden id="image-contrast-view" class="image-contrast-view">
 		<div class="image-flow-bar">
-			<a class="tool-switch-link" href="/" onclick="return showFrontView();" data-i18n="changeTool">Change tool</a>
+			<a class="tool-switch-link" href="/" onclick="return showFrontView();">
+				<svg class="tool-switch-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+					<path d="M19 12H5M11 6L5 12L11 18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" />
+				</svg>
+				<span data-i18n="changeTool">Back to tools</span>
+			</a>
 			<section hidden id="loaded-image-summary" class="loaded-image-summary" aria-label="Loaded image" data-i18n-aria-label="chooseImage">
 				<p id="image-summary-text"></p>
 				<button class="cta ghost" type="button" onclick="replaceImage();" data-i18n="replaceImage">Choose another image</button>
