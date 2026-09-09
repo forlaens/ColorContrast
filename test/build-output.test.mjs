@@ -165,9 +165,10 @@ test('document implements the task-first workflow without eyebrow labels', async
   assert.match(index, /<section id="tool-chooser" class="tool-chooser" aria-labelledby="tool-chooser-title" tabindex="-1">/);
   assert.match(index, /<a class="tool-choice" href="#simple-contrast">/);
   assert.match(index, /<a class="tool-choice" href="#image-contrast">/);
-  assert.match(index, /class="tool-choice-preview tool-choice-preview-colors"/);
-  assert.match(index, /class="tool-choice-preview tool-choice-preview-image"/);
-  assert.equal((index.match(/data-i18n="openChecker">Open checker/g) || []).length, 2);
+  assert.equal((index.match(/class="tool-choice-arrow" aria-hidden="true">→<\/span>/g) || []).length, 2);
+  assert.doesNotMatch(index, /class="tool-choice-preview/);
+  assert.doesNotMatch(index, /data-i18n="openChecker">Open checker/);
+  assert.doesNotMatch(app, /openChecker:/);
   assert.match(index, /<section hidden id="simple-contrast" class="simple-contrast" aria-labelledby="simple-contrast-title" tabindex="-1">/);
   assert.match(index, /<h2 id="simple-contrast-title" data-i18n="simpleContrastTitle">Check two colors<\/h2>/);
   assert.match(index, /id="simple-foreground"[^>]+aria-describedby="simple-color-hint simple-foreground-error"/);

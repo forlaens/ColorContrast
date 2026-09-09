@@ -27,6 +27,14 @@ export default defineConfig({
 				viewport: { width: 390, height: 844 },
 				isMobile: false
 			}
+		},
+		{
+			name: 'intermediate-dark',
+			grep: /dark (task chooser|two-color result|image result)$/,
+			use: {
+				...devices['Desktop Chrome'],
+				viewport: { width: 768, height: 900 }
+			}
 		}
 	],
 	webServer: {

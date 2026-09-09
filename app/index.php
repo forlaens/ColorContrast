@@ -53,22 +53,15 @@
 					<span class="tool-choice-copy">
 						<strong data-i18n="simpleContrastTitle">Check two colors</strong>
 						<span data-i18n="simpleChoiceCopy">Compare a foreground and background color.</span>
-						<span class="tool-choice-action" data-i18n="openChecker">Open checker</span>
 					</span>
-					<span class="tool-choice-preview tool-choice-preview-colors" aria-hidden="true">
-						<span>Aa</span>
-						<span>Aa</span>
-					</span>
+					<span class="tool-choice-arrow" aria-hidden="true">→</span>
 				</a>
 				<a class="tool-choice" href="#image-contrast">
 					<span class="tool-choice-copy">
 						<strong data-i18n="chooseImage">Check contrast in an image</strong>
 						<span data-i18n="imageChoiceCopy">Find places where a chosen color is difficult to see.</span>
-						<span class="tool-choice-action" data-i18n="openChecker">Open checker</span>
 					</span>
-					<span class="tool-choice-preview tool-choice-preview-image" aria-hidden="true">
-						<img src="img/social-card.png" width="1200" height="630" alt="">
-					</span>
+					<span class="tool-choice-arrow" aria-hidden="true">→</span>
 				</a>
 			</div>
 		</section>

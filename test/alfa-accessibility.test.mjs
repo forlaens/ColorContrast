@@ -513,8 +513,8 @@ test('task chooser routes to one tool at a time and browser history returns to i
     }));
     assert.deepEqual(choiceStyles[0], choiceStyles[1]);
 
-    assert.equal(await page.locator('.tool-choice-preview').count(), 2);
-    assert.equal(await page.locator('.tool-choice-preview-image img').evaluate((image) => image.complete && image.naturalWidth > 0), true);
+    assert.equal(await page.locator('.tool-choice-arrow').count(), 2);
+    assert.equal(await page.locator('.tool-choice-preview').count(), 0);
 
     const chooserLayout = await page.locator('#tool-chooser').evaluate((chooser) => {
       const choices = chooser.querySelector('.tool-choice-grid');
@@ -527,26 +527,26 @@ test('task chooser routes to one tool at a time and browser history returns to i
       const copyBox = copy.getBoundingClientRect();
 
       return {
-        choicesBelowCopy: choicesBox.top > copyBox.bottom,
-        choicesSideBySide: Math.abs(choiceItems[0].getBoundingClientRect().top - choiceItems[1].getBoundingClientRect().top) <= 1,
-        headingBeforeChoices: headingBox.bottom < choicesBox.top,
+        choicesBesideIntro: choicesBox.left > Math.max(headingBox.right, copyBox.right),
+        choicesStacked: choiceItems[1].getBoundingClientRect().top >= choiceItems[0].getBoundingClientRect().bottom,
+        headingAlignedWithChoices: Math.abs(headingBox.top - choicesBox.top) <= 1,
         choicesInsideChooser: choicesBox.right <= chooserBox.right + 1,
-        previewsHaveHeight: choiceItems.every((choice) => choice.querySelector('.tool-choice-preview').getBoundingClientRect().height >= 140)
+        arrowsHaveTouchTargets: choiceItems.every((choice) => choice.querySelector('.tool-choice-arrow').getBoundingClientRect().width >= 44)
       };
     });
     assert.deepEqual(chooserLayout, {
-      choicesBelowCopy: true,
-      choicesSideBySide: true,
-      headingBeforeChoices: true,
+      choicesBesideIntro: true,
+      choicesStacked: true,
+      headingAlignedWithChoices: true,
       choicesInsideChooser: true,
-      previewsHaveHeight: true
+      arrowsHaveTouchTargets: true
     });
 
     await page.locator('.tool-choice').first().hover();
     await page.waitForTimeout(180);
     assert.notEqual(
-      await page.locator('.tool-choice').first().evaluate((choice) => getComputedStyle(choice).borderTopColor),
-      choiceStyles[0].borderColor
+      await page.locator('.tool-choice').first().evaluate((choice) => getComputedStyle(choice).backgroundColor),
+      choiceStyles[0].backgroundColor
     );
     await page.mouse.move(0, 0);
     await page.waitForTimeout(180);
@@ -559,21 +559,19 @@ test('task chooser routes to one tool at a time and browser history returns to i
       return {
         noHorizontalOverflow: document.documentElement.scrollWidth <= window.innerWidth,
         choicesBelowCopy: choicesBox.top > copyBox.bottom,
-        choicesSideBySide: Math.abs(
-          chooser.querySelectorAll('.tool-choice')[0].getBoundingClientRect().top -
-          chooser.querySelectorAll('.tool-choice')[1].getBoundingClientRect().top
-        ) <= 1
+        choicesStacked: chooser.querySelectorAll('.tool-choice')[1].getBoundingClientRect().top >=
+          chooser.querySelectorAll('.tool-choice')[0].getBoundingClientRect().bottom
       };
     });
     assert.deepEqual(compactChooserLayout, {
       noHorizontalOverflow: true,
       choicesBelowCopy: true,
-      choicesSideBySide: true
+      choicesStacked: true
     });
 
     await page.setViewportSize({ width: 390, height: 844 });
     assert.equal(await page.locator('.tool-choice').evaluateAll((choices) => {
-      return choices[1].getBoundingClientRect().top > choices[0].getBoundingClientRect().bottom;
+      return choices[1].getBoundingClientRect().top >= choices[0].getBoundingClientRect().bottom;
     }), true);
     await page.setViewportSize({ width: 1280, height: 900 });
 
