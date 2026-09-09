@@ -418,6 +418,7 @@ h2 {
 .accessibility-page .back-link {
 	display: inline-flex;
 	align-items: center;
+	gap: 0.5rem;
 	margin-top: 18px;
 	min-height: 44px;
 }

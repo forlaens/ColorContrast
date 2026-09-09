@@ -130,7 +130,7 @@ test('document includes contact footer', async () => {
   assert.doesNotMatch(index, /accessibilityLimitations/);
   assert.doesNotMatch(index, /language switching, theme switching, drag and drop, upload handling, empty-canvas handling, and contrast rendering/);
   assert.match(index, /<p class="accessibility-updated" data-i18n="accessibilityUpdated">Last updated: May 7, 2026\.<\/p>/);
-  assert.match(index, /<a class="back-link" href="\/" data-i18n="accessibilityBack">Back to checker<\/a>/);
+  assert.match(index, /<a class="back-link" href="\/"><span class="back-link-icon" aria-hidden="true">←<\/span><span data-i18n="accessibilityBack">Back to checker<\/span><\/a>/);
   assert.match(index, /<div class="footer-inner">/);
   assert.match(index, /<p class="footer-brand">/);
   assert.match(index, /<span data-i18n="footerCopyright">Copyright<\/span>/);
