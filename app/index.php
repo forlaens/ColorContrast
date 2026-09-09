@@ -295,7 +295,7 @@
 
 		<section hidden id="accessibility-statement" class="accessibility-page" aria-labelledby="accessibility-statement-title" tabindex="-1">
 			<h2 id="accessibility-statement-title" data-i18n="accessibilityTitle">Accessibility statement</h2>
-			<p class="accessibility-lede" data-i18n="accessibilityIntro">This statement explains the accessibility target for the Image contrast checker, what is covered, how the app is tested, and how to report an accessibility problem.</p>
+			<p class="accessibility-lede" data-i18n="accessibilityIntro">This statement explains the accessibility target for the Color contrast checker, what is covered, how the app is tested, and how to report an accessibility problem.</p>
 
 			<section class="accessibility-section" aria-labelledby="accessibility-status-title">
 				<h3 id="accessibility-status-title" data-i18n="accessibilityStatusTitle">Conformance status</h3>
@@ -304,7 +304,7 @@
 
 			<section class="accessibility-section" aria-labelledby="accessibility-scope-title">
 				<h3 id="accessibility-scope-title" data-i18n="accessibilityScopeTitle">Scope</h3>
-				<p data-i18n="accessibilityScopeCopy">This statement covers the public Image contrast checker web app at colorcontrast.forlaens.com: the upload view, checker view, language and theme controls, footer, and accessibility statement page. It does not cover user-uploaded images or browser and operating system controls outside the app.</p>
+				<p data-i18n="accessibilityScopeCopy">This statement covers the public Color contrast checker web app at colorcontrast.forlaens.com: the upload view, checker view, language and theme controls, footer, and accessibility statement page. It does not cover user-uploaded images or browser and operating system controls outside the app.</p>
 			</section>
 
 			<section class="accessibility-section" aria-labelledby="accessibility-standard-title">

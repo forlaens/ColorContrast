@@ -151,6 +151,17 @@ test('page title keeps the Forlæns brand while localizing the tool name', async
   }
 });
 
+test('accessibility statement identifies the app with its current localized title', async () => {
+  const { languages, translations } = await getInterfaceTranslations();
+
+  for (const { code } of languages) {
+    const { title, accessibilityIntro, accessibilityScopeCopy } = translations[code];
+
+    assert.equal(accessibilityIntro.includes(title), true, `${code}.accessibilityIntro must use the current app title`);
+    assert.equal(accessibilityScopeCopy.includes(title), true, `${code}.accessibilityScopeCopy must use the current app title`);
+  }
+});
+
 test('new interface strings are localized instead of copied from English', async () => {
   const { languages, translations, localizedTranslationUpdates } = await getInterfaceTranslations();
   const nonEnglishCodes = languages
