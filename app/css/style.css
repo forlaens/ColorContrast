@@ -1901,7 +1901,6 @@ body {
 
 .app-main {
 	width: min(var(--content), calc(100% - 40px));
-	min-height: calc(100vh - 148px);
 	margin: 0 auto;
 	padding: clamp(28px, 5vw, 68px) 0 clamp(56px, 7vw, 92px);
 }
