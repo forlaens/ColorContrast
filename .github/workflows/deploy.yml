@@ -1,4 +1,4 @@
-name: Deploy to FTP
+name: Deploy to production
 
 on:
   workflow_run:
@@ -14,12 +14,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: deploy-ftp-production
+  group: deploy-colorcontrast-production
   cancel-in-progress: true
 
 jobs:
   deploy:
-    name: Upload FTP build
+    name: Deploy static build
     runs-on: ubuntu-latest
     environment:
       name: production
@@ -55,45 +55,32 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build FTP package
+      - name: Build production package
         run: npm run build
 
-      - name: Verify FTP package
+      - name: Verify production package
         run: |
           test -d dist
           find dist -maxdepth 2 -type f | sort | head -50
 
-      - name: Check FTP secrets
-        id: ftp-config
+      - name: Configure restricted SSH deployment
         env:
-          FTP_SERVER: ${{ secrets.FTP_SERVER }}
-          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          FTP_SERVER_DIR: ${{ secrets.FTP_SERVER_DIR }}
+          DEPLOY_SSH_PRIVATE_KEY: ${{ secrets.HETZNER_COLORCONTRAST_DEPLOY_SSH_KEY }}
         run: |
-          if [ -n "$FTP_SERVER" ] && [ -n "$FTP_USERNAME" ] && [ -n "$FTP_PASSWORD" ] && [ -n "$FTP_SERVER_DIR" ]; then
-            echo "enabled=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::FTP deploy skipped because one or more FTP secrets are missing."
-          fi
+          test -n "$DEPLOY_SSH_PRIVATE_KEY"
+          install -d -m 700 "$HOME/.ssh"
+          printf '%s\n' "$DEPLOY_SSH_PRIVATE_KEY" > "$HOME/.ssh/colorcontrast_deploy"
+          chmod 600 "$HOME/.ssh/colorcontrast_deploy"
+          printf '%s\n' '2.28.78.95 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPNkQnGVw2OTZX30yZTiiAdtzlo2llh1KEnkCtbCGD0/' > "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/known_hosts"
 
-      - name: Install lftp
-        if: steps.ftp-config.outputs.enabled == 'true'
-        run: sudo apt-get update && sudo apt-get install -y lftp
-
-      - name: Upload files
-        if: steps.ftp-config.outputs.enabled == 'true'
-        env:
-          FTP_SERVER: ${{ secrets.FTP_SERVER }}
-          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          FTP_SERVER_DIR: ${{ secrets.FTP_SERVER_DIR }}
+      - name: Upload static files to Hetzner
         run: |
-          lftp -u "$FTP_USERNAME","$FTP_PASSWORD" "$FTP_SERVER" <<EOF
-          set ftp:ssl-allow true
-          set net:max-retries 2
-          set net:timeout 30
-          mirror --reverse --delete --verbose dist "$FTP_SERVER_DIR"
-          bye
-          EOF
+          rsync -rlptDz --delete --itemize-changes \
+            -e 'ssh -i ~/.ssh/colorcontrast_deploy -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes' \
+            dist/ deploy-colorcontrast@2.28.78.95:/srv/www/colorcontrast.2biaz.dk/public/
+
+      - name: Verify live site
+        run: |
+          curl --fail --silent --show-error --retry 5 --retry-all-errors --retry-delay 2 \
+            https://colorcontrast.forlaens.com/ -o /dev/null
