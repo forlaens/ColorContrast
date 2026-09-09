@@ -577,6 +577,7 @@ test('task chooser routes to one tool at a time and browser history returns to i
 
     await page.getByRole('link', { name: /Check two colors/ }).click();
     await page.waitForFunction(() => location.hash === '#simple-contrast');
+    await page.locator('#simple-contrast').waitFor({ state: 'visible' });
     assert.equal(await page.locator('#simple-contrast').isVisible(), true);
     assert.equal(await page.locator('#tool-chooser').isHidden(), true);
     assert.equal(await page.evaluate(() => document.activeElement.id), 'simple-contrast');
