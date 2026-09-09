@@ -1,0 +1,15 @@
+[Unit]
+Description=Deploy the latest ColorContrast static release
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=deploy-colorcontrast
+Group=site-colorcontrast
+ExecStart=/usr/local/libexec/colorcontrast-deploy-pull
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+ReadWritePaths=/srv/www/colorcontrast.2biaz.dk/public
