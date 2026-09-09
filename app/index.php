@@ -100,7 +100,7 @@
 			<button id="simple-swap" class="cta ghost simple-swap" type="button" onclick="swapSimpleColors();" data-i18n="swapColors">Swap colors</button>
 				</div>
 				<p id="simple-color-hint" class="field-hint" data-i18n="colorFormatHint">Use a hex value or a recognized CSS color.</p>
-				<div id="simple-contrast-result" class="simple-contrast-result" role="status" aria-live="polite" aria-atomic="true"></div>
+				<div id="simple-contrast-result" class="simple-contrast-result"></div>
 				<div id="simple-contrast-sample" class="simple-contrast-sample">
 					<span data-i18n="simpleSampleText">Sample text</span>
 				</div>
@@ -166,7 +166,7 @@
 		<div class="checker-scroll">
 			<section id="preview_area" class="checker" aria-label="Contrast checker" data-i18n-aria-label="checkerRegion">
 				<div class="checker-sidebar">
-					<div role="toolbar" aria-label="Checker settings" data-i18n-aria-label="settingsToolbar">
+					<div id="checker-settings" class="checker-settings" role="group" aria-label="Checker settings" data-i18n-aria-label="settingsToolbar">
 					<div class="toolbar-group">
 						<div class="field color-field">
 							<span id="testcolor-label" data-i18n="colorLabel">Color to check</span>
@@ -197,7 +197,7 @@
 				<div class="view-controls">
 					<button id="run-test" class="cta" type="button" onclick="initRenderContrast();" data-i18n="findProblemAreas">Find problem areas</button>
 				</div>
-				<div hidden id="checker-result" class="checker-result" role="status" aria-live="polite" aria-atomic="true"></div>
+				<div hidden id="checker-result" class="checker-result"></div>
 				</div>
 				<div class="checker-preview-column">
 				<div class="preview-control-bar">
@@ -222,7 +222,7 @@
 
 				<p id="preview-help" class="sr-only" data-i18n="previewHelp">Use the zoom controls to inspect the image. If the image is larger than the visible preview, use the pan buttons or scroll the preview. Focus the image preview and use arrow keys to move the color picker.</p>
 				<div class="preview-frame">
-					<section id="preview-viewport" class="preview-viewport" tabindex="0" aria-label="Zoomable image preview" data-i18n-aria-label="previewViewport" aria-describedby="preview-help">
+					<section id="preview-viewport" class="preview-viewport">
 						<div id="preview-canvas-layer" class="preview-canvas-layer">
 						<canvas id="image_preview" class="preview" tabindex="0" aria-label="Image preview" data-i18n-aria-label="imagePreview" aria-describedby="preview-help" onmousedown="setTestColorFromCanvas(event, this);" onfocus="placeCrosshairs(this);" onkeydown="canvasKeyDown(this, event);" onkeyup="canvasKeyUp(event);" onblur="canvasBlur();"></canvas>
 						<canvas id="contrast_overlay" class="contrast-overlay" aria-hidden="true"></canvas>

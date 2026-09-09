@@ -288,7 +288,7 @@ test('built app supports every language in the switcher', async () => {
       const fileLabel = await page.locator('.file-picker-button').textContent();
       const fileName = await page.locator('#selected-file-name').textContent();
       const checkerLabel = await page.locator('#preview_area').getAttribute('aria-label');
-      const toolbarLabel = await page.locator('[role="toolbar"]').getAttribute('aria-label');
+      const settingsLabel = await page.locator('#checker-settings').getAttribute('aria-label');
       const accessibilityTitle = await page.locator('#accessibility-statement-title').textContent();
       assert.equal(await page.locator('#language-switcher').inputValue(), language);
       assert.equal(await documentLanguage(page), language);
@@ -296,7 +296,7 @@ test('built app supports every language in the switcher', async () => {
       assert.equal((fileLabel || '').trim().length > 0, true);
       assert.equal((fileName || '').trim().length > 0, true);
       assert.equal((checkerLabel || '').trim().length > 0, true);
-      assert.equal((toolbarLabel || '').trim().length > 0, true);
+      assert.equal((settingsLabel || '').trim().length > 0, true);
       assert.equal((accessibilityTitle || '').trim().length > 0, true);
     }
 
@@ -306,10 +306,10 @@ test('built app supports every language in the switcher', async () => {
     assert.equal(await page.locator('.file-picker-button').textContent(), 'Vælg billede');
     assert.equal(await page.locator('#selected-file-name').textContent(), 'Ingen fil valgt');
     assert.equal(await page.locator('#preview_area').getAttribute('aria-label'), 'Kontrasttjek');
-    assert.equal(await page.locator('[role="toolbar"]').getAttribute('aria-label'), 'Indstillinger for tjek');
+    assert.equal(await page.locator('#checker-settings').getAttribute('aria-label'), 'Indstillinger for tjek');
     assert.equal(await page.locator('#accessibility-statement-title').textContent(), 'Tilgængelighedserklæring');
     assert.equal(await page.locator('a[href="#accessibility-statement"]').textContent(), 'Tilgængelighedserklæring');
-    assert.equal(await page.locator('#simple-contrast-result').getAttribute('aria-label'), 'Kontrastforhold: 17,73:1. Består AAA for almindelig tekst.');
+    assert.equal(await page.locator('#simple-contrast-result').getAttribute('aria-label'), null);
     assert.equal(await page.locator('#simple-contrast-result .simple-contrast-ratio').textContent(), '17,73:1');
     assert.equal(await page.locator('#simple-contrast-result .simple-contrast-badge').count(), 0);
     assert.equal(await page.locator('#simple-contrast-result .simple-contrast-message').textContent(), 'Består AAA for almindelig tekst.');
@@ -1262,8 +1262,8 @@ test('contrast rendering changes the canvas and reset restores the source image'
     }));
     assert.equal(await page.locator('#reset-image').isVisible(), true);
     assert.match(await page.locator('#checker-result').textContent(), /^[\d.]+%Problem areasnormal text, AAA \(7:1\)#ffffff \(white\)$/);
-    assert.match(await page.locator('#checker-result').getAttribute('aria-label'), /^Test complete\. About [\d.]+ percent of the preview does not meet normal text, AAA \(7:1\) for #ffffff \(white\)\. Problem areas are marked with black and white stripes\./);
-    assert.equal(await page.locator('#checker-result').getAttribute('aria-label'), await page.locator('#settings-status').textContent());
+    assert.equal(await page.locator('#checker-result').getAttribute('aria-label'), null);
+    assert.match(await page.locator('#settings-status').textContent(), /^Test complete\. About [\d.]+ percent of the preview does not meet normal text, AAA \(7:1\) for #ffffff \(white\)\. Problem areas are marked with black and white stripes\./);
 
     await page.setViewportSize({ width: 760, height: 900 });
     const compactResultControls = await page.locator('.preview-control-bar').evaluate((bar) => {
@@ -1307,7 +1307,8 @@ test('contrast rendering changes the canvas and reset restores the source image'
     assert.equal(await page.getByRole('button', { name: 'Update result' }).isVisible(), true);
     await page.getByRole('button', { name: 'Update result' }).click();
     await page.waitForFunction(() => document.querySelector('#checker-result').textContent.includes('large text (3:1)'));
-    assert.match(await page.locator('#checker-result').getAttribute('aria-label'), /does not meet large text \(3:1\) for #ffffff \(white\)\./);
+    await page.waitForFunction(() => document.querySelector('#settings-status').textContent.includes('large text (3:1)'));
+    assert.match(await page.locator('#settings-status').textContent(), /does not meet large text \(3:1\) for #ffffff \(white\)\./);
 
     await page.locator('#reset-image').click();
     const resetCanvas = await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL());
@@ -1363,7 +1364,9 @@ test('image preview supports zoom and only shows pan controls when the image ove
         handPressed: document.querySelector('#hand-tool').getAttribute('aria-pressed'),
         handDisabled: document.querySelector('#hand-tool').disabled,
         handVisibility: getComputedStyle(document.querySelector('#hand-tool')).visibility,
-        viewportName: viewport.getAttribute('aria-label'),
+        viewportTabIndex: viewport.tabIndex,
+        canvasName: canvas.getAttribute('aria-label'),
+        canvasTabIndex: canvas.tabIndex,
         describedBy: canvas.getAttribute('aria-describedby'),
         zoom: document.querySelector('#zoom-output').textContent.trim(),
         canvasWidth: canvas.width,
@@ -1377,11 +1380,17 @@ test('image preview supports zoom and only shows pan controls when the image ove
     assert.equal(initialState.handPressed, 'false');
     assert.equal(initialState.handDisabled, true);
     assert.equal(initialState.handVisibility, 'hidden');
-    assert.equal(initialState.viewportName, 'Zoomable image preview');
+    assert.equal(initialState.viewportTabIndex, -1);
+    assert.equal(initialState.canvasName, 'Image preview');
+    assert.equal(initialState.canvasTabIndex, 0);
     assert.equal(initialState.describedBy, 'preview-help');
     assert.match(initialState.zoom, /%$/);
     assert.equal(initialState.canvasWidth, initialState.canvasCssWidth);
     assert.equal(initialState.documentWidth <= initialState.viewportWidth, true);
+
+    await page.getByRole('button', { name: 'Reset zoom' }).focus();
+    await page.keyboard.press('Tab');
+    assert.equal(await page.evaluate(() => document.activeElement.id), 'image_preview');
 
     await page.getByRole('button', { name: 'Zoom in' }).click();
 

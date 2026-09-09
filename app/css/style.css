@@ -1006,7 +1006,7 @@ input[type=file] {
 	background: var(--panel);
 }
 
-[role=toolbar] {
+#checker-settings {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
@@ -1135,7 +1135,7 @@ input[type=color] {
 	color: var(--button-strong-text);
 }
 
-#preview_area[aria-busy=true] [role=toolbar] [disabled] {
+#preview_area[aria-busy=true] #checker-settings [disabled] {
 	opacity: .55;
 }
 
@@ -1239,7 +1239,7 @@ input[type=color] {
 	cursor: grabbing;
 }
 
-[role=toolbar] .cta {
+#checker-settings .cta {
 	max-width: 100%;
 	white-space: normal;
 }
@@ -1615,7 +1615,7 @@ input[type=color] {
 		flex-direction: column;
 	}
 
-	[role=toolbar],
+	#checker-settings,
 	.toolbar-group,
 	.view-controls {
 		align-items: stretch;
@@ -2412,7 +2412,7 @@ body {
 	border-bottom: 1px solid var(--border);
 }
 
-.checker-sidebar > [role="toolbar"] {
+.checker-sidebar > #checker-settings {
 	grid-area: settings;
 	display: grid;
 	align-content: start;
@@ -2966,7 +2966,7 @@ body {
 	.tool-choice,
 	.upload-dropzone,
 	.simple-workspace,
-	.checker-sidebar > [role="toolbar"],
+	.checker-sidebar > #checker-settings,
 	.checker-result,
 	.preview-frame {
 		border: 2px solid CanvasText;
