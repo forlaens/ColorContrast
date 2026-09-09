@@ -32,7 +32,7 @@ test('build creates a static release artifact', async () => {
   assert.equal(result.status, 0, [result.stdout, result.stderr].join('\n'));
 
   const index = await readFile(join(distDir, 'index.html'), 'utf8');
-  assert.match(index, /<title>Color contrast checker<\/title>/);
+  assert.match(index, /<title>Forlæns Color Contrast Checker<\/title>/);
   assert.match(index, /<meta property="og:url" content="https:\/\/colorcontrast\.forlaens\.com\/">/);
   assert.match(index, /<meta property="og:image" content="https:\/\/colorcontrast\.forlaens\.com\/img\/social-card\.png">/);
   assert.match(index, /<meta name="twitter:image" content="https:\/\/colorcontrast\.forlaens\.com\/img\/social-card\.png">/);
@@ -99,7 +99,7 @@ test('document provides a skip link to main content', async () => {
   assert.match(index, /<div class="app-shell">/);
   assert.match(index, /<header class="hero" aria-labelledby="app-title">/);
   assert.match(index, /<h1 id="app-title">/);
-  assert.match(index, /<a class="home-title-link" href="\/" onclick="return showFrontView\(\);" data-i18n="title">Color contrast checker<\/a>/);
+  assert.match(index, /<a class="home-title-link" href="\/" onclick="return showFrontView\(\);">\s*<img class="brand-mark" src="\/img\/brand\/forlaens-circle-mark\.svg" width="32" height="32" alt="">\s*<span data-i18n="title">Forlæns Color Contrast Checker<\/span>\s*<\/a>/);
   assert.match(index, /<main id="main-content" class="app-main" tabindex="-1">/);
   assert.ok(index.indexOf('<header class="hero"') < index.indexOf('id="main-content"'));
   assert.ok(index.indexOf('<header class="hero"') < index.indexOf('<a class="skip-link"'));
