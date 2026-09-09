@@ -14,6 +14,8 @@ function resetFileInput() {
 function setColorPickerActive(active) {
 	var button = id('colorpicker');
 	var viewport = id('preview-viewport');
+	var instruction = id('picker-instruction');
+	var selected = id('selected-test-color');
 
 	if (!button) {
 		return false;
@@ -24,6 +26,14 @@ function setColorPickerActive(active) {
 
 	if (viewport) {
 		viewport.classList.toggle('is-color-picker', active);
+	}
+
+	if (instruction) {
+		instruction.hidden = !active;
+	}
+
+	if (selected) {
+		selected.hidden = !active;
 	}
 
 	return true;
@@ -92,12 +102,49 @@ function setTestColor(hex, shouldAnnounce) {
 
 	colorInput.value = normalized;
 	syncNativeColorControl(colorInput, nativeInput);
+	colorInput.setAttribute('aria-invalid', 'false');
+	id('test-color-error').hidden = true;
+	updateSelectedTestColor(colorInput.value);
+	if (window.markImageResultDirty) {
+		window.markImageResultDirty();
+	}
 	storeCheckerSettings();
 
 	if (shouldAnnounce) {
 		announceStatus(translate('colorSelectedStatus').replace('{color}', formatColorForStatus(normalized)));
 	}
 }
+
+function updateSelectedTestColor(color) {
+	var selected = id('selected-test-color');
+
+	if (!selected) {
+		return false;
+	}
+
+	selected.textContent = color || '';
+	selected.style.setProperty('--selected-color', color || 'transparent');
+	return true;
+}
+
+function updateTestColorState() {
+	var colorInput = selector('[name=color]');
+	var error = id('test-color-error');
+	var normalized = normalizeColorToHex(colorInput.value);
+	var invalid = !normalized;
+
+	colorInput.setAttribute('aria-invalid', invalid ? 'true' : 'false');
+	error.hidden = !invalid;
+	updateSelectedTestColor(normalized);
+
+	if (window.markImageResultDirty) {
+		window.markImageResultDirty();
+	}
+
+	return !invalid;
+}
+
+window.updateTestColorState = updateTestColorState;
 
 function isValidTestColor(value) {
 	return /^#[0-9a-f]{6}$/i.test(value);
@@ -154,10 +201,19 @@ function initCheckerSettings() {
 
 	restoreCheckerSettings();
 	initHexColorField(colorInput, nativeInput, function () {
+		updateTestColorState();
 		storeCheckerSettings();
 	});
 
-	contrastSelect.addEventListener('change', storeCheckerSettings);
+	contrastSelect.addEventListener('change', function () {
+		storeCheckerSettings();
+		if (window.markImageResultDirty) {
+			window.markImageResultDirty();
+		}
+	});
+	colorInput.setAttribute('aria-invalid', 'false');
+	id('test-color-error').hidden = true;
+	updateSelectedTestColor(colorInput.value);
 
 	return true;
 }

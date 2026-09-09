@@ -1,38 +1,22 @@
 function showStep(stepNumber) {
 	var step1 = id('step-1');
 	var step2 = id('step-2');
+	var imageSummary = id('loaded-image-summary');
 	var isCheckerView = stepNumber === 2;
 
-	step1.hidden = false;
-	step1.removeAttribute('aria-hidden');
+	step1.hidden = isCheckerView;
 	step2.hidden = !isCheckerView;
-	document.body.classList.toggle('is-checker-view', isCheckerView);
+	imageSummary.hidden = !isCheckerView;
 
 	if (isCheckerView) {
+		step1.setAttribute('aria-hidden', 'true');
 		step2.removeAttribute('aria-hidden');
+		imageSummary.removeAttribute('aria-hidden');
 	} else {
+		step1.removeAttribute('aria-hidden');
 		step2.setAttribute('aria-hidden', 'true');
+		imageSummary.setAttribute('aria-hidden', 'true');
 	}
-
-	setIntroVisible(false);
-}
-
-function setIntroVisible(visible) {
-	var intro = id('intro-panel');
-
-	if (!intro) {
-		return false;
-	}
-
-	intro.hidden = !visible;
-
-	if (visible) {
-		intro.removeAttribute('aria-hidden');
-	} else {
-		intro.setAttribute('aria-hidden', 'true');
-	}
-
-	return true;
 }
 
 function isAccessibilityStatementView() {
@@ -41,6 +25,10 @@ function isAccessibilityStatementView() {
 
 function isSimpleContrastView() {
 	return window.location.hash === '#simple-contrast';
+}
+
+function isImageContrastView() {
+	return window.location.hash === '#image-contrast';
 }
 
 function updateDocumentTitleForView() {
@@ -52,6 +40,8 @@ function updateDocumentTitleForView() {
 		document.title = translate('accessibilityTitle') + ' - ' + translate('title');
 	} else if (isSimpleContrastView()) {
 		document.title = translate('simpleContrastTitle') + ' - ' + translate('title');
+	} else if (isImageContrastView()) {
+		document.title = translate('chooseImage') + ' - ' + translate('title');
 	} else {
 		document.title = translate('title');
 	}
@@ -61,17 +51,25 @@ function updateDocumentTitleForView() {
 
 function updateAppView(shouldFocus) {
 	var homeView = id('home-view');
+	var chooserView = id('tool-chooser');
 	var simpleView = id('simple-contrast');
+	var imageView = id('image-contrast-view');
 	var statementView = id('accessibility-statement');
 	var showStatement = isAccessibilityStatementView();
 	var showSimple = isSimpleContrastView();
+	var showImage = isImageContrastView();
+	var showChooser = !showStatement && !showSimple && !showImage;
 
-	if (!homeView || !simpleView || !statementView) {
+	if (!homeView || !chooserView || !simpleView || !imageView || !statementView) {
 		return false;
 	}
 
 	homeView.hidden = showStatement;
+	chooserView.hidden = !showChooser;
+	simpleView.hidden = !showSimple;
+	imageView.hidden = !showImage;
 	statementView.hidden = !showStatement;
+	document.body.dataset.view = showStatement ? 'accessibility' : showSimple ? 'simple' : showImage ? 'image' : 'home';
 
 	if (showStatement) {
 		homeView.setAttribute('aria-hidden', 'true');
@@ -81,11 +79,13 @@ function updateAppView(shouldFocus) {
 		statementView.setAttribute('aria-hidden', 'true');
 	}
 
-	simpleView.removeAttribute('aria-hidden');
+	chooserView.setAttribute('aria-hidden', showChooser ? 'false' : 'true');
+	simpleView.setAttribute('aria-hidden', showSimple ? 'false' : 'true');
+	imageView.setAttribute('aria-hidden', showImage ? 'false' : 'true');
 	updateDocumentTitleForView();
 
 	if (shouldFocus) {
-		(showStatement ? statementView : showSimple ? simpleView : id('main-content')).focus();
+		(showStatement ? statementView : showSimple ? simpleView : showImage ? (id('step-2').hidden ? id('step-1') : id('step-2')) : chooserView).focus();
 	}
 
 	return true;
@@ -97,18 +97,19 @@ function showFrontView() {
 	}
 
 	updateAppView(false);
-	showStep(1);
 	window.scrollTo(0, 0);
 
 	return false;
 }
+
+window.isImageContrastView = isImageContrastView;
 
 // Hash-based routing keeps this static app deployable without server rewrites.
 function initViewRouting() {
 	window.updateAppView = updateAppView;
 	window.showFrontView = showFrontView;
 	window.addEventListener('hashchange', function () {
-		updateAppView(true);
+		updateAppView(window.location.hash !== '#main-content');
 	});
 	updateAppView(false);
 }
@@ -187,42 +188,6 @@ function setLoadingState(state, message) {
 	previewArea.setAttribute('aria-busy', state)
 	loadingText.hidden = !state;
 	loadingText.textContent = message;
-}
-
-// The intro panel can be collapsed, but its heading remains in the document
-// outline so assistive technology users keep a stable page structure.
-function initIntroPanel() {
-	var introPanel = id('intro-panel');
-	var introToggle = id('intro-toggle');
-	var introSteps = id('intro-steps');
-
-	if (!introPanel || !introToggle || !introSteps) {
-		return false;
-	}
-
-	try {
-		function setIntroOpen(isOpen) {
-			introToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-			introSteps.hidden = !isOpen;
-			setStoredValue(STORAGE_KEYS.introOpen, isOpen ? 'true' : 'false');
-		}
-
-		var savedState = getStoredValue(STORAGE_KEYS.introOpen);
-
-		if (savedState === 'false') {
-			setIntroOpen(false);
-		} else if (savedState === 'true') {
-			setIntroOpen(true);
-		}
-
-		introToggle.addEventListener('click', function () {
-			setIntroOpen(introToggle.getAttribute('aria-expanded') !== 'true');
-		});
-	} catch (error) {
-		return false;
-	}
-
-	return true;
 }
 
 function getSystemTheme() {
@@ -318,7 +283,9 @@ function getSimpleContrastMessage(ratio) {
 
 function renderSimpleContrastResult(result, ratio, message) {
 	function shortRequirementLabel(key) {
-		return translate(key).replace(/\s*\([^)]*\)/, '');
+		return translate(key)
+			.replace(/\s*\([^)]*\)/, '')
+			.replace(/\s*,?\s*AA{1,2}\s*$/, '');
 	}
 
 	function outcomeLabel(requiredRatio, enhancedRatio) {
@@ -337,17 +304,12 @@ function renderSimpleContrastResult(result, ratio, message) {
 		var passed = ratio >= item.requiredRatio;
 		var enhanced = item.enhancedRatio && ratio >= item.enhancedRatio;
 		var card = document.createElement('li');
-		var mark = document.createElement('span');
 		var label = document.createElement('span');
 		var status = document.createElement('strong');
 		var detail = document.createElement('span');
 
 		card.className = 'simple-contrast-outcome';
 		card.setAttribute('data-state', passed ? 'pass' : 'fail');
-		mark.className = 'simple-contrast-check-mark';
-		mark.textContent = passed ? '✓' : '×';
-		mark.setAttribute('aria-hidden', 'true');
-
 		label.className = 'simple-contrast-outcome-label';
 		label.textContent = item.label;
 
@@ -359,7 +321,7 @@ function renderSimpleContrastResult(result, ratio, message) {
 		detail.className = 'simple-contrast-outcome-detail';
 		detail.textContent = '≥ ' + formatNumber(enhanced ? item.enhancedRatio : item.requiredRatio) + ':1';
 
-		card.append(mark, label, status, detail);
+		card.append(label, status, detail);
 		return card;
 	}
 
@@ -432,8 +394,28 @@ function updateSimpleContrast(shouldAnnounce) {
 
 	var foregroundColor = normalizeColorToHex(foreground.value);
 	var backgroundColor = normalizeColorToHex(background.value);
+	var foregroundError = id('simple-foreground-error');
+	var backgroundError = id('simple-background-error');
+	var foregroundInvalid = !foregroundColor;
+	var backgroundInvalid = !backgroundColor;
 
-	if (!foregroundColor || !backgroundColor) {
+	foreground.setAttribute('aria-invalid', foregroundInvalid ? 'true' : 'false');
+	background.setAttribute('aria-invalid', backgroundInvalid ? 'true' : 'false');
+	foregroundError.hidden = !foregroundInvalid;
+	backgroundError.hidden = !backgroundInvalid;
+
+	if (foregroundInvalid || backgroundInvalid) {
+		result.textContent = '';
+		result.hidden = true;
+		result.removeAttribute('aria-label');
+		result.removeAttribute('title');
+
+		if (sample) {
+			sample.style.color = '';
+			sample.style.backgroundColor = '';
+			sample.hidden = true;
+		}
+
 		return false;
 	}
 
@@ -443,8 +425,10 @@ function updateSimpleContrast(shouldAnnounce) {
 		.replace('{message}', getSimpleContrastMessage(ratio));
 
 	renderSimpleContrastResult(result, ratio, message);
+	result.hidden = false;
 
 	if (sample) {
+		sample.hidden = false;
 		sample.style.color = foregroundColor;
 		sample.style.backgroundColor = backgroundColor;
 	}
@@ -453,6 +437,21 @@ function updateSimpleContrast(shouldAnnounce) {
 		announceStatus(message);
 	}
 
+	return true;
+}
+
+function swapSimpleColors() {
+	var foreground = id('simple-foreground');
+	var background = id('simple-background');
+	var foregroundPicker = id('simple-foreground-native');
+	var backgroundPicker = id('simple-background-native');
+	var foregroundValue = foreground.value;
+
+	foreground.value = background.value;
+	background.value = foregroundValue;
+	syncNativeColorControl(foreground, foregroundPicker);
+	syncNativeColorControl(background, backgroundPicker);
+	updateSimpleContrast(true);
 	return true;
 }
 
@@ -486,13 +485,12 @@ function initSimpleContrast() {
 }
 
 window.updateSimpleContrast = updateSimpleContrast;
-window.setIntroVisible = setIntroVisible;
+window.swapSimpleColors = swapSimpleColors;
 
 if (document.readyState === 'loading') {
 	document.addEventListener('DOMContentLoaded', function () {
 		initViewRouting();
 		initMainFocusTarget();
-		initIntroPanel();
 		initThemeToggle();
 		initSimpleContrast();
 		initCheckerSettings();
@@ -500,7 +498,6 @@ if (document.readyState === 'loading') {
 } else {
 	initViewRouting();
 	initMainFocusTarget();
-	initIntroPanel();
 	initThemeToggle();
 	initSimpleContrast();
 	initCheckerSettings();

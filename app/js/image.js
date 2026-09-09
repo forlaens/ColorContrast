@@ -4,6 +4,78 @@ var imageDragDepth = 0;
 var imageThumbnailUrl = null;
 var zoomSteps = [0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4];
 
+function setImageWorkflowState(state) {
+	var view = id('image-contrast-view');
+
+	if (view) {
+		view.setAttribute('data-state', state);
+	}
+
+	image.uiState = state;
+	return state;
+}
+
+function setImageSourceLoading(state, message) {
+	var status = id('image-source-status');
+	var dropzone = selector('.upload-dropzone');
+	var urlInput = id('image_url');
+	var urlButton = id('load-image-url');
+
+	if (!status) {
+		return false;
+	}
+
+	status.textContent = state ? (message || translate('imageLoadingStatus')) : '';
+	status.hidden = !state;
+
+	if (dropzone) {
+		dropzone.setAttribute('aria-busy', state ? 'true' : 'false');
+	}
+
+	if (urlButton) {
+		urlButton.disabled = state || !(urlInput && urlInput.value.trim());
+	}
+
+	return true;
+}
+
+function showImageSourceError(message) {
+	var error = id('image-source-error');
+	setImageSourceLoading(false);
+
+	if (!error) {
+		return showError(message);
+	}
+
+	error.textContent = message;
+	error.hidden = false;
+	setImageWorkflowState('error');
+	return false;
+}
+
+function clearImageSourceError() {
+	var error = id('image-source-error');
+
+	if (error) {
+		error.textContent = '';
+		error.hidden = true;
+	}
+}
+
+function updateLoadedImageSummary() {
+	var summary = id('image-summary-text');
+
+	if (!summary || !image.file) {
+		return false;
+	}
+
+	summary.textContent = translate('loadedImageSummary')
+		.replace('{name}', image.name || '')
+		.replace('{width}', formatNumber(image.file.width))
+		.replace('{height}', formatNumber(image.file.height));
+	return true;
+}
+
 window.onresize = recalcImage;
 
 // Keep the canvas and cached pixels aligned with the rendered preview size.
@@ -24,6 +96,7 @@ function recalcImage() {
 
 function loadImagePreview() {
 	clearError();
+	clearImageSourceError();
 
 	var files = id('image_file').files;
 	var file = files && files[0];
@@ -31,10 +104,7 @@ function loadImagePreview() {
 	if (!file) {
 		updateSelectedFileName();
 		clearImageThumbnail();
-		showStep(2);
-		showEmptyPreviewCanvas();
-		announceStatus(translate('emptyCanvasStatus'));
-		return false;
+		return showImageSourceError(translate('chooseImageFirstError'));
 	}
 
 	return loadSelectedImageFromInput();
@@ -44,6 +114,9 @@ function loadImageFile(file) {
 	cachedPixels = false;
 	image.hasContrastHighlights = false;
 	image.contrastTest = null;
+	image.name = file.name;
+	setImageSourceLoading(true, translate('imageLoadingStatus'));
+	setImageWorkflowState('loading');
 	hideImagePalette();
 
 	var reader = new FileReader();
@@ -53,27 +126,27 @@ function loadImageFile(file) {
 		loadedImage.onload = function() {
 			image.file = loadedImage;
 			image.zoom = null;
+			setImageSourceLoading(false);
 			showStep(2);
 
 			try {
 				updatePreviewCanvas();
 				updateImagePalette();
-				if (window.setIntroVisible) {
-					window.setIntroVisible(true);
-				}
+				updateLoadedImageSummary();
+				setImageWorkflowState('ready');
 				announceStatus(translate('imageLoadedStatus')
 					.replace('{name}', file.name)
 					.replace('{width}', formatNumber(image.file.width))
 					.replace('{height}', formatNumber(image.file.height)));
 			} catch (error) {
 				showStep(1);
-				showError(error.message);
+				showImageSourceError(error.message);
 			}
 		};
 
 		loadedImage.onerror = function() {
 			showStep(1);
-			showError(translate('decodeImageError'));
+			showImageSourceError(translate('decodeImageError'));
 		};
 
 		loadedImage.src = event.target.result;
@@ -81,7 +154,7 @@ function loadImageFile(file) {
 
 	reader.onerror = function() {
 		showStep(1);
-		showError(translate('readImageError'));
+		showImageSourceError(translate('readImageError'));
 	};
 
 	reader.readAsDataURL(file);
@@ -92,7 +165,7 @@ function loadImageFromBlob(blob, name, options) {
 	options = options || {};
 
 	if (!blob) {
-		showError(translate('readImageError'));
+		showImageSourceError(translate('readImageError'));
 		return false;
 	}
 
@@ -101,7 +174,7 @@ function loadImageFromBlob(blob, name, options) {
 	try {
 		file = new File([blob], name || 'image-from-url', { type: blob.type || options.type || '' });
 	} catch (error) {
-		showError(translate('browserFileError'));
+		showImageSourceError(translate('browserFileError'));
 		return false;
 	}
 
@@ -152,7 +225,7 @@ function getValidatedImageUrl(value) {
 	var url = (value || '').trim();
 
 	if (!url) {
-		showError(translate('imageUrlEmptyError'));
+		showImageSourceError(translate('imageUrlEmptyError'));
 		return false;
 	}
 
@@ -160,13 +233,13 @@ function getValidatedImageUrl(value) {
 		var parsed = new URL(url, window.location.href);
 
 		if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-			showError(translate('imageUrlInvalidError'));
+			showImageSourceError(translate('imageUrlInvalidError'));
 			return false;
 		}
 
 		return parsed.href;
 	} catch (error) {
-		showError(translate('imageUrlInvalidError'));
+		showImageSourceError(translate('imageUrlInvalidError'));
 		return false;
 	}
 }
@@ -177,6 +250,7 @@ function isImageUrlTypeAllowed(type) {
 
 function loadImageFromUrl(value) {
 	clearError();
+	clearImageSourceError();
 
 	var input = id('image_url');
 	var url = getValidatedImageUrl(typeof value === 'string' ? value : input && input.value);
@@ -186,7 +260,7 @@ function loadImageFromUrl(value) {
 	}
 
 	if (typeof fetch !== 'function') {
-		showError(translate('imageUrlFetchUnavailableError'));
+		showImageSourceError(translate('imageUrlFetchUnavailableError'));
 		return false;
 	}
 
@@ -195,6 +269,8 @@ function loadImageFromUrl(value) {
 	}
 
 	announceStatus(translate('imageUrlLoadingStatus'));
+	setImageSourceLoading(true, translate('imageUrlLoadingStatus'));
+	setImageWorkflowState('loading');
 
 	return fetch(url, { mode: 'cors' })
 		.then(function (response) {
@@ -206,7 +282,7 @@ function loadImageFromUrl(value) {
 		})
 		.then(function (blob) {
 			if (!isImageUrlTypeAllowed(blob.type)) {
-				showError(translate('imageUrlTypeError'));
+				showImageSourceError(translate('imageUrlTypeError'));
 				return false;
 			}
 
@@ -217,7 +293,7 @@ function loadImageFromUrl(value) {
 		})
 		.catch(function (error) {
 			showStep(1);
-			showError(error && error.message && error.message !== 'Failed to fetch'
+			showImageSourceError(error && error.message && error.message !== 'Failed to fetch'
 				? error.message
 				: translate('imageUrlFetchError'));
 			return false;
@@ -251,9 +327,6 @@ function showEmptyPreviewCanvas() {
 	updatePreviewControls();
 	updateCheckerResult('');
 	hideImagePalette();
-	if (window.setIntroVisible) {
-		window.setIntroVisible(false);
-	}
 }
 
 function hideImagePalette() {
@@ -382,21 +455,33 @@ function paletteHex(color) {
 function appendPaletteSwatches(container, colors) {
 	colors.forEach(function (color) {
 		var hex = paletteHex(color);
+		var colorName = describeRgbColor(color);
 		var swatch = document.createElement('li');
+		var button = document.createElement('button');
 		var preview = document.createElement('span');
 		var code = document.createElement('span');
 		var name = document.createElement('span');
+		var action = document.createElement('span');
 
 		swatch.className = 'palette-swatch';
+		button.className = 'palette-swatch-button';
+		button.type = 'button';
+		button.addEventListener('click', function () {
+			setTestColor(hex, true);
+		});
 		preview.className = 'palette-swatch-preview';
 		preview.style.backgroundColor = hex;
 		code.className = 'palette-swatch-code';
 		code.textContent = hex;
-		name.textContent = describeRgbColor(color);
+		name.textContent = colorName;
+		action.className = 'sr-only';
+		action.textContent = '. ' + translate('selectPaletteColor').replace('{color}', hex);
 
-		swatch.appendChild(preview);
-		swatch.appendChild(code);
-		swatch.appendChild(name);
+		button.appendChild(preview);
+		button.appendChild(code);
+		button.appendChild(name);
+		button.appendChild(action);
+		swatch.appendChild(button);
 		container.appendChild(swatch);
 	});
 }
@@ -419,52 +504,40 @@ function createPaletteColorHeading(color) {
 }
 
 function appendPaletteMatrix(container, colors) {
-	var table = document.createElement('table');
-	var caption = document.createElement('caption');
-	var thead = document.createElement('thead');
-	var headRow = document.createElement('tr');
-	var tbody = document.createElement('tbody');
-	var emptyHead = document.createElement('th');
+	var list = document.createElement('ol');
+	var pairs = [];
 	var threshold = 4.5;
 
-	caption.className = 'sr-only';
-	caption.textContent = translate('paletteMatrixCaption');
-	table.appendChild(caption);
-	emptyHead.scope = 'col';
-	headRow.appendChild(emptyHead);
+	for (var row = 0; row < colors.length; row++) {
+		for (var column = row + 1; column < colors.length; column++) {
+			pairs.push({
+				first: colors[row],
+				second: colors[column],
+				ratio: contrastRatio(colors[row], colors[column])
+			});
+		}
+	}
 
-	colors.forEach(function (color) {
-		var th = document.createElement('th');
-		th.scope = 'col';
-		th.appendChild(createPaletteColorHeading(color));
-		headRow.appendChild(th);
+	pairs.sort(function (first, second) {
+		return first.ratio - second.ratio;
+	});
+	list.className = 'palette-pairs';
+
+	pairs.forEach(function (pair) {
+		var item = document.createElement('li');
+		var colorsGroup = document.createElement('span');
+		var result = document.createElement('strong');
+		var passes = pair.ratio >= threshold;
+
+		item.className = passes ? 'palette-pass' : 'palette-fail';
+		colorsGroup.className = 'palette-pair-colors';
+		colorsGroup.append(createPaletteColorHeading(pair.first), createPaletteColorHeading(pair.second));
+		result.textContent = translate(passes ? 'palettePass' : 'paletteFail') + ' ' + formatNumber(pair.ratio) + ':1';
+		item.append(colorsGroup, result);
+		list.appendChild(item);
 	});
 
-	thead.appendChild(headRow);
-	table.appendChild(thead);
-
-	colors.forEach(function (rowColor) {
-		var row = document.createElement('tr');
-		var th = document.createElement('th');
-		th.scope = 'row';
-		th.appendChild(createPaletteColorHeading(rowColor));
-		row.appendChild(th);
-
-		colors.forEach(function (columnColor) {
-			var td = document.createElement('td');
-			var ratio = contrastRatio(rowColor, columnColor);
-			var passes = ratio >= threshold;
-
-			td.className = passes ? 'palette-pass' : 'palette-fail';
-			td.textContent = translate(passes ? 'palettePass' : 'paletteFail') + ' ' + formatNumber(ratio) + ':1';
-			row.appendChild(td);
-		});
-
-		tbody.appendChild(row);
-	});
-
-	table.appendChild(tbody);
-	container.appendChild(table);
+	container.appendChild(list);
 }
 
 function updateImagePalette() {
@@ -490,7 +563,8 @@ function updateImagePalette() {
 		appendPaletteSwatches(swatches, colors);
 		appendPaletteMatrix(matrix, colors);
 		summary.textContent = translate('paletteSummary').replace('{count}', colors.length);
-		card.hidden = false;
+	card.hidden = false;
+	card.open = false;
 		card.removeAttribute('aria-hidden');
 		return true;
 	} catch (error) {
@@ -504,6 +578,8 @@ function updatePreviewCanvas(options) {
 
 	var canvas = getCanvas();
 	var context = getContext();
+	var overlay = id('contrast_overlay');
+	var overlayContext = getContext(overlay);
 
 	if (!canvas || !context) {
 		throw new Error(translate('canvasError'));
@@ -524,6 +600,11 @@ function updatePreviewCanvas(options) {
 	canvas.height = image.dimensions.height;
 	canvas.style.width = image.dimensions.width + 'px';
 	canvas.style.height = image.dimensions.height + 'px';
+	overlay.width = image.dimensions.width;
+	overlay.height = image.dimensions.height;
+	overlay.style.width = image.dimensions.width + 'px';
+	overlay.style.height = image.dimensions.height + 'px';
+	overlayContext.clearRect(0, 0, overlay.width, overlay.height);
 	updateCanvasLayerSize(image.dimensions.width, image.dimensions.height);
 	context.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -533,7 +614,7 @@ function updatePreviewCanvas(options) {
 	schedulePreviewControlsUpdate();
 
 	if (shouldPreserveHighlights && window.applyContrastHighlights) {
-		applyContrastHighlights(context, image.contrastTest, false);
+		applyContrastHighlights(overlayContext, image.contrastTest, false);
 		showResetBtn();
 	} else {
 		image.hasContrastHighlights = false;
@@ -548,11 +629,47 @@ function resetPreviewImage() {
 		image.hasContrastHighlights = false;
 		image.contrastTest = null;
 		updatePreviewCanvas({ preserveHighlights: false });
-		announceStatus(translate('imageResetStatus'));
+		setImageWorkflowState('ready');
+		announceStatus(translate('clearHighlightsStatus'));
 	} catch (error) {
 		showError(error.message);
 	}
 }
+
+function replaceImage() {
+	image = {};
+	cachedPixels = false;
+	clearFileSelectionDisplay();
+	clearImageUrlField();
+	setImageSourceLoading(false);
+	clearImageSourceError();
+	hideImagePalette();
+	updateCheckerResult('');
+	showStep(1);
+	setImageWorkflowState('empty');
+	id('step-1').focus();
+	return true;
+}
+
+function showOriginalImage() {
+	var overlay = id('contrast_overlay');
+	overlay.hidden = true;
+	id('show-original').setAttribute('aria-pressed', 'true');
+	id('show-problems').setAttribute('aria-pressed', 'false');
+	return true;
+}
+
+function showProblemAreas() {
+	var overlay = id('contrast_overlay');
+	overlay.hidden = false;
+	id('show-original').setAttribute('aria-pressed', 'false');
+	id('show-problems').setAttribute('aria-pressed', 'true');
+	return true;
+}
+
+window.replaceImage = replaceImage;
+window.showOriginalImage = showOriginalImage;
+window.showProblemAreas = showProblemAreas;
 
 function scaleImage(canvas) {
 	resizePreviewFrame();
@@ -932,12 +1049,12 @@ function imageValidation(file, options) {
 	options = options || {};
 
 	if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
-		showError(translate('browserFileError'));
+		showImageSourceError(translate('browserFileError'));
 		return false;
 	}
 
 	if (typeof FileReader === 'undefined') {
-		showError(translate('browserPreviewError'));
+		showImageSourceError(translate('browserPreviewError'));
 		return false;
 	}
 
@@ -946,7 +1063,7 @@ function imageValidation(file, options) {
 	}
 
 	if( !(/image/i).test(file.type) && !(options.allowUnknownType && isImageUrlTypeAllowed(file.type)) ) {
-		showError(translate('imageTypeError'));
+		showImageSourceError(translate('imageTypeError'));
 		return false;
 	}
 
@@ -1001,7 +1118,7 @@ function setImageFile(file, shouldLoadPreview, options) {
 		transfer.items.add(file);
 		fileInput.files = transfer.files;
 	} catch (error) {
-		showError(translate('droppedFilePickerError'));
+		showImageSourceError(translate('droppedFilePickerError'));
 		return false;
 	}
 
@@ -1009,6 +1126,7 @@ function setImageFile(file, shouldLoadPreview, options) {
 	updateSelectedFileName();
 	syncActiveImageSource(options.source === 'url' ? 'url' : 'file');
 	clearError();
+	clearImageSourceError();
 
 	if (shouldLoadPreview) {
 		return loadImageFile(file);
@@ -1141,14 +1259,39 @@ function clearImageThumbnail() {
 	}
 }
 
-function updateCheckerResult(message) {
+function updateCheckerResult(message, details) {
 	var result = id('checker-result');
 
 	if (!result) {
 		return false;
 	}
 
-	result.textContent = message || '';
+	result.textContent = '';
+	result.removeAttribute('aria-label');
+
+	if (message && details) {
+		var value = document.createElement('strong');
+		var label = document.createElement('span');
+		var meta = document.createElement('span');
+		var level = document.createElement('span');
+		var color = document.createElement('span');
+
+		value.className = 'checker-result-value';
+		value.textContent = details.percentage + '%';
+		label.className = 'checker-result-label';
+		label.textContent = translate('problemAreas');
+		meta.className = 'checker-result-meta';
+		level.textContent = details.level;
+		color.textContent = details.color;
+		meta.append(level, color);
+		result.append(value, label, meta);
+		result.setAttribute('aria-label', message);
+	} else if (message) {
+		result.textContent = message;
+	}
+
+	result.hidden = !message;
+	id('result-view-controls').hidden = !message;
 	return true;
 }
 
@@ -1232,6 +1375,7 @@ function initPreviewDragging() {
 function initImageChooser() {
 	var fileInput = id('image_file');
 	var urlInput = id('image_url');
+	var urlButton = id('load-image-url');
 
 	if (fileInput) {
 		fileInput.addEventListener('change', loadSelectedImageFromInput);
@@ -1239,13 +1383,17 @@ function initImageChooser() {
 
 	if (urlInput) {
 		urlInput.addEventListener('input', function () {
+			if (urlButton) {
+				urlButton.disabled = image.uiState === 'loading' || !urlInput.value.trim();
+			}
+
 			if (urlInput.value.trim()) {
 				clearFileSelectionDisplay();
 			}
 		});
 
 		urlInput.addEventListener('keydown', function (event) {
-			if (event.key === 'Enter') {
+			if (event.key === 'Enter' && urlInput.value.trim()) {
 				event.preventDefault();
 				loadImageFromUrl();
 			}
@@ -1253,6 +1401,9 @@ function initImageChooser() {
 	}
 
 	document.addEventListener('paste', function (event) {
+		if (!window.isImageContrastView || !window.isImageContrastView()) {
+			return;
+		}
 		var file = getImageFileFromClipboard(event.clipboardData);
 
 		if (file) {
@@ -1275,6 +1426,9 @@ function initImageChooser() {
 	});
 
 	document.addEventListener('dragenter', function (event) {
+		if (!window.isImageContrastView || !window.isImageContrastView()) {
+			return;
+		}
 		if (!hasImageDrag(event.dataTransfer)) {
 			return;
 		}
@@ -1285,6 +1439,9 @@ function initImageChooser() {
 	});
 
 	document.addEventListener('dragover', function (event) {
+		if (!window.isImageContrastView || !window.isImageContrastView()) {
+			return;
+		}
 		if (!hasImageDrag(event.dataTransfer)) {
 			return;
 		}
@@ -1307,6 +1464,9 @@ function initImageChooser() {
 	});
 
 	document.addEventListener('drop', function (event) {
+		if (!window.isImageContrastView || !window.isImageContrastView()) {
+			return;
+		}
 		if (!hasImageDrag(event.dataTransfer)) {
 			return;
 		}
@@ -1326,8 +1486,10 @@ if (document.readyState === 'loading') {
 	document.addEventListener('DOMContentLoaded', function () {
 		initImageChooser();
 		initPreviewDragging();
+		setImageWorkflowState('empty');
 	});
 } else {
 	initImageChooser();
 	initPreviewDragging();
+	setImageWorkflowState('empty');
 }
