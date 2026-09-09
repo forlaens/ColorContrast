@@ -328,7 +328,7 @@
 			</section>
 
 			<p class="accessibility-updated" data-i18n="accessibilityUpdated">Last updated: May 7, 2026.</p>
-			<a class="back-link" href="/" data-i18n="accessibilityBack">Back to checker</a>
+			<a class="back-link" href="/"><span class="back-link-icon" aria-hidden="true">←</span><span data-i18n="accessibilityBack">Back to checker</span></a>
 		</section>
 	</main>
 
