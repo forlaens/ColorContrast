@@ -146,6 +146,7 @@ test('page title keeps the Forlæns brand while localizing the tool name', async
   assert.match(source, /document\.title = 'Forlæns \| ' \+ getTranslation\('title'\);/);
 
   for (const { code } of languages) {
+    assert.doesNotMatch(translations[code].title, /^Forlæns\b/u);
     assert.match(`Forlæns | ${translations[code].title}`, /^Forlæns \| .+/u);
   }
 });
