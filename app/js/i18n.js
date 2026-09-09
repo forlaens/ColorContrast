@@ -2441,7 +2441,7 @@
 	function applyLanguage(language) {
 		window.appLanguage = translations[language] ? language : 'en';
 		document.documentElement.lang = window.appLanguage;
-		document.title = getTranslation('title');
+		document.title = 'Forlæns | ' + getTranslation('title');
 
 		var description = document.querySelector('meta[name="description"]');
 		if (description) {

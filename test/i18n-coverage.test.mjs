@@ -139,6 +139,17 @@ test('every referenced interface translation key exists in every supported langu
   }
 });
 
+test('page title keeps the Forlæns brand while localizing the tool name', async () => {
+  const source = await readSource('app/js/i18n.js');
+  const { languages, translations } = await getInterfaceTranslations();
+
+  assert.match(source, /document\.title = 'Forlæns \| ' \+ getTranslation\('title'\);/);
+
+  for (const { code } of languages) {
+    assert.match(`Forlæns | ${translations[code].title}`, /^Forlæns \| .+/u);
+  }
+});
+
 test('new interface strings are localized instead of copied from English', async () => {
   const { languages, translations, localizedTranslationUpdates } = await getInterfaceTranslations();
   const nonEnglishCodes = languages

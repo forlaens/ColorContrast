@@ -13,7 +13,7 @@
 			<h1 id="app-title">
 				<a class="home-title-link" href="/" onclick="return showFrontView();">
 					<img class="brand-mark" src="/img/brand/forlaens-circle-mark.svg" width="32" height="32" alt="">
-					<span data-i18n="title">Forlæns Color Contrast Checker</span>
+					<span data-i18n="title">Color contrast checker</span>
 				</a>
 			</h1>
 		</div>

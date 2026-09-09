@@ -9,7 +9,7 @@
 		$baseUrl = $scheme . '://' . $host;
 		$pageUrl = $baseUrl . '/';
 		$socialImageUrl = $baseUrl . '/img/social-card.png';
-		$title = 'Forlæns Color Contrast Checker';
+		$title = 'Forlæns | Color contrast checker';
 		$description = 'Check two colors quickly, or choose an image to find places where a color may be hard to read or see.';
 	?>
 	<meta charset="utf-8">
