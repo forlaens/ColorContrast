@@ -40,6 +40,7 @@ test('build creates a static release artifact', async () => {
   assert.match(index, /<script src="\/js\/app\.bundle\.js" defer><\/script>/);
   assert.equal(index.includes('<link href="/css/style.css" rel="stylesheet">'), false);
   assert.match(index, /<link rel="manifest" href="\/manifest\.webmanifest">/);
+  assert.match(index, /<link rel="icon" type="image\/svg\+xml" href="\/img\/brand\/forlaens-circle-mark\.svg">/);
 
   const rootEntries = await readdir('dist');
   assert.equal(rootEntries.includes('app'), false);
@@ -307,12 +308,21 @@ test('document keeps help contextual instead of a permanent instruction panel', 
 test('build includes PWA files', async () => {
   const manifest = JSON.parse(await readFile(join(distDir, 'manifest.webmanifest'), 'utf8'));
   const serviceWorker = await readFile(join(distDir, 'sw.js'), 'utf8');
+  const brandMark = await readFile(join(distDir, 'img', 'brand', 'forlaens-circle-mark.svg'), 'utf8');
 
   assert.equal(manifest.display, 'standalone');
   assert.equal(manifest.start_url, '/');
   assert.equal(manifest.icons.length >= 2, true);
+  assert.deepEqual(manifest.icons[0], {
+    src: '/img/brand/forlaens-circle-mark.svg',
+    sizes: 'any',
+    type: 'image/svg+xml'
+  });
+  assert.match(brandMark, /#C95F2E/);
+  assert.match(brandMark, /#102F49/);
   assert.match(serviceWorker, /colorcontrast-[a-f0-9]{12}/);
   assert.match(serviceWorker, /\/js\/app\.bundle\.js/);
+  assert.match(serviceWorker, /\/img\/brand\/forlaens-circle-mark\.svg/);
   assert.match(serviceWorker, /fetch\(event\.request\)/);
   assert.match(serviceWorker, /caches\.match\(event\.request\)/);
 });

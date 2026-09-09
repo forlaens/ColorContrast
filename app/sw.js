@@ -11,6 +11,7 @@ const CORE_ASSETS = [
 	'/js/toolbar.js',
 	'/js/util.js',
 	'/manifest.webmanifest',
+	'/img/brand/forlaens-circle-mark.svg',
 	'/img/social-card.png',
 	'/img/favicon/android-chrome-192x192.png',
 	'/img/favicon/android-chrome-512x512.png'
