@@ -21,6 +21,14 @@ test('task chooser', async ({ page }) => {
 	await expect(page).toHaveScreenshot('task-chooser.png', screenshotOptions);
 });
 
+test('focused task choice takes priority over hover', async ({ page }) => {
+	await page.goto('/', { waitUntil: 'networkidle' });
+	const choice = page.locator('.tool-choice').first();
+	await choice.focus();
+	await choice.hover();
+	await expect(page).toHaveScreenshot('task-chooser-focused-hover.png', screenshotOptions);
+});
+
 test('two-color result', async ({ page }) => {
 	await page.goto('/#simple-contrast', { waitUntil: 'networkidle' });
 	await expect(page.locator('#simple-contrast-result')).not.toBeEmpty();

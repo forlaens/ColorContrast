@@ -617,6 +617,25 @@ test('task chooser routes to one tool at a time and browser history returns to i
     await page.mouse.move(0, 0);
     await page.waitForTimeout(180);
 
+    const firstChoice = page.locator('.tool-choice').first();
+    await firstChoice.focus();
+    assert.equal(await firstChoice.evaluate((choice) => choice.matches(':focus-visible')), true);
+    const focusStyles = await firstChoice.evaluate((choice) => ({
+      backgroundColor: getComputedStyle(choice).backgroundColor,
+      arrowBackgroundColor: getComputedStyle(choice.querySelector('.tool-choice-arrow')).backgroundColor,
+      outlineStyle: getComputedStyle(choice).outlineStyle
+    }));
+    assert.equal(focusStyles.outlineStyle, 'solid');
+
+    await firstChoice.hover();
+    await page.waitForTimeout(180);
+    assert.deepEqual(await firstChoice.evaluate((choice) => ({
+      backgroundColor: getComputedStyle(choice).backgroundColor,
+      arrowBackgroundColor: getComputedStyle(choice.querySelector('.tool-choice-arrow')).backgroundColor,
+      outlineStyle: getComputedStyle(choice).outlineStyle
+    })), focusStyles);
+    await page.mouse.move(0, 0);
+
     await page.setViewportSize({ width: 760, height: 900 });
     const compactChooserLayout = await page.locator('#tool-chooser').evaluate((chooser) => {
       const choicesBox = chooser.querySelector('.tool-choice-grid').getBoundingClientRect();
