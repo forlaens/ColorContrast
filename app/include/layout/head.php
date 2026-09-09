@@ -9,7 +9,7 @@
 		$baseUrl = $scheme . '://' . $host;
 		$pageUrl = $baseUrl . '/';
 		$socialImageUrl = $baseUrl . '/img/social-card.png';
-		$title = 'Color contrast checker';
+		$title = 'Forlæns Color Contrast Checker';
 		$description = 'Check two colors quickly, or choose an image to find places where a color may be hard to read or see.';
 	?>
 	<meta charset="utf-8">
@@ -38,10 +38,10 @@
 	<link rel="manifest" href="/manifest.webmanifest">
 	<link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#000000">
 	<link rel="shortcut icon" href="/img/favicon/favicon.ico">
-	<meta name="apple-mobile-web-app-title" content="Contrast">
+	<meta name="apple-mobile-web-app-title" content="Forlæns Contrast">
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="default">
-	<meta name="application-name" content="Contrast">
+	<meta name="application-name" content="Forlæns Contrast">
 	<meta name="msapplication-TileColor" content="#ffffff">
 	<meta name="msapplication-config" content="/img/favicon/browserconfig.xml">
 	<meta name="theme-color" content="#f6f7fb" media="(prefers-color-scheme: light)">

@@ -11,7 +11,10 @@
 		<a class="skip-link" href="#main-content" onclick="markSkipLinkTarget();" data-i18n="skipLink">Skip to main content</a>
 		<div>
 			<h1 id="app-title">
-				<a class="home-title-link" href="/" onclick="return showFrontView();" data-i18n="title">Color contrast checker</a>
+				<a class="home-title-link" href="/" onclick="return showFrontView();">
+					<img class="brand-mark" src="/img/brand/forlaens-circle-mark.svg" width="32" height="32" alt="">
+					<span data-i18n="title">Forlæns Color Contrast Checker</span>
+				</a>
 			</h1>
 		</div>
 		<div class="header-controls">

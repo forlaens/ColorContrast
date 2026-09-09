@@ -1722,27 +1722,27 @@ input[type=color] {
 	}
 }
 
-/* Editorial workbench: one clear hierarchy, restrained surfaces, stronger previews. */
+/* Forlæns light mode: an off-white field, deep-blue structure, and warm orange actions. */
 :root {
-	--bg: #f6f7fb;
+	--bg: #fffaf4;
 	--panel: #ffffff;
-	--panel-soft: #f8fafc;
-	--text: #111827;
-	--muted: #374151;
-	--border: #d9dee7;
-	--border-strong: #c5ccd8;
-	--accent: #0b4f4a;
-	--accent-dark: #083d39;
-	--accent-text: #ffffff;
-	--button-strong-bg: #111827;
-	--button-strong-text: #ffffff;
-	--focus-ring: #075eeb;
-	--focus-gap: #ffffff;
+	--panel-soft: #f7eee3;
+	--text: #102f49;
+	--muted: #284158;
+	--border: #dfd2c1;
+	--border-strong: #c9b8a5;
+	--accent: #7c3519;
+	--accent-dark: #5e260f;
+	--accent-text: #fffaf4;
+	--button-strong-bg: #102f49;
+	--button-strong-text: #fffaf4;
+	--focus-ring: #9d4a24;
+	--focus-gap: #fffaf4;
 	--status-pass-bg: #d1fae5;
 	--status-pass-text: #064e3b;
 	--status-fail-bg: #fee2e2;
 	--status-fail-text: #7f1d1d;
-	--transparent-canvas: #7f8b93;
+	--transparent-canvas: #586e80;
 	--transparent-grid: rgba(255, 255, 255, 0.16);
 	--radius: 6px;
 	--content: 1120px;
@@ -1859,7 +1859,14 @@ body {
 .home-title-link {
 	display: inline-flex;
 	align-items: center;
+	gap: 10px;
 	min-height: 44px;
+}
+
+.brand-mark {
+	flex: 0 0 auto;
+	width: 32px;
+	height: 32px;
 }
 
 .header-controls {

@@ -325,7 +325,7 @@ test('built app supports every language in the switcher', async () => {
 	    await page.waitForFunction(() => document.querySelector('#home-view').hidden && !document.querySelector('#accessibility-statement').hidden);
 	    assert.equal(await page.locator('#home-view').evaluate((element) => element.hidden), true);
 	    assert.equal(await page.locator('#accessibility-statement').evaluate((element) => element.hidden), false);
-    assert.equal(await page.title(), 'Tilgængelighedserklæring - Kontrasttjek for farver');
+    assert.equal(await page.title(), 'Tilgængelighedserklæring - Forlæns Color Contrast Checker');
 
     await page.locator('#accessibility-statement a[href="/"]').click();
     await page.waitForFunction(() => window.location.hash === '' && !document.querySelector('#home-view').hidden);
@@ -647,7 +647,7 @@ test('task chooser routes to one tool at a time and browser history returns to i
     assert.equal(await page.locator('#simple-contrast').isVisible(), true);
     assert.equal(await page.locator('#tool-chooser').isHidden(), true);
     assert.equal(await page.evaluate(() => document.activeElement.id), 'simple-contrast');
-    assert.equal(await page.title(), 'Check two colors - Color contrast checker');
+    assert.equal(await page.title(), 'Check two colors - Forlæns Color Contrast Checker');
 
     await page.getByRole('link', { name: 'Back to tools' }).click();
     assert.equal(await page.locator('#tool-chooser').isVisible(), true);
