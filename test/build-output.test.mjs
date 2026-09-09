@@ -176,7 +176,7 @@ test('document implements the task-first workflow without eyebrow labels', async
   assert.match(index, /id="simple-background"[^>]+aria-describedby="simple-color-hint simple-background-error"/);
   assert.match(index, /<input id="simple-background-native" class="native-color-control" type="color" value="#ffffff" aria-label="Choose background color visually" data-i18n-aria-label="chooseBackgroundVisually">/);
   assert.match(index, /<button id="simple-swap"[^>]+data-i18n="swapColors">Swap colors<\/button>/);
-  assert.match(index, /<div id="simple-contrast-result" class="simple-contrast-result" role="status" aria-live="polite" aria-atomic="true"><\/div>/);
+  assert.match(index, /<div id="simple-contrast-result" class="simple-contrast-result"><\/div>/);
   assert.match(index, /<div hidden id="image-contrast-view" class="image-contrast-view">/);
   assert.match(index, /<section id="step-1" class="step upload-panel" aria-labelledby="upload-title" tabindex="-1">/);
   assert.match(index, /<h2 id="upload-title" class="upload-title" data-i18n="chooseImage">Check contrast in an image<\/h2>/);
@@ -196,7 +196,8 @@ test('document implements the task-first workflow without eyebrow labels', async
   assert.match(index, /<button id="hand-tool" class="icon-button text-icon-button hand-tool-button" type="button" aria-label="Drag image" data-i18n-aria-label="dragImage" aria-pressed="false" onclick="toggleHandTool\(this\);">/);
   assert.match(index, /<div hidden id="pan-controls" class="pan-controls" role="group" aria-label="Pan image" data-i18n-aria-label="panControls">/);
   assert.match(index, /data-pan-direction="right" onclick="panPreview\(1, 0\);">→<\/button>/);
-  assert.match(index, /<section id="preview-viewport" class="preview-viewport" tabindex="0" aria-label="Zoomable image preview" data-i18n-aria-label="previewViewport" aria-describedby="preview-help">/);
+  assert.match(index, /<section id="preview-viewport" class="preview-viewport">/);
+  assert.match(index, /<canvas id="image_preview" class="preview" tabindex="0" aria-label="Image preview" data-i18n-aria-label="imagePreview" aria-describedby="preview-help"/);
   assert.match(index, /<details hidden id="palette-card" class="palette-card">/);
   assert.match(index, /<h2 id="palette-title" data-i18n="paletteTitle">Main colors in this image<\/h2>/);
   assert.match(index, /<ul id="palette-swatches" class="palette-swatches"><\/ul>/);
@@ -225,12 +226,12 @@ test('document includes language switcher support', async () => {
 
   assert.match(index, /<select id="language-switcher" name="language" autocomplete="off"><\/select>/);
   assert.match(index, /<div id="settings-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"><\/div>/);
-  assert.match(index, /<div hidden id="checker-result" class="checker-result" role="status" aria-live="polite" aria-atomic="true"><\/div>/);
+  assert.match(index, /<div hidden id="checker-result" class="checker-result"><\/div>/);
   assert.match(index, /<label for="image_file" class="file-picker-control">/);
   assert.match(index, /<span class="file-picker-button" data-i18n="chooseFile">Choose image<\/span>/);
   assert.match(index, /data-i18n-file-empty="noFileChosen"/);
   assert.match(index, /data-i18n-aria-label="checkerRegion"/);
-  assert.match(index, /data-i18n-aria-label="settingsToolbar"/);
+  assert.match(index, /<div id="checker-settings" class="checker-settings" role="group" aria-label="Checker settings" data-i18n-aria-label="settingsToolbar">/);
   assert.match(index, /<script src="\/js\/app\.bundle\.js" defer><\/script>/);
   assert.match(i18n, /code:"kl"/);
   assert.match(i18n, /code:"it"/);

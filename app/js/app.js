@@ -164,7 +164,7 @@ function clearError() {
 function setLoadingState(state, message) {
 	var loadingText = selector('[role=status].loading');
 	var previewArea = selector('#preview_area');
-	var toolbar = selector('[role=toolbar]');
+	var toolbar = id('checker-settings');
 
 	if (!loadingText || !previewArea || !toolbar) {
 		return false;
@@ -364,8 +364,6 @@ function renderSimpleContrastResult(result, ratio, message) {
 	}
 
 	result.textContent = '';
-	result.setAttribute('aria-label', message);
-	result.title = message;
 	ratioGroup.append(ratioElement);
 	summary.append(ratioGroup, messageElement);
 	result.append(summary, outcomeList);
@@ -396,8 +394,6 @@ function updateSimpleContrast(shouldAnnounce) {
 	if (foregroundInvalid || backgroundInvalid) {
 		result.textContent = '';
 		result.hidden = true;
-		result.removeAttribute('aria-label');
-		result.removeAttribute('title');
 
 		if (sample) {
 			sample.style.color = '';

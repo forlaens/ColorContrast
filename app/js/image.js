@@ -1015,7 +1015,7 @@ function updatePreviewControls() {
 
 function resizePreviewFrame() {
 	var previewArea = selector('#preview_area');
-	var toolbar = selector('[role=toolbar]');
+	var toolbar = id('checker-settings');
 	var scrollArea = selector('.checker-scroll');
 
 	if (!previewArea || !toolbar || !scrollArea) {
@@ -1267,7 +1267,6 @@ function updateCheckerResult(message, details) {
 	}
 
 	result.textContent = '';
-	result.removeAttribute('aria-label');
 
 	if (message && details) {
 		var value = document.createElement('strong');
@@ -1285,7 +1284,6 @@ function updateCheckerResult(message, details) {
 		color.textContent = details.color;
 		meta.append(level, color);
 		result.append(value, label, meta);
-		result.setAttribute('aria-label', message);
 	} else if (message) {
 		result.textContent = message;
 	}
