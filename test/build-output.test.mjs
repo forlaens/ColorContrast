@@ -276,6 +276,12 @@ test('document includes dark mode support', async () => {
   assert.match(app, /prefers-color-scheme: dark/);
 });
 
+test('short views do not force empty space before the footer', async () => {
+  const styles = await readFile(join(distDir, 'css/style.css'), 'utf8');
+
+  assert.doesNotMatch(styles, /\.app-main\s*\{[^}]*min-height:\s*calc\(100vh - 148px\)/s);
+});
+
 test('document remembers checker settings', async () => {
   const app = await readFile(join(distDir, 'js/app.bundle.js'), 'utf8');
 
