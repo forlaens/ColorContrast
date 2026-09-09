@@ -2345,6 +2345,22 @@
 		it: { toolChooserCopy: 'Scegli due colori oppure controlla un’immagine.', uploadCopy: 'Scegli un’immagine per trovare i punti in cui un colore può essere difficile da vedere. PNG, JPG, GIF o SVG. L’immagine resta nel browser.', chooseFile: 'Scegli immagine', pasteHint: 'Trascina qui un’immagine oppure incollala dagli appunti.', changeTool: 'Torna agli strumenti', imageLoadingStatus: 'Caricamento immagine.' }
 	};
 
+	var resultTranslationUpdates = {
+		en: { simpleContrastMeetsLevel: 'Meets {level}', simpleContrastDoesNotMeetLevel: 'Does not meet {level}', simpleContrastRequirement: 'Requires at least {ratio}:1' },
+		da: { simpleContrastMeetsLevel: 'Opfylder {level}', simpleContrastDoesNotMeetLevel: 'Opfylder ikke {level}', simpleContrastRequirement: 'Kræver mindst {ratio}:1' },
+		no: { simpleContrastMeetsLevel: 'Oppfyller {level}', simpleContrastDoesNotMeetLevel: 'Oppfyller ikke {level}', simpleContrastRequirement: 'Krever minst {ratio}:1' },
+		sv: { simpleContrastMeetsLevel: 'Uppfyller {level}', simpleContrastDoesNotMeetLevel: 'Uppfyller inte {level}', simpleContrastRequirement: 'Kräver minst {ratio}:1' },
+		fi: { simpleContrastMeetsLevel: 'Täyttää tason {level}', simpleContrastDoesNotMeetLevel: 'Ei täytä tasoa {level}', simpleContrastRequirement: 'Vaatii vähintään {ratio}:1' },
+		kl: { simpleContrastMeetsLevel: 'Naammassivaa {level}', simpleContrastDoesNotMeetLevel: '{level} naammassinngilaa', simpleContrastRequirement: 'Minnerpaamik {ratio}:1 pisariaqartinneqarpoq' },
+		is: { simpleContrastMeetsLevel: 'Uppfyllir {level}', simpleContrastDoesNotMeetLevel: 'Uppfyllir ekki {level}', simpleContrastRequirement: 'Krefst að minnsta kosti {ratio}:1' },
+		fo: { simpleContrastMeetsLevel: 'Lýkur {level}', simpleContrastDoesNotMeetLevel: 'Lýkur ikki {level}', simpleContrastRequirement: 'Krevur minst {ratio}:1' },
+		es: { simpleContrastMeetsLevel: 'Cumple {level}', simpleContrastDoesNotMeetLevel: 'No cumple {level}', simpleContrastRequirement: 'Requiere al menos {ratio}:1' },
+		de: { simpleContrastMeetsLevel: 'Erfüllt {level}', simpleContrastDoesNotMeetLevel: 'Erfüllt {level} nicht', simpleContrastRequirement: 'Erfordert mindestens {ratio}:1' },
+		fr: { simpleContrastMeetsLevel: 'Respecte le niveau {level}', simpleContrastDoesNotMeetLevel: 'Ne respecte pas le niveau {level}', simpleContrastRequirement: 'Nécessite au moins {ratio}:1' },
+		pt: { simpleContrastMeetsLevel: 'Cumpre {level}', simpleContrastDoesNotMeetLevel: 'Não cumpre {level}', simpleContrastRequirement: 'Requer pelo menos {ratio}:1' },
+		it: { simpleContrastMeetsLevel: 'Soddisfa {level}', simpleContrastDoesNotMeetLevel: 'Non soddisfa {level}', simpleContrastRequirement: 'Richiede almeno {ratio}:1' }
+	};
+
 	for (var paletteCode in localizedPaletteUpdates) {
 		if (Object.prototype.hasOwnProperty.call(localizedPaletteUpdates, paletteCode) && localizedTranslationUpdates[paletteCode]) {
 			Object.assign(localizedTranslationUpdates[paletteCode], localizedPaletteUpdates[paletteCode]);
@@ -2366,6 +2382,12 @@
 	for (var clarityCode in clarityTranslationUpdates) {
 		if (Object.prototype.hasOwnProperty.call(clarityTranslationUpdates, clarityCode) && translations[clarityCode]) {
 			Object.assign(translations[clarityCode], clarityTranslationUpdates[clarityCode]);
+		}
+	}
+
+	for (var resultCode in resultTranslationUpdates) {
+		if (Object.prototype.hasOwnProperty.call(resultTranslationUpdates, resultCode) && translations[resultCode]) {
+			Object.assign(translations[resultCode], resultTranslationUpdates[resultCode]);
 		}
 	}
 

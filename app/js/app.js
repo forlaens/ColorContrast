@@ -288,21 +288,30 @@ function renderSimpleContrastResult(result, ratio, message) {
 			.replace(/\s*,?\s*AA{1,2}\s*$/, '');
 	}
 
-	function outcomeLabel(requiredRatio, enhancedRatio) {
-		if (ratio >= enhancedRatio) {
-			return 'AAA';
-		}
+	function createOutcomeIcon(passed) {
+		var icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+		var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 
-		if (ratio >= requiredRatio) {
-			return 'AA';
-		}
+		icon.classList.add('simple-contrast-outcome-icon');
+		icon.setAttribute('aria-hidden', 'true');
+		icon.setAttribute('focusable', 'false');
+		icon.setAttribute('viewBox', '0 0 24 24');
+		icon.setAttribute('fill', 'none');
+		icon.setAttribute('stroke', 'currentColor');
+		icon.setAttribute('stroke-linecap', 'round');
+		icon.setAttribute('stroke-linejoin', 'round');
+		icon.setAttribute('stroke-width', '2.5');
+		path.setAttribute('d', passed ? 'M5 12.5L9.5 17L19 7.5' : 'M7 7L17 17M17 7L7 17');
+		icon.appendChild(path);
 
-		return translate('paletteFail');
+		return icon;
 	}
 
 	function outcomeCard(item) {
 		var passed = ratio >= item.requiredRatio;
 		var enhanced = item.enhancedRatio && ratio >= item.enhancedRatio;
+		var level = enhanced ? 'AAA' : 'AA';
+		var requiredRatio = enhanced ? item.enhancedRatio : item.requiredRatio;
 		var card = document.createElement('li');
 		var label = document.createElement('span');
 		var status = document.createElement('strong');
@@ -314,31 +323,16 @@ function renderSimpleContrastResult(result, ratio, message) {
 		label.textContent = item.label;
 
 		status.className = 'simple-contrast-outcome-status';
-		status.textContent = passed
-			? (item.enhancedRatio ? outcomeLabel(item.requiredRatio, item.enhancedRatio) : translate('palettePass'))
-			: translate('paletteFail');
+		status.append(
+			createOutcomeIcon(passed),
+			document.createTextNode(translate(passed ? 'simpleContrastMeetsLevel' : 'simpleContrastDoesNotMeetLevel').replace('{level}', level))
+		);
 
 		detail.className = 'simple-contrast-outcome-detail';
-		detail.textContent = '≥ ' + formatNumber(enhanced ? item.enhancedRatio : item.requiredRatio) + ':1';
+		detail.textContent = translate('simpleContrastRequirement').replace('{ratio}', formatNumber(requiredRatio));
 
 		card.append(label, status, detail);
 		return card;
-	}
-
-	function outcomeSummary(ratio) {
-		if (ratio >= 7) {
-			return 'AAA';
-		}
-
-		if (ratio >= 4.5) {
-			return 'AA';
-		}
-
-		if (ratio >= 3) {
-			return translate('largeTextAA').replace(/\s*\([^)]*\)/, '');
-		}
-
-		return translate('paletteFail');
 	}
 
 	var ratioText = formatNumber(ratio) + ':1';
@@ -352,7 +346,6 @@ function renderSimpleContrastResult(result, ratio, message) {
 	var ratioGroup = document.createElement('div');
 	var ratioElement = document.createElement('strong');
 	var messageElement = document.createElement('span');
-	var outcomeBadge = document.createElement('span');
 	var outcomeList = document.createElement('ul');
 
 	summary.className = 'simple-contrast-summary';
@@ -361,10 +354,6 @@ function renderSimpleContrastResult(result, ratio, message) {
 	ratioElement.className = 'simple-contrast-ratio';
 	ratioElement.textContent = ratioText;
 	ratioElement.setAttribute('aria-hidden', 'true');
-
-	outcomeBadge.className = 'simple-contrast-badge';
-	outcomeBadge.textContent = outcomeSummary(ratio);
-	outcomeBadge.setAttribute('data-state', ratio >= 3 ? 'pass' : 'fail');
 
 	messageElement.className = 'simple-contrast-message';
 	messageElement.textContent = resultMessage;
@@ -378,7 +367,7 @@ function renderSimpleContrastResult(result, ratio, message) {
 	result.setAttribute('aria-label', message);
 	result.title = message;
 	ratioGroup.append(ratioElement);
-	summary.append(ratioGroup, outcomeBadge, messageElement);
+	summary.append(ratioGroup, messageElement);
 	result.append(summary, outcomeList);
 }
 
