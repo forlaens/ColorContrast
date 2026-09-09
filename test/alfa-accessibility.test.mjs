@@ -648,7 +648,7 @@ test('task chooser routes to one tool at a time and browser history returns to i
     assert.equal(await page.evaluate(() => document.activeElement.id), 'simple-contrast');
     assert.equal(await page.title(), 'Check two colors - Color contrast checker');
 
-    await page.getByRole('link', { name: 'Change tool' }).click();
+    await page.getByRole('link', { name: 'Back to tools' }).click();
     assert.equal(await page.locator('#tool-chooser').isVisible(), true);
     await page.goBack();
     await page.waitForFunction(() => location.hash === '#simple-contrast');
@@ -1678,7 +1678,7 @@ test('core workflows reflow with increased text spacing', async () => {
     await assertPageReflows();
     await page.getByRole('link', { name: /Check two colors/ }).click();
     await assertPageReflows();
-    await page.getByRole('link', { name: 'Change tool' }).click();
+    await page.getByRole('link', { name: 'Back to tools' }).click();
     await page.getByRole('link', { name: /Check contrast in an image/ }).click();
     await assertPageReflows();
     await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
