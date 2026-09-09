@@ -15,7 +15,8 @@ cleanup() {
 
 trap cleanup EXIT
 
-candidate_sha="$(curl --fail --silent --show-error --location --max-time 15 "$release_sha_url")"
+cache_buster="$(date +%s%N)"
+candidate_sha="$(curl --fail --silent --show-error --location --max-time 15 "${release_sha_url}?cachebust=${cache_buster}")"
 current_sha=''
 
 if [[ -f "$site_root/.deploy-sha" ]]; then
@@ -26,7 +27,7 @@ if [[ "$candidate_sha" == "$current_sha" ]]; then
 	exit 0
 fi
 
-curl --fail --silent --show-error --location --max-time 60 --output "$work_dir/release.tar.gz" "$release_archive_url"
+curl --fail --silent --show-error --location --max-time 60 --output "$work_dir/release.tar.gz" "${release_archive_url}?cachebust=${cache_buster}"
 install -d "$work_dir/release"
 tar -xzf "$work_dir/release.tar.gz" --strip-components=1 --directory "$work_dir/release"
 
