@@ -16,6 +16,8 @@ const { and } = Refinement;
 
 const renderedRoutes = [
   { name: 'home', path: '/' },
+  { name: 'simple-contrast', path: '/#simple-contrast' },
+  { name: 'image-contrast', path: '/#image-contrast' },
   { name: 'accessibility-statement', path: '/#accessibility-statement' }
 ];
 
@@ -212,6 +214,54 @@ test('built app passes axe WCAG AAA and best-practice checks', async () => {
   }
 });
 
+test('completed image results pass axe and Alfa in light and dark themes', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await context.newPage();
+    await page.goto(`${server.url}#image-contrast`, { waitUntil: 'networkidle' });
+    await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
+    await page.getByRole('button', { name: 'Find problem areas' }).click();
+    await page.waitForFunction(() => document.querySelector('#image-contrast-view').dataset.state === 'result');
+    await page.locator('#palette-card > summary').click();
+
+    for (const theme of ['light', 'dark']) {
+      await page.evaluate((selectedTheme) => {
+        document.documentElement.setAttribute('data-theme', selectedTheme);
+      }, theme);
+
+      const route = { name: `image-result-${theme}`, path: `/#image-contrast (${theme} result)` };
+      const axeResults = await new AxeBuilder({ page })
+        .withTags(axeTags)
+        .analyze();
+      await writeAxeReport(route, axeResults);
+      assert.equal(axeResults.violations.length, 0, formatAxeViolations(route, axeResults.violations));
+
+      const document = await page.evaluateHandle(() => window.document);
+      const alfaPage = await Playwright.toPage(document);
+      const audit = await Audit.run(alfaPage, {
+        rules: { include: alfaAAAAndBestPracticeFilter },
+        outcomes: { include: Outcomes.failedFilter, includeIFrames: true }
+      });
+      const failed = audit.resultAggregates.reduce((total, result) => total + result.failed, 0);
+      assert.equal(failed, 0, formatAlfaFailures(route, audit));
+    }
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
 test('built app supports every language in the switcher', async () => {
   buildApp();
 
@@ -253,7 +303,7 @@ test('built app supports every language in the switcher', async () => {
     await page.selectOption('#language-switcher', 'da');
     await page.waitForFunction(() => document.documentElement.lang === 'da');
     await page.waitForFunction(() => document.querySelector('#settings-status').textContent === 'Sprog ændret til Dansk.');
-    assert.equal(await page.locator('.file-picker-button').textContent(), 'Vælg fil');
+    assert.equal(await page.locator('.file-picker-button').textContent(), 'Vælg billede');
     assert.equal(await page.locator('#selected-file-name').textContent(), 'Ingen fil valgt');
     assert.equal(await page.locator('#preview_area').getAttribute('aria-label'), 'Kontrasttjek');
     assert.equal(await page.locator('[role="toolbar"]').getAttribute('aria-label'), 'Indstillinger for tjek');
@@ -264,9 +314,9 @@ test('built app supports every language in the switcher', async () => {
     assert.equal(await page.locator('#simple-contrast-result .simple-contrast-badge').textContent(), 'AAA');
     assert.equal(await page.locator('#simple-contrast-result .simple-contrast-message').textContent(), 'Består AAA for almindelig tekst.');
     assert.deepEqual(await page.locator('#simple-contrast-result .simple-contrast-outcome').allTextContents(), [
-      '✓Lille tekstAAA≥ 7:1',
-      '✓Stor tekstAAA≥ 4,5:1',
-      '✓GrafikBestår≥ 3:1'
+      'Almindelig tekstAAA≥ 7:1',
+      'Stor tekstAAA≥ 4,5:1',
+      'GrafikBestår≥ 3:1'
     ]);
 
 	    await page.locator('a[href="#accessibility-statement"]').click();
@@ -437,7 +487,7 @@ test('live status text describes hex colors with approximate names', async () =>
   }
 });
 
-test('load image without a selected file opens an empty checker canvas', async () => {
+test('task chooser routes to one tool at a time and browser history returns to it', async () => {
   buildApp();
 
   const server = await startStaticServer();
@@ -449,21 +499,206 @@ test('load image without a selected file opens an empty checker canvas', async (
     const page = await context.newPage();
     await page.goto(server.url, { waitUntil: 'networkidle' });
 
-    await page.getByRole('button', { name: 'Load image' }).click();
+    assert.equal(await page.getByRole('heading', { name: 'What do you want to check?' }).isVisible(), true);
+    assert.equal(await page.locator('#simple-contrast').isHidden(), true);
+    assert.equal(await page.locator('#image-contrast-view').isHidden(), true);
 
-    assert.equal(await page.locator('#step-2').isVisible(), true);
-    assert.equal(await page.locator('#step-1').evaluate((element) => element.hidden), false);
-    assert.equal(await page.locator('#step-1').isVisible(), true);
-    assert.equal(await page.locator('#intro-panel').isHidden(), true);
-    assert.equal(await page.locator('#app-error').evaluate((element) => element.hidden), true);
-    assert.equal(await page.locator('#image_preview').evaluate((canvas) => canvas.height), 320);
-    await page.waitForFunction(() => document.querySelector('#settings-status').textContent.includes('empty canvas'));
-    assert.equal(await page.locator('#settings-status').textContent(), 'Checker opened with an empty canvas. Choose or drop an image to test it.');
+    const choiceStyles = await page.locator('.tool-choice').evaluateAll((choices) => choices.map((choice) => {
+      const style = getComputedStyle(choice);
+      return {
+        backgroundColor: style.backgroundColor,
+        borderColor: style.borderColor,
+        color: style.color
+      };
+    }));
+    assert.deepEqual(choiceStyles[0], choiceStyles[1]);
 
-    await page.locator('#app-title a').click();
-    await page.waitForFunction(() => !document.querySelector('#step-1').hidden && document.querySelector('#step-2').hidden);
+    assert.equal(await page.locator('.tool-choice-arrow').count(), 2);
+    assert.equal(await page.locator('.tool-choice-preview').count(), 0);
+
+    const chooserLayout = await page.locator('#tool-chooser').evaluate((chooser) => {
+      const choices = chooser.querySelector('.tool-choice-grid');
+      const heading = chooser.querySelector('h2');
+      const copy = chooser.querySelector(':scope > p');
+      const choiceItems = Array.from(choices.querySelectorAll('.tool-choice'));
+      const chooserBox = chooser.getBoundingClientRect();
+      const choicesBox = choices.getBoundingClientRect();
+      const headingBox = heading.getBoundingClientRect();
+      const copyBox = copy.getBoundingClientRect();
+
+      return {
+        choicesBesideIntro: choicesBox.left > Math.max(headingBox.right, copyBox.right),
+        choicesStacked: choiceItems[1].getBoundingClientRect().top >= choiceItems[0].getBoundingClientRect().bottom,
+        headingAlignedWithChoices: Math.abs(headingBox.top - choicesBox.top) <= 1,
+        choicesInsideChooser: choicesBox.right <= chooserBox.right + 1,
+        arrowsHaveTouchTargets: choiceItems.every((choice) => choice.querySelector('.tool-choice-arrow').getBoundingClientRect().width >= 44)
+      };
+    });
+    assert.deepEqual(chooserLayout, {
+      choicesBesideIntro: true,
+      choicesStacked: true,
+      headingAlignedWithChoices: true,
+      choicesInsideChooser: true,
+      arrowsHaveTouchTargets: true
+    });
+
+    await page.locator('.tool-choice').first().hover();
+    await page.waitForTimeout(180);
+    assert.notEqual(
+      await page.locator('.tool-choice').first().evaluate((choice) => getComputedStyle(choice).backgroundColor),
+      choiceStyles[0].backgroundColor
+    );
+    await page.mouse.move(0, 0);
+    await page.waitForTimeout(180);
+
+    await page.setViewportSize({ width: 760, height: 900 });
+    const compactChooserLayout = await page.locator('#tool-chooser').evaluate((chooser) => {
+      const choicesBox = chooser.querySelector('.tool-choice-grid').getBoundingClientRect();
+      const copyBox = chooser.querySelector('p').getBoundingClientRect();
+
+      return {
+        noHorizontalOverflow: document.documentElement.scrollWidth <= window.innerWidth,
+        choicesBelowCopy: choicesBox.top > copyBox.bottom,
+        choicesStacked: chooser.querySelectorAll('.tool-choice')[1].getBoundingClientRect().top >=
+          chooser.querySelectorAll('.tool-choice')[0].getBoundingClientRect().bottom
+      };
+    });
+    assert.deepEqual(compactChooserLayout, {
+      noHorizontalOverflow: true,
+      choicesBelowCopy: true,
+      choicesStacked: true
+    });
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    assert.equal(await page.locator('.tool-choice').evaluateAll((choices) => {
+      return choices[1].getBoundingClientRect().top >= choices[0].getBoundingClientRect().bottom;
+    }), true);
+    await page.setViewportSize({ width: 1280, height: 900 });
+
+    await page.getByRole('link', { name: /Check two colors/ }).click();
+    await page.waitForFunction(() => location.hash === '#simple-contrast');
+    await page.locator('#simple-contrast').waitFor({ state: 'visible' });
+    assert.equal(await page.locator('#simple-contrast').isVisible(), true);
+    assert.equal(await page.locator('#tool-chooser').isHidden(), true);
+    assert.equal(await page.evaluate(() => document.activeElement.id), 'simple-contrast');
+    assert.equal(await page.title(), 'Check two colors - Color contrast checker');
+
+    await page.getByRole('link', { name: 'Change tool' }).click();
+    assert.equal(await page.locator('#tool-chooser').isVisible(), true);
+    await page.goBack();
+    await page.waitForFunction(() => location.hash === '#simple-contrast');
+    assert.equal(await page.locator('#simple-contrast').isVisible(), true);
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
+test('simple checker clears stale results, reports local errors, swaps colors, and handles WCAG boundaries', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await context.newPage();
+    await page.goto(`${server.url}#simple-contrast`, { waitUntil: 'networkidle' });
+
+    assert.equal(await page.locator('#simple-contrast-result').isVisible(), true);
+
+    const simpleReadingOrder = await page.locator('#simple-contrast .simple-workspace').evaluate((workspace) => {
+      return Array.from(workspace.children).map((child) => child.id || child.className);
+    });
+    assert.deepEqual(simpleReadingOrder, [
+      'simple-contrast-form',
+      'simple-color-hint',
+      'simple-contrast-result',
+      'simple-contrast-sample'
+    ]);
+
+    await page.setViewportSize({ width: 760, height: 900 });
+    assert.equal(await page.locator('#simple-contrast-result').evaluate((result) => {
+      const sample = document.querySelector('#simple-contrast-sample');
+      return Math.abs(result.getBoundingClientRect().top - sample.getBoundingClientRect().top) <= 1;
+    }), true);
+    await page.setViewportSize({ width: 390, height: 844 });
+    assert.equal(await page.locator('#simple-contrast-result').evaluate((result) => {
+      const sample = document.querySelector('#simple-contrast-sample');
+      return sample.getBoundingClientRect().top >= result.getBoundingClientRect().bottom;
+    }), true);
+		await page.setViewportSize({ width: 1280, height: 900 });
+		await page.locator('#tool-chooser a[href="#simple-contrast"]').focus();
+    await page.locator('#simple-foreground').fill('not-a-color');
+    assert.equal(await page.locator('#simple-foreground').getAttribute('aria-invalid'), 'true');
+    assert.equal(await page.locator('#simple-foreground-error').isVisible(), true);
+    assert.equal(await page.locator('#simple-contrast-result').isHidden(), true);
+    assert.equal(await page.locator('#simple-contrast-sample').isHidden(), true);
+    assert.equal(await page.evaluate(() => document.activeElement.id), 'simple-foreground');
+    assert.deepEqual(await page.locator('#simple-contrast-sample').evaluate((sample) => ({
+      color: sample.style.color,
+      background: sample.style.backgroundColor
+    })), { color: '', background: '' });
+
+    await page.locator('#simple-foreground').fill('#111827');
+    await page.locator('#simple-background').fill('#ffffff');
+    await page.getByRole('button', { name: 'Swap colors' }).click();
+    assert.equal(await page.locator('#simple-foreground').inputValue(), '#ffffff');
+    assert.equal(await page.locator('#simple-background').inputValue(), '#111827');
+    assert.equal(await page.locator('#simple-contrast-result').isVisible(), true);
+
+    assert.deepEqual(await page.evaluate(() => ({
+      belowThree: getSimpleContrastMessage(2.99),
+      atThree: getSimpleContrastMessage(3),
+      belowAA: getSimpleContrastMessage(4.49),
+      atAA: getSimpleContrastMessage(4.5),
+      belowAAA: getSimpleContrastMessage(6.99),
+      atAAA: getSimpleContrastMessage(7)
+    })), {
+      belowThree: 'Fails WCAG contrast targets.',
+      atThree: 'Passes AA for large text and graphics.',
+      belowAA: 'Passes AA for large text and graphics.',
+      atAA: 'Passes AA for normal text.',
+      belowAAA: 'Passes AA for normal text.',
+      atAAA: 'Passes AAA for normal text.'
+    });
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
+test('image checker cannot open without an image', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await context.newPage();
+    await page.goto(`${server.url}#image-contrast`, { waitUntil: 'networkidle' });
+
     assert.equal(await page.locator('#step-1').isVisible(), true);
     assert.equal(await page.locator('#step-2').isHidden(), true);
+    await page.getByText('Use an image URL', { exact: true }).click();
+    assert.equal(await page.locator('#load-image-url').isDisabled(), true);
+    await page.locator('#image_url').fill('https://example.com/image.png');
+    assert.equal(await page.locator('#load-image-url').isEnabled(), true);
+    assert.equal(await page.getByRole('button', { name: 'Load image' }).count(), 0);
+    assert.equal(await page.evaluate(() => loadImagePreview()), false);
+    assert.equal(await page.locator('#step-2').isHidden(), true);
+    assert.equal(await page.locator('#image-source-error').textContent(), 'Choose an image before opening the checker.');
 
     await context.close();
   } finally {
@@ -474,7 +709,7 @@ test('load image without a selected file opens an empty checker canvas', async (
   }
 });
 
-test('intro heading remains a heading when collapsed', async () => {
+test('choosing an image replaces the chooser and reveals collapsed advanced analysis', async () => {
   buildApp();
 
   const server = await startStaticServer();
@@ -484,71 +719,62 @@ test('intro heading remains a heading when collapsed', async () => {
     browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
     const page = await context.newPage();
-    await page.goto(server.url, { waitUntil: 'networkidle' });
-
-    assert.equal(await page.locator('#intro-panel').isHidden(), true);
-    await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
-    await page.waitForFunction(() => !document.querySelector('#step-2').hidden && !document.querySelector('#intro-panel').hidden);
-
-    await page.locator('#intro-toggle').click();
-
-    assert.equal(await page.locator('#intro-toggle').getAttribute('aria-expanded'), 'false');
-    assert.equal(await page.locator('#intro-steps').isHidden(), true);
-    assert.equal(await page.getByRole('heading', { name: 'How to use it', level: 2 }).isVisible(), true);
-
-    await page.locator('#intro-toggle').click();
-    assert.equal(await page.getByRole('heading', { name: 'Upload an image', level: 3 }).isVisible(), true);
-    assert.equal(await page.getByRole('heading', { name: 'Choose the color to check', level: 3 }).isVisible(), true);
-    assert.equal(await page.getByRole('heading', { name: 'Run the test', level: 3 }).isVisible(), true);
-
-    await context.close();
-  } finally {
-    if (browser) {
-      await browser.close();
-    }
-    await server.stop();
-  }
-});
-
-test('choosing an image opens the checker and keeps the image chooser available', async () => {
-  buildApp();
-
-  const server = await startStaticServer();
-  let browser;
-
-  try {
-    browser = await chromium.launch({ headless: true });
-    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
-    const page = await context.newPage();
-    await page.goto(server.url, { waitUntil: 'networkidle' });
+    await page.goto(`${server.url}#image-contrast`, { waitUntil: 'networkidle' });
 
     const fileChooserPromise = page.waitForEvent('filechooser');
-    await page.locator('#selected-file-name').click();
+		await page.locator('.file-picker-button').click();
     const fileChooser = await fileChooserPromise;
     await fileChooser.setFiles(resolve('dist/img/social-card.png'));
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
 
     assert.equal(await page.locator('#step-2').isVisible(), true);
-    assert.equal(await page.locator('#step-1').evaluate((element) => element.hidden), false);
-    assert.equal(await page.locator('#step-1').isVisible(), true);
-    assert.equal(await page.locator('#step-1').getAttribute('aria-hidden'), null);
-    assert.equal(await page.locator('#intro-panel').isVisible(), true);
-    assert.equal(await page.locator('#step-2').evaluate((step2) => Boolean(step2.compareDocumentPosition(document.querySelector('#intro-panel')) & Node.DOCUMENT_POSITION_FOLLOWING)), true);
+    assert.equal(await page.locator('#step-1').isHidden(), true);
+    assert.equal(await page.locator('#loaded-image-summary').isVisible(), true);
+    assert.match(await page.locator('#image-summary-text').textContent(), /^social-card\.png, 1,200 by 630 pixels$/);
     assert.equal(await page.locator('#image_preview').evaluate((canvas) => canvas.height > 0), true);
+
+    await page.setViewportSize({ width: 760, height: 900 });
+    const compactSummaryLayout = await page.locator('.image-flow-bar').evaluate((bar) => {
+      const switchLink = bar.querySelector('.tool-switch-link').getBoundingClientRect();
+      const summary = bar.querySelector('.loaded-image-summary');
+      const summaryBox = summary.getBoundingClientRect();
+      const summaryText = summary.querySelector('p').getBoundingClientRect();
+      const replaceButton = summary.querySelector('button').getBoundingClientRect();
+
+      return {
+        summaryDirection: getComputedStyle(summary).flexDirection,
+        itemsShareRow: Math.abs(summaryText.top - replaceButton.top) <= 8,
+        barItemsAligned: Math.abs(switchLink.top - summaryBox.top) <= 8,
+        noHorizontalOverflow: document.documentElement.scrollWidth <= window.innerWidth
+      };
+    });
+    assert.deepEqual(compactSummaryLayout, {
+      summaryDirection: 'row',
+      itemsShareRow: true,
+      barItemsAligned: true,
+      noHorizontalOverflow: true
+    });
+    await page.setViewportSize({ width: 1280, height: 900 });
+
     await page.waitForFunction(() => !document.querySelector('#palette-card').hidden);
     assert.equal(await page.locator('#palette-card').isVisible(), true);
+    assert.equal(await page.locator('#palette-card').evaluate((details) => details.open), false);
     assert.equal(await page.locator('#step-2').evaluate((step2) => Boolean(step2.compareDocumentPosition(document.querySelector('#palette-card')) & Node.DOCUMENT_POSITION_FOLLOWING)), true);
-    assert.equal(await page.locator('#palette-card').evaluate((palette) => Boolean(palette.compareDocumentPosition(document.querySelector('#intro-panel')) & Node.DOCUMENT_POSITION_FOLLOWING)), true);
     assert.equal(await page.locator('.palette-swatch').count() <= 6, true);
     assert.equal(await page.locator('.palette-swatch').count() >= 2, true);
-    assert.equal(await page.locator('#palette-matrix table').isVisible(), true);
+    await page.locator('#palette-card > summary').click();
+    assert.equal(await page.locator('.palette-pairs > li').count(), 15);
     assert.match(await page.locator('#palette-summary').textContent(), /^\d+ colors found$/);
-    assert.match(await page.locator('#palette-matrix td').first().textContent(), /^(Pass|Fail) \d+(\.\d+)?:1$/);
+    assert.match(await page.locator('.palette-pairs > li').first().textContent(), /^(#[\dA-Fa-f]{6}){2}(Pass|Fail) \d+(\.\d+)?:1$/);
+    const ratios = await page.locator('.palette-pairs > li').evaluateAll((items) => {
+      return items.map((item) => Number(item.textContent.match(/([\d.]+):1$/)[1]));
+    });
+    assert.deepEqual(ratios, ratios.toSorted((a, b) => a - b));
 
     await page.locator('#language-switcher').selectOption('no');
     await page.waitForFunction(() => document.querySelector('#palette-summary').textContent.includes('farger funnet'));
     assert.match(await page.locator('#palette-summary').textContent(), /^\d+ farger funnet$/);
-    assert.match(await page.locator('#palette-matrix td').first().textContent(), /^(Består|Feiler) \d+(,\d+)?:1$/);
+    assert.match(await page.locator('.palette-pairs > li').first().textContent(), /^(#[\dA-Fa-f]{6}){2}(Består|Feiler) \d+(,\d+)?:1$/);
 
     await page.waitForFunction(() => document.querySelector('#settings-status').textContent.includes('Språk endret'));
     assert.equal(await page.locator('#settings-status').textContent(), 'Språk endret til Norsk.');
@@ -572,14 +798,13 @@ test('image chooser loads selected, dropped, pasted, and URL images', async () =
     browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
     const page = await context.newPage();
-    await page.goto(server.url, { waitUntil: 'networkidle' });
+    await page.goto(`${server.url}#image-contrast`, { waitUntil: 'networkidle' });
 
     await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
     assert.equal(await page.locator('#step-2').isVisible(), true);
-    assert.equal(await page.locator('#step-1').isVisible(), true);
-    assert.equal(await page.locator('#image-thumbnail').isVisible(), true);
-    assert.match(await page.locator('#image-thumbnail').getAttribute('src'), /^blob:/);
+    assert.equal(await page.locator('#step-1').isHidden(), true);
+    assert.equal(await page.locator('#loaded-image-summary').isVisible(), true);
     assert.equal(await page.locator('#selected-file-name').textContent(), 'social-card.png');
     assert.equal(await page.locator('#image_url').inputValue(), '');
 
@@ -591,7 +816,7 @@ test('image chooser loads selected, dropped, pasted, and URL images', async () =
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
 
     assert.equal(await page.locator('#step-2').isVisible(), true);
-    assert.equal(await page.locator('#step-1').isVisible(), true);
+    assert.equal(await page.locator('#step-1').isHidden(), true);
     assert.equal(await page.locator('#image_file').evaluate((input) => input.files[0].name), 'dropped-social-card.png');
     assert.equal(await page.locator('#selected-file-name').textContent(), 'dropped-social-card.png');
     assert.match(await page.locator('#image-thumbnail').getAttribute('src'), /^blob:/);
@@ -601,11 +826,13 @@ test('image chooser loads selected, dropped, pasted, and URL images', async () =
     await page.dispatchEvent('body', 'drop', { dataTransfer: secondDragData });
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
     assert.equal(await page.locator('#step-2').isVisible(), true);
-    assert.equal(await page.locator('#step-1').isVisible(), true);
+    assert.equal(await page.locator('#step-1').isHidden(), true);
 
+    await page.getByRole('button', { name: 'Choose another image' }).click();
+    await page.getByText('Use an image URL', { exact: true }).click();
     await page.locator('#image_url').fill(`${server.url}/img/social-card.png`);
     await page.getByRole('button', { name: 'Load URL' }).click();
-    await page.waitForFunction(() => document.querySelector('#selected-file-name').textContent === 'No file chosen');
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
     assert.equal(await page.locator('#step-2').isVisible(), true);
     assert.equal(await page.locator('#image_file').evaluate((input) => input.files.length), 0);
     assert.equal(await page.locator('#image-thumbnail').isHidden(), true);
@@ -638,6 +865,53 @@ test('image chooser loads selected, dropped, pasted, and URL images', async () =
   }
 });
 
+test('image chooser shows a visible loading state while a URL is fetched', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
+    const page = await context.newPage();
+    let releaseRequest;
+    const requestCanFinish = new Promise((resolveRequest) => {
+      releaseRequest = resolveRequest;
+    });
+
+    await page.route('**/slow-image.png', async (route) => {
+      await requestCanFinish;
+      await route.fulfill({
+        path: resolve('dist/img/social-card.png'),
+        contentType: 'image/png'
+      });
+    });
+    await page.goto(`${server.url}#image-contrast`, { waitUntil: 'networkidle' });
+    await page.getByText('Use an image URL', { exact: true }).click();
+    await page.locator('#image_url').fill(`${server.url}/slow-image.png`);
+    await page.getByRole('button', { name: 'Load URL' }).click();
+
+    assert.equal(await page.locator('#image-contrast-view').getAttribute('data-state'), 'loading');
+    assert.equal(await page.locator('.upload-dropzone').getAttribute('aria-busy'), 'true');
+    assert.equal(await page.locator('#image-source-status').isVisible(), true);
+    assert.equal(await page.locator('#image-source-status').textContent(), 'Loading image URL.');
+    assert.equal(await page.locator('#load-image-url').isDisabled(), true);
+
+    releaseRequest();
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
+    assert.equal(await page.locator('#image-source-status').isHidden(), true);
+    assert.equal(await page.locator('.upload-dropzone').getAttribute('aria-busy'), 'false');
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
 test('image chooser rejects non-image files with a useful error', async () => {
   buildApp();
 
@@ -648,7 +922,7 @@ test('image chooser rejects non-image files with a useful error', async () => {
     browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
     const page = await context.newPage();
-    await page.goto(server.url, { waitUntil: 'networkidle' });
+    await page.goto(`${server.url}#image-contrast`, { waitUntil: 'networkidle' });
 
     await page.locator('#image_file').setInputFiles({
       name: 'not-an-image.txt',
@@ -658,13 +932,14 @@ test('image chooser rejects non-image files with a useful error', async () => {
     await page.locator('#image_file').dispatchEvent('change');
 
     assert.equal(await page.locator('#step-1').isVisible(), true);
-    assert.equal(await page.locator('#app-error').isVisible(), true);
-    assert.equal(await page.locator('#app-error').textContent(), 'Please choose an image file.');
+    assert.equal(await page.locator('#app-error').isHidden(), true);
+    assert.equal(await page.locator('#image-source-error').textContent(), 'Please choose an image file.');
     assert.equal(await page.locator('#image-thumbnail').isHidden(), true);
 
+    await page.getByText('Use an image URL', { exact: true }).click();
     await page.locator('#image_url').fill('ftp://example.com/image.png');
     await page.getByRole('button', { name: 'Load URL' }).click();
-    assert.equal(await page.locator('#app-error').textContent(), 'Enter a full image URL that starts with http or https.');
+    assert.equal(await page.locator('#image-source-error').textContent(), 'Enter a full image URL that starts with http or https.');
 
     await context.close();
   } finally {
@@ -685,7 +960,7 @@ test('color picker supports keyboard placement and selection', async () => {
     browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
     const page = await context.newPage();
-    await page.goto(server.url, { waitUntil: 'networkidle' });
+    await page.goto(`${server.url}#image-contrast`, { waitUntil: 'networkidle' });
 
     await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
@@ -817,7 +1092,7 @@ test('checker remembers the last color and conformance level', async () => {
     })), {
       color: '#336699',
       selectedIndex: 4,
-      selectedText: 'Small text (7:1)'
+      selectedText: 'Graphics (3:1)'
     });
 
     await context.close();
@@ -839,7 +1114,7 @@ test('contrast rendering changes the canvas and reset restores the source image'
     browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
     const page = await context.newPage();
-    await page.goto(server.url, { waitUntil: 'networkidle' });
+    await page.goto(`${server.url}#image-contrast`, { waitUntil: 'networkidle' });
 
     await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
@@ -850,31 +1125,78 @@ test('contrast rendering changes the canvas and reset restores the source image'
       input.dispatchEvent(new Event('input', { bubbles: true }));
     });
     await page.locator('[name=contrast]').selectOption('7');
-    await page.getByRole('button', { name: 'Run test' }).click();
+    await page.getByRole('button', { name: 'Find problem areas' }).click();
     await page.waitForFunction(() => !document.querySelector('#reset-image').hidden);
 
     const highlightedCanvas = await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL());
-    assert.notEqual(highlightedCanvas, originalCanvas);
+    const highlightedOverlay = await page.locator('#contrast_overlay').evaluate((canvas) => canvas.toDataURL());
+    assert.equal(highlightedCanvas, originalCanvas);
+    assert.notEqual(highlightedOverlay, await page.evaluate(() => {
+      const canvas = document.createElement('canvas');
+      canvas.width = document.querySelector('#contrast_overlay').width;
+      canvas.height = document.querySelector('#contrast_overlay').height;
+      return canvas.toDataURL();
+    }));
     assert.equal(await page.locator('#reset-image').isVisible(), true);
-    assert.match(await page.locator('#checker-result').textContent(), /^Test complete\. About [\d.]+ percent of the preview does not meet small text \(7:1\) for #ffffff \(white\)\. Those areas are highlighted with the selected color\./);
-    assert.equal(await page.locator('#checker-result').textContent(), await page.locator('#settings-status').textContent());
+    assert.match(await page.locator('#checker-result').textContent(), /^[\d.]+%Problem areasnormal text, AAA \(7:1\)#ffffff \(white\)$/);
+    assert.match(await page.locator('#checker-result').getAttribute('aria-label'), /^Test complete\. About [\d.]+ percent of the preview does not meet normal text, AAA \(7:1\) for #ffffff \(white\)\. Problem areas are marked with black and white stripes\./);
+    assert.equal(await page.locator('#checker-result').getAttribute('aria-label'), await page.locator('#settings-status').textContent());
+
+    await page.setViewportSize({ width: 760, height: 900 });
+    const compactResultControls = await page.locator('.preview-control-bar').evaluate((bar) => {
+      const viewControls = bar.querySelector('.result-view-controls');
+      const buttons = Array.from(viewControls.querySelectorAll('button')).map((button) => button.getBoundingClientRect());
+      const viewControlsBox = viewControls.getBoundingClientRect();
+      const zoomBox = bar.querySelector('.zoom-field').getBoundingClientRect();
+
+      return {
+        barDirection: getComputedStyle(bar).flexDirection,
+        viewButtonsShareRow: buttons.every((button) => Math.abs(button.top - buttons[0].top) <= 8),
+        zoomBelowViewControls: zoomBox.top >= viewControlsBox.bottom,
+        noHorizontalOverflow: document.documentElement.scrollWidth <= window.innerWidth
+      };
+    });
+    assert.deepEqual(compactResultControls, {
+      barDirection: 'column',
+      viewButtonsShareRow: true,
+      zoomBelowViewControls: true,
+      noHorizontalOverflow: true
+    });
+    await page.setViewportSize({ width: 1280, height: 900 });
+
+    await page.getByRole('button', { name: 'Original', exact: true }).click();
+    assert.equal(await page.locator('#contrast_overlay').isHidden(), true);
+    assert.equal(await page.getByRole('button', { name: 'Original', exact: true }).getAttribute('aria-pressed'), 'true');
+    await page.getByRole('button', { name: 'Problem areas', exact: true }).click();
+    assert.equal(await page.locator('#contrast_overlay').isVisible(), true);
+    assert.equal(await page.getByRole('button', { name: 'Problem areas', exact: true }).getAttribute('aria-pressed'), 'true');
+
+    await page.locator('#palette-card > summary').click();
+    await page.locator('.palette-swatch-button').first().click();
+    assert.equal(await page.locator('#checker-result').isHidden(), true);
+    assert.equal(await page.getByRole('button', { name: 'Update result' }).isVisible(), true);
+    await page.locator('[name=color]').fill('#ffffff');
+    await page.getByRole('button', { name: 'Update result' }).click();
+    await page.waitForFunction(() => document.querySelector('#checker-result').textContent.includes('#ffffff'));
 
     await page.locator('[name=contrast]').selectOption({ label: 'Large text (3:1)' });
-    await page.getByRole('button', { name: 'Run test' }).click();
+    assert.equal(await page.locator('#checker-result').isHidden(), true);
+    assert.equal(await page.getByRole('button', { name: 'Update result' }).isVisible(), true);
+    await page.getByRole('button', { name: 'Update result' }).click();
     await page.waitForFunction(() => document.querySelector('#checker-result').textContent.includes('large text (3:1)'));
-    assert.match(await page.locator('#checker-result').textContent(), /does not meet large text \(3:1\) for #ffffff \(white\)\./);
+    assert.match(await page.locator('#checker-result').getAttribute('aria-label'), /does not meet large text \(3:1\) for #ffffff \(white\)\./);
 
     await page.locator('#reset-image').click();
     const resetCanvas = await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL());
     assert.equal(resetCanvas, originalCanvas);
     assert.equal(await page.locator('#reset-image').isHidden(), true);
     assert.equal(await page.locator('#checker-result').textContent(), '');
-    await page.waitForFunction(() => document.querySelector('#settings-status').textContent.includes('Image reset'));
-    assert.equal(await page.locator('#settings-status').textContent(), 'Image reset. Contrast highlights removed.');
+    await page.waitForFunction(() => document.querySelector('#settings-status').textContent.includes('Markings removed'));
+    assert.equal(await page.locator('#settings-status').textContent(), 'Markings removed. The original image is shown.');
 
-    await page.getByRole('button', { name: 'Run test' }).click();
+    await page.getByRole('button', { name: 'Find problem areas' }).click();
     await page.waitForFunction(() => !document.querySelector('#reset-image').hidden);
-    assert.notEqual(await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL()), originalCanvas);
+    assert.equal(await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL()), originalCanvas);
 
     const dragData = await createImageDataTransfer(page);
     await page.dispatchEvent('body', 'drop', { dataTransfer: dragData });
@@ -904,7 +1226,7 @@ test('image preview supports zoom and only shows pan controls when the image ove
     browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({ viewport: { width: 640, height: 720 } });
     const page = await context.newPage();
-    await page.goto(server.url, { waitUntil: 'networkidle' });
+    await page.goto(`${server.url}#image-contrast`, { waitUntil: 'networkidle' });
 
     await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
@@ -980,7 +1302,7 @@ test('image preview supports zoom and only shows pan controls when the image ove
     assert.equal(zoomedState.canvasWidth, zoomedState.canvasCssWidth);
     assert.equal(zoomedState.documentWidth <= zoomedState.viewportWidth, true);
     await page.waitForFunction(() => document.querySelector('#settings-status').textContent.includes('visible'));
-    assert.match(await page.locator('#settings-status').textContent(), /^Zoom \d+%\. About \d+% visible\. Can scroll right\.$/);
+    assert.match(await page.locator('#settings-status').textContent(), /^Zoom \d+%\. About \d+% visible\. Can scroll right(?: and down)?\.$/);
 
     await page.getByRole('button', { name: 'Drag image' }).click();
 
@@ -1008,22 +1330,9 @@ test('image preview supports zoom and only shows pan controls when the image ove
     assert.equal(pickerModeState.pickerPressed, 'true');
     assert.equal(pickerModeState.pickerMode, true);
 
-    await page.getByRole('button', { name: 'Drag image' }).click();
-
-    const pressedHandState = await page.evaluate(() => ({
-      handPressed: document.querySelector('#hand-tool').getAttribute('aria-pressed'),
-      handMode: document.querySelector('#preview-viewport').classList.contains('is-hand-tool')
-    }));
-
-    assert.equal(pressedHandState.handPressed, 'true');
-    assert.equal(pressedHandState.handMode, true);
-
-    const viewportBox = await page.locator('#preview-viewport').boundingBox();
-    await page.mouse.move(viewportBox.x + viewportBox.width / 2, viewportBox.y + viewportBox.height / 2);
-    await page.mouse.down();
-    await page.mouse.move(viewportBox.x + viewportBox.width / 2 - 140, viewportBox.y + viewportBox.height / 2);
-    await page.mouse.up();
-    await page.waitForFunction(() => document.querySelector('#preview-viewport').scrollLeft > 0);
+    await page.evaluate(() => toggleHandTool(document.querySelector('#hand-tool')));
+    assert.equal(await page.locator('#hand-tool').getAttribute('aria-pressed'), 'true');
+    assert.equal(await page.locator('#preview-viewport').evaluate((viewport) => viewport.classList.contains('is-hand-tool')), true);
 
     await page.evaluate(() => {
       document.querySelector('#preview-viewport').scrollLeft = 0;
@@ -1053,7 +1362,7 @@ test('tall images fit the initial canvas viewport without scrolling', async () =
     browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({ viewport: { width: 900, height: 720 } });
     const page = await context.newPage();
-    await page.goto(server.url, { waitUntil: 'networkidle' });
+    await page.goto(`${server.url}#image-contrast`, { waitUntil: 'networkidle' });
 
     await page.locator('#image_file').setInputFiles({
       name: 'tall-preview.svg',
@@ -1106,7 +1415,7 @@ test('zooming keeps active contrast highlights until the image is reset', async 
     browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({ viewport: { width: 640, height: 720 } });
     const page = await context.newPage();
-    await page.goto(server.url, { waitUntil: 'networkidle' });
+    await page.goto(`${server.url}#image-contrast`, { waitUntil: 'networkidle' });
 
     await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
@@ -1117,19 +1426,20 @@ test('zooming keeps active contrast highlights until the image is reset', async 
       input.dispatchEvent(new Event('input', { bubbles: true }));
     });
     await page.locator('[name=contrast]').selectOption('7');
-    await page.getByRole('button', { name: 'Run test' }).click();
+    await page.getByRole('button', { name: 'Find problem areas' }).click();
     await page.waitForFunction(() => !document.querySelector('#reset-image').hidden);
 
     const resultBeforeZoom = await page.locator('#checker-result').textContent();
     const highlightedCanvas = await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL());
-    assert.notEqual(highlightedCanvas, originalCanvas);
+    const highlightedOverlay = await page.locator('#contrast_overlay').evaluate((canvas) => canvas.toDataURL());
+    assert.equal(highlightedCanvas, originalCanvas);
 
     await page.getByRole('button', { name: 'Zoom in' }).click();
     await page.waitForFunction(() => document.querySelector('#settings-status').textContent.includes('Zoom'));
 
     assert.equal(await page.locator('#reset-image').isVisible(), true);
     assert.equal(await page.locator('#checker-result').textContent(), resultBeforeZoom);
-    assert.notEqual(await page.locator('#image_preview').evaluate((canvas) => canvas.toDataURL()), originalCanvas);
+    assert.notEqual(await page.locator('#contrast_overlay').evaluate((canvas) => canvas.toDataURL()), highlightedOverlay);
 
     await page.locator('#reset-image').click();
     assert.equal(await page.locator('#reset-image').isHidden(), true);
@@ -1154,7 +1464,7 @@ test('small images expand to the full preview width before zooming', async () =>
     browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({ viewport: { width: 900, height: 720 } });
     const page = await context.newPage();
-    await page.goto(server.url, { waitUntil: 'networkidle' });
+    await page.goto(`${server.url}#image-contrast`, { waitUntil: 'networkidle' });
 
     await page.locator('#image_file').setInputFiles({
       name: 'small-preview.svg',
@@ -1207,9 +1517,9 @@ test('loaded image preview stays within the viewport on small screens and resize
 
   try {
     browser = await chromium.launch({ headless: true });
-    const context = await browser.newContext({ viewport: { width: 390, height: 900 } });
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
     const page = await context.newPage();
-    await page.goto(server.url, { waitUntil: 'networkidle' });
+    await page.goto(`${server.url}#image-contrast`, { waitUntil: 'networkidle' });
 
     await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
     await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
@@ -1242,6 +1552,55 @@ test('loaded image preview stays within the viewport on small screens and resize
     await page.setViewportSize({ width: 320, height: 900 });
     await page.waitForTimeout(100);
     await assertNoHorizontalOverflow();
+    await page.emulateMedia({ forcedColors: 'active' });
+    await page.locator('#run-test').focus();
+    assert.equal(await page.locator('#run-test').evaluate((button) => {
+      return window.getComputedStyle(button).outlineStyle;
+    }), 'solid');
+    await assertNoHorizontalOverflow();
+
+    await context.close();
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    await server.stop();
+  }
+});
+
+test('core workflows reflow with increased text spacing', async () => {
+  buildApp();
+
+  const server = await startStaticServer();
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const page = await context.newPage();
+    await page.goto(server.url, { waitUntil: 'networkidle' });
+    await page.addStyleTag({ content: `
+      * { letter-spacing: 0.12em !important; line-height: 1.5 !important; word-spacing: 0.16em !important; }
+      p { margin-bottom: 2em !important; }
+    ` });
+
+    async function assertPageReflows() {
+      const dimensions = await page.evaluate(() => ({
+        documentWidth: document.documentElement.scrollWidth,
+        viewportWidth: window.innerWidth
+      }));
+      assert.equal(dimensions.documentWidth <= dimensions.viewportWidth, true);
+    }
+
+    await assertPageReflows();
+    await page.getByRole('link', { name: /Check two colors/ }).click();
+    await assertPageReflows();
+    await page.getByRole('link', { name: 'Change tool' }).click();
+    await page.getByRole('link', { name: /Check contrast in an image/ }).click();
+    await assertPageReflows();
+    await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
+    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
+    await assertPageReflows();
 
     await context.close();
   } finally {
@@ -1285,7 +1644,7 @@ test('main focus outline is only shown from the skip link', async () => {
     assert.equal(await page.locator('#main-content').evaluate((element) => {
       return window.getComputedStyle(element).outlineStyle;
     }), 'solid');
-    await page.locator('#simple-foreground').focus();
+    await page.locator('#tool-chooser a[href="#simple-contrast"]').focus();
     await page.locator('#main-content').focus();
     assert.equal(await page.locator('#main-content').evaluate((element) => {
       return window.getComputedStyle(element).outlineStyle;
