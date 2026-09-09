@@ -1312,7 +1312,7 @@ input[type=color] {
 	text-decoration: none;
 }
 
-.tool-choice:hover {
+.tool-choice:hover:not(:focus-visible) {
 	border-color: var(--accent);
 	background: var(--panel-soft);
 }
@@ -1967,12 +1967,12 @@ body {
 	color: var(--text);
 }
 
-.tool-choice:hover {
+.tool-choice:hover:not(:focus-visible) {
 	background: var(--panel-soft);
 	box-shadow: none;
 }
 
-.tool-choice:first-child:hover {
+.tool-choice:first-child:hover:not(:focus-visible) {
 	background: var(--panel-soft);
 }
 
