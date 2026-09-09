@@ -543,31 +543,6 @@ h2 {
 	font-weight: 750;
 }
 
-.simple-contrast-badge {
-	width: fit-content;
-	padding: 6px 10px;
-	border-radius: 999px;
-	background: #d1fae5;
-	color: #064e3b;
-	font-size: 0.9rem;
-	font-weight: 850;
-}
-
-[data-theme="dark"] .simple-contrast-badge {
-	background: #064e3b;
-	color: #d1fae5;
-}
-
-.simple-contrast-badge[data-state="fail"] {
-	background: #fee2e2;
-	color: #7f1d1d;
-}
-
-[data-theme="dark"] .simple-contrast-badge[data-state="fail"] {
-	background: #7f1d1d;
-	color: #fee2e2;
-}
-
 .simple-contrast-outcomes {
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -599,34 +574,32 @@ h2 {
 }
 
 .simple-contrast-outcome-status {
-	font-size: clamp(1.35rem, 2.4vw, 2rem);
-	font-weight: 850;
+	display: inline-flex;
+	grid-column: 2;
+	grid-row: 1;
+	align-items: center;
+	justify-self: end;
+	gap: 8px;
+	font-size: clamp(1.1rem, 1.8vw, 1.3rem);
+	font-weight: 750;
 	line-height: 1.05;
+}
+
+.simple-contrast-outcome-icon {
+	width: 1.4em;
+	height: 1.4em;
+	flex: 0 0 auto;
+	color: var(--accent);
+}
+
+.simple-contrast-outcome[data-state="fail"] .simple-contrast-outcome-icon {
+	color: var(--error-border);
 }
 
 .simple-contrast-outcome-detail {
 	color: var(--muted);
 	font-size: 0.9rem;
 	font-weight: 750;
-}
-
-.simple-contrast-check-mark {
-	display: inline-grid;
-	align-items: center;
-	justify-items: center;
-	width: 32px;
-	height: 32px;
-	border-radius: 999px;
-	background: var(--accent);
-	color: var(--accent-text);
-	font-size: 1rem;
-	font-weight: 900;
-	line-height: 1;
-}
-
-.simple-contrast-outcome[data-state="fail"] .simple-contrast-check-mark {
-	background: var(--error-border);
-	color: #ffffff;
 }
 
 .simple-contrast-sample {
@@ -2209,23 +2182,6 @@ body {
 	font-variant-numeric: tabular-nums;
 	font-weight: 780;
 	letter-spacing: -0.07em;
-}
-
-.simple-contrast-badge {
-	order: -1;
-	padding: 0;
-	border-radius: 0;
-	background: transparent;
-	color: var(--accent);
-	font-size: 0.9rem;
-	font-weight: 650;
-}
-
-[data-theme="dark"] .simple-contrast-badge,
-.simple-contrast-badge[data-state="fail"],
-[data-theme="dark"] .simple-contrast-badge[data-state="fail"] {
-	background: transparent;
-	color: var(--text);
 }
 
 .simple-contrast-message {

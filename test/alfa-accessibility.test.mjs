@@ -311,13 +311,14 @@ test('built app supports every language in the switcher', async () => {
     assert.equal(await page.locator('a[href="#accessibility-statement"]').textContent(), 'Tilgængelighedserklæring');
     assert.equal(await page.locator('#simple-contrast-result').getAttribute('aria-label'), 'Kontrastforhold: 17,73:1. Består AAA for almindelig tekst.');
     assert.equal(await page.locator('#simple-contrast-result .simple-contrast-ratio').textContent(), '17,73:1');
-    assert.equal(await page.locator('#simple-contrast-result .simple-contrast-badge').textContent(), 'AAA');
+    assert.equal(await page.locator('#simple-contrast-result .simple-contrast-badge').count(), 0);
     assert.equal(await page.locator('#simple-contrast-result .simple-contrast-message').textContent(), 'Består AAA for almindelig tekst.');
     assert.deepEqual(await page.locator('#simple-contrast-result .simple-contrast-outcome').allTextContents(), [
-      'Almindelig tekstAAA≥ 7:1',
-      'Stor tekstAAA≥ 4,5:1',
-      'GrafikBestår≥ 3:1'
+      'Almindelig tekstOpfylder AAAKræver mindst 7:1',
+      'Stor tekstOpfylder AAAKræver mindst 4,5:1',
+      'GrafikOpfylder AAKræver mindst 3:1'
     ]);
+    assert.equal(await page.locator('#simple-contrast-result .simple-contrast-outcome[data-state="pass"] .simple-contrast-outcome-icon').count(), 3);
 
 	    await page.locator('a[href="#accessibility-statement"]').click();
 	    await page.waitForFunction(() => window.location.hash === '#accessibility-statement');
@@ -732,6 +733,45 @@ test('simple checker clears stale results, reports local errors, swaps colors, a
       belowAAA: 'Passes AA for normal text.',
       atAAA: 'Passes AAA for normal text.'
     });
+
+    assert.deepEqual(await page.evaluate(() => {
+      const result = document.querySelector('#simple-contrast-result');
+
+      renderSimpleContrastResult(result, 4.5, getSimpleContrastMessage(4.5));
+      return Array.from(result.querySelectorAll('.simple-contrast-outcome')).map((outcome) => ({
+        state: outcome.dataset.state,
+        status: outcome.querySelector('.simple-contrast-outcome-status').textContent,
+        requirement: outcome.querySelector('.simple-contrast-outcome-detail').textContent
+      }));
+    }), [
+      { state: 'pass', status: 'Meets AA', requirement: 'Requires at least 4.5:1' },
+      { state: 'pass', status: 'Meets AAA', requirement: 'Requires at least 4.5:1' },
+      { state: 'pass', status: 'Meets AA', requirement: 'Requires at least 3:1' }
+    ]);
+
+    assert.deepEqual(await page.evaluate(() => {
+      const result = document.querySelector('#simple-contrast-result');
+
+      renderSimpleContrastResult(result, 3, getSimpleContrastMessage(3));
+      return Array.from(result.querySelectorAll('.simple-contrast-outcome')).map((outcome) => ({
+        state: outcome.dataset.state,
+        status: outcome.querySelector('.simple-contrast-outcome-status').textContent,
+        requirement: outcome.querySelector('.simple-contrast-outcome-detail').textContent
+      }));
+    }), [
+      { state: 'fail', status: 'Does not meet AA', requirement: 'Requires at least 4.5:1' },
+      { state: 'pass', status: 'Meets AA', requirement: 'Requires at least 3:1' },
+      { state: 'pass', status: 'Meets AA', requirement: 'Requires at least 3:1' }
+    ]);
+
+    await page.locator('#simple-background').fill('#ffffff');
+    await page.waitForFunction(() => document.querySelectorAll('#simple-contrast-result .simple-contrast-outcome[data-state="fail"] .simple-contrast-outcome-icon').length === 3);
+    assert.deepEqual(await page.locator('#simple-contrast-result .simple-contrast-outcome-status').allTextContents(), [
+      'Does not meet AA',
+      'Does not meet AA',
+      'Does not meet AA'
+    ]);
+    assert.equal(await page.locator('#simple-contrast-result .simple-contrast-outcome[data-state="fail"] .simple-contrast-outcome-icon').count(), 3);
 
     await context.close();
   } finally {

@@ -35,6 +35,13 @@ test('two-color validation error', async ({ page }) => {
 	await expect(page).toHaveScreenshot('two-color-error.png', screenshotOptions);
 });
 
+test('two-color failure result', async ({ page }) => {
+	await page.goto('/#simple-contrast', { waitUntil: 'networkidle' });
+	await page.locator('#simple-foreground').fill('#ffffff');
+	await expect(page.locator('.simple-contrast-outcome[data-state="fail"]')).toHaveCount(3);
+	await expect(page).toHaveScreenshot('two-color-fail.png', screenshotOptions);
+});
+
 test('empty image checker', async ({ page }) => {
 	await page.goto('/#image-contrast', { waitUntil: 'networkidle' });
 	await expect(page.locator('#step-1')).toBeVisible();
