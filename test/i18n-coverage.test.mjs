@@ -161,6 +161,19 @@ test('new interface strings are localized instead of copied from English', async
   }
 });
 
+test('large-text help uses WCAG point sizes and CSS-pixel equivalents in every language', async () => {
+  const { languages, translations } = await getInterfaceTranslations();
+
+  for (const { code } of languages) {
+    const copy = translations[code].textSizeHelpCopy;
+
+    assert.match(copy, /18 pt/u, `${code}.textSizeHelpCopy must state the 18 pt threshold`);
+    assert.match(copy, /14 pt/u, `${code}.textSizeHelpCopy must state the bold 14 pt threshold`);
+    assert.match(copy, /24 px/u, `${code}.textSizeHelpCopy must include the 24 px equivalent`);
+    assert.match(copy, /18[,.]5 px/u, `${code}.textSizeHelpCopy must include the 18.5 px equivalent`);
+  }
+});
+
 test('all status color names are translated for every supported language', async () => {
   const { languages } = await getInterfaceTranslations();
   const { COLOR_NAME_RANGES, COLOR_NAME_TRANSLATIONS } = await getColorTranslations();
