@@ -118,7 +118,8 @@ test('document includes contact footer', async () => {
   assert.match(index, /<footer class="site-footer">/);
   assert.match(index, /<section hidden id="accessibility-statement" class="accessibility-page" aria-labelledby="accessibility-statement-title" tabindex="-1">/);
   assert.match(index, /<h2 id="accessibility-statement-title" data-i18n="accessibilityTitle">Accessibility statement<\/h2>/);
-  assert.match(index, /<p class="accessibility-lede" data-i18n="accessibilityIntro">/);
+  assert.match(index, /<p class="accessibility-lede" data-i18n="accessibilityIntro">This statement explains the accessibility target for the Color contrast checker/);
+  assert.doesNotMatch(index, /Image contrast checker/);
   assert.match(index, /<h3 id="accessibility-status-title" data-i18n="accessibilityStatusTitle">Conformance status<\/h3>/);
   assert.match(index, /<h3 id="accessibility-scope-title" data-i18n="accessibilityScopeTitle">Scope<\/h3>/);
   assert.match(index, /<h3 id="accessibility-standard-title" data-i18n="accessibilityStandardTitle">Accessibility approach<\/h3>/);
