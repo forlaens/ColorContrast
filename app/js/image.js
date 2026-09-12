@@ -806,10 +806,6 @@ function setHandToolActive(active) {
 
 	active = active === true && hasPreviewImage();
 
-	if (active && window.setColorPickerActive) {
-		window.setColorPickerActive(false);
-	}
-
 	button.setAttribute('aria-pressed', active ? 'true' : 'false');
 	viewport.classList.toggle('is-hand-tool', active);
 	viewport.classList.remove('is-dragging-preview');

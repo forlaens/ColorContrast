@@ -1168,10 +1168,6 @@ input[type=color] {
 	user-select: none;
 }
 
-.preview-viewport.is-color-picker {
-	cursor: crosshair;
-}
-
 .preview-canvas-layer {
 	position: relative;
 	min-width: 100%;
@@ -1228,10 +1224,6 @@ input[type=color] {
 	background-position: 0 0, 0 16px, 16px -16px, -16px 0;
 }
 
-.preview-viewport.is-color-picker .preview {
-	cursor: crosshair;
-}
-
 .preview-viewport.is-hand-tool .preview {
 	cursor: grab;
 }
@@ -1243,29 +1235,6 @@ input[type=color] {
 #checker-settings .cta {
 	max-width: 100%;
 	white-space: normal;
-}
-
-#crosshairs {
-	pointer-events: none;
-	display: none;
-	position: absolute;
-	width: 16px;
-	height: 16px;
-}
-
-#crosshairs svg {
-	width: 100%;
-	height: 100%;
-}
-
-#crosshairs svg .white {
-	stroke: white;
-	stroke-linejoin: round;
-	stroke-width: 100;
-}
-
-.preview:focus + .contrast-overlay + #crosshairs {
-	display: block;
 }
 
 /* One task at a time: chooser, simple checker, and image checker. */
@@ -1449,18 +1418,6 @@ input[type=color] {
 	font-weight: 700;
 }
 
-.picker-button {
-	gap: 8px;
-	white-space: normal;
-}
-
-.picker-button svg {
-	flex: 0 0 auto;
-	width: 18px;
-	height: 18px;
-	fill: currentColor;
-}
-
 .selected-test-color {
 	display: inline-flex;
 	align-items: center;
@@ -1478,15 +1435,6 @@ input[type=color] {
 	border: 1px solid var(--border-strong);
 	border-radius: 4px;
 	background: var(--selected-color);
-}
-
-.picker-instruction {
-	flex-basis: 100%;
-	margin: 0;
-	padding: 10px 12px;
-	border-left: 4px solid var(--accent);
-	background: var(--panel);
-	color: var(--text);
 }
 
 .result-view-controls {
@@ -1509,10 +1457,6 @@ input[type=color] {
 	top: 0;
 	left: 0;
 	z-index: 1;
-}
-
-#crosshairs {
-	z-index: 2;
 }
 
 .palette-card {
@@ -1633,10 +1577,6 @@ input[type=color] {
 		flex-wrap: wrap;
 	}
 
-	.picker-button {
-		flex: 1 1 190px;
-	}
-
 	select {
 		width: 100%;
 	}
@@ -1645,7 +1585,6 @@ input[type=color] {
 @media (forced-colors: active) {
 	.tool-choice,
 	.checker-result,
-	.picker-instruction,
 	.palette-pairs > li {
 		forced-color-adjust: auto;
 		border: 2px solid CanvasText;
@@ -2366,8 +2305,7 @@ body {
 	min-height: 40px;
 }
 
-.loaded-image-summary .cta:hover,
-.picker-button:hover {
+.loaded-image-summary .cta:hover {
 	border-color: var(--text);
 	background: var(--panel-soft);
 	color: var(--text);
@@ -2408,7 +2346,6 @@ body {
 	display: grid;
 	grid-template-areas:
 		"settings action"
-		"instruction instruction"
 		"result result";
 	grid-template-columns: minmax(0, 1fr) auto;
 	align-content: start;
@@ -2449,11 +2386,6 @@ body {
 	gap: 8px;
 }
 
-.color-field .picker-button {
-	grid-column: 1 / span 2;
-	justify-content: flex-start;
-}
-
 .color-field .hex-color-control,
 .checker select {
 	width: 100%;
@@ -2472,15 +2404,6 @@ body {
 	min-height: 36px;
 	padding: 7px;
 	background: var(--panel-soft);
-}
-
-.picker-instruction {
-	grid-area: instruction;
-	margin: 0;
-	padding: 8px 0 8px 16px;
-	border: 0;
-	border-left: 3px solid var(--accent);
-	background: transparent;
 }
 
 .view-controls {

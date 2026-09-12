@@ -1,7 +1,7 @@
 {
   "name": "Forlæns Color Contrast Checker",
   "short_name": "Forlæns Contrast",
-  "description": "Choose a color from an image and check whether it stays readable or visible.",
+  "description": "Choose a color and check whether it stays readable or visible over an image.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

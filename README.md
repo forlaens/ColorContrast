@@ -26,8 +26,8 @@ The app lets someone upload or drop in an image, choose a text/icon/background c
 - `i18n.js` owns supported languages, translated UI strings, language persistence, and translated attributes such as `aria-label`.
 - `app.js` owns view routing, the accessibility statement view, error display, loading state, intro panel state, and theme preference.
 - `image.js` owns file input, drag/drop, thumbnail preview, image decoding, canvas sizing, and cached source pixels.
-- `canvas.js` contains canvas access, rendering, drawing, and keyboard handling for the color picker crosshairs.
-- `toolbar.js` owns the checker toolbar state, selected test color, reset action, and crosshair placement.
+- `canvas.js` contains canvas access, rendering, and drawing.
+- `toolbar.js` owns the checker toolbar state, selected test color, and reset action.
 - `contrast.js` performs the pixel-by-pixel contrast highlight pass.
 - `color.js` contains RGB/hex conversion, pixel sampling, luminance, and contrast-ratio math.
 - `pwa.js` registers the service worker.

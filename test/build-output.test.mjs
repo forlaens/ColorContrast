@@ -199,7 +199,9 @@ test('document implements the task-first workflow without eyebrow labels', async
   assert.match(index, /<div hidden id="pan-controls" class="pan-controls" role="group" aria-label="Pan image" data-i18n-aria-label="panControls">/);
   assert.match(index, /data-pan-direction="right" onclick="panPreview\(1, 0\);">→<\/button>/);
   assert.match(index, /<section id="preview-viewport" class="preview-viewport">/);
-  assert.match(index, /<canvas id="image_preview" class="preview" tabindex="0" aria-label="Image preview" data-i18n-aria-label="imagePreview" aria-describedby="preview-help"/);
+  assert.match(index, /<canvas id="image_preview" class="preview" tabindex="0" aria-label="Image preview" data-i18n-aria-label="imagePreview" aria-describedby="preview-help"><\/canvas>/);
+  assert.doesNotMatch(index, /id="colorpicker"/);
+  assert.doesNotMatch(index, /id="crosshairs"/);
   assert.match(index, /<details hidden id="palette-card" class="palette-card">/);
   assert.match(index, /<h2 id="palette-title" data-i18n="paletteTitle">Main colors in this image<\/h2>/);
   assert.match(index, /<ul id="palette-swatches" class="palette-swatches"><\/ul>/);
@@ -300,7 +302,7 @@ test('document keeps help contextual instead of a permanent instruction panel', 
   const index = await readFile(join(distDir, 'index.html'), 'utf8');
 
   assert.doesNotMatch(index, /id="intro-panel"/);
-  assert.match(index, /id="picker-instruction"/);
+  assert.doesNotMatch(index, /id="picker-instruction"/);
   assert.match(index, /class="help-disclosure"/);
   assert.match(index, /class="image-url-disclosure"/);
 });
