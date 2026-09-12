@@ -17,7 +17,7 @@
 
 	var translations = {
 		en: {
-			description: 'Choose a color from an image and check whether it stays readable or visible.',
+			description: 'Choose a color and check whether it stays readable or visible over an image.',
 			skipLink: 'Skip to main content',
 			languageLabel: 'Language',
 			themeLabel: 'Theme',
@@ -42,7 +42,6 @@
 			
 			resetImage: 'Reset image',
 			colorLabel: 'Color to check',
-			pickColor: 'Pick a color from the image',
 			chooseColorVisually: 'Choose color visually',
 			chooseForegroundVisually: 'Choose foreground color visually',
 			chooseBackgroundVisually: 'Choose background color visually',
@@ -73,7 +72,7 @@
 			directionUp: 'up',
 			directionDown: 'down',
 			previewViewport: 'Zoomable image preview',
-			previewHelp: 'Use the zoom controls to inspect the image. If the image is larger than the visible preview, use the pan buttons or scroll the preview. Focus the image preview and use arrow keys to move the color picker.',
+			previewHelp: 'Use the zoom controls to inspect the image. If the image is larger than the visible preview, use the pan buttons or scroll the preview.',
 			panControls: 'Pan image',
 			dragImage: 'Drag image',
 			panLeft: 'Pan left',
@@ -153,7 +152,7 @@
 			accessibilityBack: 'Back to checker'
 		},
 		da: {
-			description: 'Vælg en farve fra et billede, og tjek om den stadig er læsbar eller synlig.',
+			description: 'Vælg en farve, og tjek om den stadig er læsbar eller synlig mod et billede.',
 			skipLink: 'Spring til hovedindhold',
 			languageLabel: 'Sprog',
 			themeLabel: 'Tema',
@@ -178,7 +177,6 @@
 			
 			resetImage: 'Reset image',
 			colorLabel: 'Color to check',
-			pickColor: 'Pick a color from the image',
 			chooseColorVisually: 'Choose color visually',
 			chooseForegroundVisually: 'Choose foreground color visually',
 			chooseBackgroundVisually: 'Choose background color visually',
@@ -209,7 +207,7 @@
 			directionUp: 'up',
 			directionDown: 'down',
 			previewViewport: 'Zoombar billedforhåndsvisning',
-			previewHelp: 'Brug zoomkontrollerne til at undersøge billedet. Hvis billedet er større end den synlige forhåndsvisning, kan du bruge panoreringsknapperne eller scrolle i forhåndsvisningen. Fokuser på billedforhåndsvisningen, og brug piletasterne til at flytte farvevælgeren.',
+			previewHelp: 'Brug zoomkontrollerne til at undersøge billedet. Hvis billedet er større end den synlige forhåndsvisning, kan du bruge panoreringsknapperne eller scrolle i forhåndsvisningen.',
 			panControls: 'Panorér billede',
 			dragImage: 'Træk billede',
 			panLeft: 'Panorér til venstre',
@@ -277,7 +275,7 @@
 			accessibilityBack: 'Tilbage til kontrasttjekket'
 		},
 		no: {
-			description: 'Velg en farge fra et bilde og sjekk om den fortsatt er lesbar eller synlig.',
+			description: 'Velg en farge og sjekk om den fortsatt er lesbar eller synlig over et bilde.',
 			skipLink: 'Hopp til hovedinnhold',
 			languageLabel: 'Språk',
 			themeLabel: 'Tema',
@@ -286,7 +284,7 @@
 			languageChanged: 'Språk endret til {language}.',
 			themeChanged: 'Tema endret til {theme}.',
 			title: 'Kontrastsjekk for bilder',
-			lede: 'Velg en farge fra bildet, kjør testen, og vurder om fargen fortsatt er lesbar eller tydelig i de markerte områdene.',
+			lede: 'Velg en farge, kjør testen, og vurder om fargen fortsatt er lesbar eller tydelig i de markerte områdene.',
 			chooseImage: 'Sjekk kontrast i et bilde',
 			uploadCopy: 'Vil du teste fargekontraster i et bilde? Velg et bilde på maskinen din her. PNG, JPG, GIF eller SVG. Filen blir i nettleseren din.',
 			loadImage: 'Last inn bilde',
@@ -302,7 +300,6 @@
 			
 			resetImage: 'Reset image',
 			colorLabel: 'Color to check',
-			pickColor: 'Pick a color from the image',
 			chooseColorVisually: 'Choose color visually',
 			chooseForegroundVisually: 'Choose foreground color visually',
 			chooseBackgroundVisually: 'Choose background color visually',
@@ -333,7 +330,7 @@
 			directionUp: 'up',
 			directionDown: 'down',
 			previewViewport: 'Zoombar bildeforhåndsvisning',
-			previewHelp: 'Bruk zoomkontrollene til å undersøke bildet. Hvis bildet er større enn den synlige forhåndsvisningen, kan du bruke panoreringsknappene eller rulle i forhåndsvisningen. Fokuser på bildeforhåndsvisningen og bruk piltastene til å flytte fargevelgeren.',
+			previewHelp: 'Bruk zoomkontrollene til å undersøke bildet. Hvis bildet er større enn den synlige forhåndsvisningen, kan du bruke panoreringsknappene eller rulle i forhåndsvisningen.',
 			panControls: 'Panorer bilde',
 			dragImage: 'Dra bilde',
 			panLeft: 'Panorer til venstre',
@@ -401,7 +398,7 @@
 			accessibilityBack: 'Tilbake til kontrastsjekken'
 		},
 		sv: {
-			description: 'Välj en färg från en bild och kontrollera om den fortfarande går att läsa eller se.',
+			description: 'Välj en färg och kontrollera om den fortfarande går att läsa eller se över en bild.',
 			skipLink: 'Hoppa till huvudinnehåll',
 			languageLabel: 'Språk',
 			themeLabel: 'Tema',
@@ -410,7 +407,7 @@
 			languageChanged: 'Språk ändrat till {language}.',
 			themeChanged: 'Tema ändrat till {theme}.',
 			title: 'Kontrastkontroll för bilder',
-			lede: 'Välj en färg från bilden, kör testet och bedöm om färgen fortfarande går att läsa eller se i de markerade områdena.',
+			lede: 'Välj en färg, kör testet och bedöm om färgen fortfarande går att läsa eller se i de markerade områdena.',
 			chooseImage: 'Kontrollera kontrast i en bild',
 			uploadCopy: 'Vill du testa färgkontraster i en bild? Välj en bild på din dator här. PNG, JPG, GIF eller SVG. Filen stannar i din webbläsare.',
 			loadImage: 'Ladda bild',
@@ -426,7 +423,6 @@
 			
 			resetImage: 'Reset image',
 			colorLabel: 'Color to check',
-			pickColor: 'Pick a color from the image',
 			chooseColorVisually: 'Choose color visually',
 			chooseForegroundVisually: 'Choose foreground color visually',
 			chooseBackgroundVisually: 'Choose background color visually',
@@ -457,7 +453,7 @@
 			directionUp: 'up',
 			directionDown: 'down',
 			previewViewport: 'Zoombar bildförhandsvisning',
-			previewHelp: 'Använd zoomkontrollerna för att granska bilden. Om bilden är större än den synliga förhandsvisningen kan du använda panoreringsknapparna eller skrolla i förhandsvisningen. Fokusera på bildförhandsvisningen och använd piltangenterna för att flytta färgväljaren.',
+			previewHelp: 'Använd zoomkontrollerna för att granska bilden. Om bilden är större än den synliga förhandsvisningen kan du använda panoreringsknapparna eller skrolla i förhandsvisningen.',
 			panControls: 'Panorera bild',
 			dragImage: 'Dra bild',
 			panLeft: 'Panorera åt vänster',
@@ -525,7 +521,7 @@
 			accessibilityBack: 'Tillbaka till kontrastkontrollen'
 		},
 		fi: {
-			description: 'Valitse kuvasta väri ja tarkista, onko se edelleen luettava tai näkyvä.',
+			description: 'Valitse väri ja tarkista, onko se edelleen luettava tai näkyvä kuvan päällä.',
 			skipLink: 'Siirry pääsisältöön',
 			languageLabel: 'Kieli',
 			themeLabel: 'Teema',
@@ -534,7 +530,7 @@
 			languageChanged: 'Kieleksi vaihdettu {language}.',
 			themeChanged: 'Teemaksi vaihdettu {theme}.',
 			title: 'Kuvakontrastin tarkistus',
-			lede: 'Valitse kuvasta väri, suorita testi ja arvioi, onko väri edelleen luettava tai näkyvä korostetuilla alueilla.',
+			lede: 'Valitse väri, suorita testi ja arvioi, onko väri edelleen luettava tai näkyvä korostetuilla alueilla.',
 			chooseImage: 'Tarkista kuvan kontrasti',
 			uploadCopy: 'Haluatko testata kuvan värikontrasteja? Valitse kuva koneeltasi tästä. PNG, JPG, GIF tai SVG. Tiedosto pysyy selaimessasi.',
 			loadImage: 'Lataa kuva',
@@ -550,7 +546,6 @@
 			
 			resetImage: 'Reset image',
 			colorLabel: 'Color to check',
-			pickColor: 'Pick a color from the image',
 			chooseColorVisually: 'Choose color visually',
 			chooseForegroundVisually: 'Choose foreground color visually',
 			chooseBackgroundVisually: 'Choose background color visually',
@@ -581,7 +576,7 @@
 			directionUp: 'up',
 			directionDown: 'down',
 			previewViewport: 'Zoomattava kuvan esikatselu',
-			previewHelp: 'Tutki kuvaa zoomauspainikkeilla. Jos kuva on suurempi kuin näkyvä esikatselu, käytä panorointipainikkeita tai vieritä esikatselua. Kohdista kuvan esikatseluun ja siirrä värinvalitsinta nuolinäppäimillä.',
+			previewHelp: 'Tutki kuvaa zoomauspainikkeilla. Jos kuva on suurempi kuin näkyvä esikatselu, käytä panorointipainikkeita tai vieritä esikatselua.',
 			panControls: 'Panoroi kuvaa',
 			dragImage: 'Vedä kuvaa',
 			panLeft: 'Panoroi vasemmalle',
@@ -649,7 +644,7 @@
 			accessibilityBack: 'Takaisin kontrastin tarkistukseen'
 		},
 		kl: {
-			description: 'Assimit qalipaat toqqaruk, suli atuarneqarsinnaanersoq imaluunniit takuneqarsinnaanersoq misissorlugu.',
+			description: 'Qalipaat toqqaruk, assillu qulaani suli atuarneqarsinnaanersoq imaluunniit takuneqarsinnaanersoq misissorlugu.',
 			skipLink: 'Imarisamut pingaarnermut ingerlaarit',
 			languageLabel: 'Oqaatsit',
 			themeLabel: 'Tema',
@@ -658,7 +653,7 @@
 			languageChanged: 'Oqaatsit {language}-mut allanngortinneqarput.',
 			themeChanged: 'Tema {theme}-mut allanngortinneqarpoq.',
 			title: 'Assimi kontrastimik misissuinneq',
-			lede: 'Assimi qalipaat toqqaruk, misissuinermik aallartigit, taava sumiiffinni ersersinneqartuni qalipaat suli atuarneqarsinnaanersoq imaluunniit takuneqarsinnaanersoq nalileruk.',
+			lede: 'Qalipaat toqqaruk, misissuinermik aallartigit, taava sumiiffinni ersersinneqartuni qalipaat suli atuarneqarsinnaanersoq imaluunniit takuneqarsinnaanersoq nalileruk.',
 			chooseImage: 'Assimi kontrasti misissoruk',
 			uploadCopy: 'Assimi qalipaatit kontrastii misilinniarpiuk? Qarasaasianniit assi uani toqqaruk. PNG, JPG, GIF imaluunniit SVG. Fiili browserinniiginnassaaq.',
 			loadImage: 'Assi ikkuguk',
@@ -674,7 +669,6 @@
 			
 			resetImage: 'Reset image',
 			colorLabel: 'Color to check',
-			pickColor: 'Pick a color from the image',
 			chooseColorVisually: 'Choose color visually',
 			chooseForegroundVisually: 'Choose foreground color visually',
 			chooseBackgroundVisually: 'Choose background color visually',
@@ -705,7 +699,7 @@
 			directionUp: 'up',
 			directionDown: 'down',
 			previewViewport: 'Assip preview-ia zoom-erneqarsinnaasoq',
-			previewHelp: 'Assi misissorniarlugu zoom controls-it atukkit. Assi preview-mi takuneqarsinnaasumit angineruppat, panoreringsknapper imaluunniit preview-mi scroll atukkit. Assip preview-ia focus-eruk, qalipaat toqqartartoq nuutiterniarlugu arrow keys atorlugit.',
+			previewHelp: 'Assi misissorniarlugu zoom controls-it atukkit. Assi preview-mi takuneqarsinnaasumit angineruppat, panoreringsknapper imaluunniit preview-mi scroll atukkit.',
 			panControls: 'Assi nikisiguk',
 			dragImage: 'Assi nusuguk',
 			panLeft: 'Saamerlermut nikisiguk',
@@ -773,7 +767,7 @@
 			accessibilityBack: 'Kontrastimik misissuinermut uterit'
 		},
 		is: {
-			description: 'Veldu lit úr mynd og athugaðu hvort hann sé enn læsilegur eða sýnilegur.',
+			description: 'Veldu lit og athugaðu hvort hann sé enn læsilegur eða sýnilegur yfir mynd.',
 			skipLink: 'Fara í aðalefni',
 			languageLabel: 'Tungumál',
 			themeLabel: 'Þema',
@@ -782,7 +776,7 @@
 			languageChanged: 'Tungumáli breytt í {language}.',
 			themeChanged: 'Þema breytt í {theme}.',
 			title: 'Birtuskilaprófun fyrir myndir',
-			lede: 'Veldu lit úr myndinni, keyrðu testið og mettu hvort liturinn sé enn læsilegur eða sýnilegur á merktum svæðum.',
+			lede: 'Veldu lit, keyrðu testið og mettu hvort liturinn sé enn læsilegur eða sýnilegur á merktum svæðum.',
 			chooseImage: 'Athuga birtuskil í mynd',
 			uploadCopy: 'Viltu prófa litabirtuskil í mynd? Veldu mynd á tölvunni þinni hér. PNG, JPG, GIF eða SVG. Skráin verður áfram í vafranum þínum.',
 			loadImage: 'Hlaða mynd',
@@ -798,7 +792,6 @@
 			
 			resetImage: 'Reset image',
 			colorLabel: 'Color to check',
-			pickColor: 'Pick a color from the image',
 			chooseColorVisually: 'Choose color visually',
 			chooseForegroundVisually: 'Choose foreground color visually',
 			chooseBackgroundVisually: 'Choose background color visually',
@@ -829,7 +822,7 @@
 			directionUp: 'up',
 			directionDown: 'down',
 			previewViewport: 'Myndforskoðun með aðdrætti',
-			previewHelp: 'Notaðu aðdráttarstýringarnar til að skoða myndina. Ef myndin er stærri en sýnilega forskoðunin geturðu notað hliðrunarhnappana eða skrunað í forskoðuninni. Fókuseraðu á myndforskoðunina og notaðu örvatakkana til að færa litavalstólið.',
+			previewHelp: 'Notaðu aðdráttarstýringarnar til að skoða myndina. Ef myndin er stærri en sýnilega forskoðunin geturðu notað hliðrunarhnappana eða skrunað í forskoðuninni.',
 			panControls: 'Hliðra mynd',
 			dragImage: 'Dragðu mynd',
 			panLeft: 'Hliðra til vinstri',
@@ -897,7 +890,7 @@
 			accessibilityBack: 'Til baka í kontrastprófunina'
 		},
 		fo: {
-			description: 'Vel ein lit úr einari mynd og kanna, um hann framvegis kann lesast ella síggjast.',
+			description: 'Vel ein lit og kanna, um hann framvegis kann lesast ella síggjast á einari mynd.',
 			skipLink: 'Far til høvuðsinnihald',
 			languageLabel: 'Mál',
 			themeLabel: 'Tema',
@@ -906,7 +899,7 @@
 			languageChanged: 'Mál broytt til {language}.',
 			themeChanged: 'Tema broytt til {theme}.',
 			title: 'Kontrastkannari fyri myndir',
-			lede: 'Vel ein lit úr myndini, koyr kanningina, og met um liturin framvegis kann lesast ella síggjast í markeraðu økjunum.',
+			lede: 'Vel ein lit, koyr kanningina, og met um liturin framvegis kann lesast ella síggjast í markeraðu økjunum.',
 			chooseImage: 'Kanna kontrast í mynd',
 			uploadCopy: 'Vilt tú kanna litkontrastir í einari mynd? Vel eina mynd á telduni her. PNG, JPG, GIF ella SVG. Fílan verður verandi í kaganum.',
 			loadImage: 'Les mynd inn',
@@ -922,7 +915,6 @@
 			
 			resetImage: 'Reset image',
 			colorLabel: 'Color to check',
-			pickColor: 'Pick a color from the image',
 			chooseColorVisually: 'Choose color visually',
 			chooseForegroundVisually: 'Choose foreground color visually',
 			chooseBackgroundVisually: 'Choose background color visually',
@@ -953,7 +945,7 @@
 			directionUp: 'up',
 			directionDown: 'down',
 			previewViewport: 'Myndaforsýning við zoomi',
-			previewHelp: 'Brúka zoom-kontrollirnar til at kanna myndina. Um myndin er størri enn sjónliga forsýningin, kanst tú brúka panoreringsknapparnar ella skrolla í forsýningini. Set fokus á myndaforsýningina og brúka pílatastarnar til at flyta litveljaran.',
+			previewHelp: 'Brúka zoom-kontrollirnar til at kanna myndina. Um myndin er størri enn sjónliga forsýningin, kanst tú brúka panoreringsknapparnar ella skrolla í forsýningini.',
 			panControls: 'Panorera mynd',
 			dragImage: 'Drag mynd',
 			panLeft: 'Panorera til vinstru',
@@ -1021,7 +1013,7 @@
 			accessibilityBack: 'Aftur til kontrastkanningina'
 		},
 		es: {
-			description: 'Elige un color de una imagen y comprueba si sigue siendo legible o visible.',
+			description: 'Elige un color y comprueba si sigue siendo legible o visible sobre una imagen.',
 			skipLink: 'Saltar al contenido principal',
 			languageLabel: 'Idioma',
 			themeLabel: 'Tema',
@@ -1030,7 +1022,7 @@
 			languageChanged: 'Idioma cambiado a {language}.',
 			themeChanged: 'Tema cambiado a {theme}.',
 			title: 'Comprobador de contraste de imágenes',
-			lede: 'Elige un color de la imagen, ejecuta la prueba y decide si ese color sigue siendo legible o visible en las zonas resaltadas.',
+			lede: 'Elige un color, ejecuta la prueba y decide si ese color sigue siendo legible o visible en las zonas resaltadas.',
 			chooseImage: 'Comprobar contraste en una imagen',
 			uploadCopy: '¿Quieres probar contrastes de color en una imagen? Elige aquí una imagen de tu equipo. PNG, JPG, GIF o SVG. El archivo permanece en tu navegador.',
 			loadImage: 'Cargar imagen',
@@ -1046,7 +1038,6 @@
 			
 			resetImage: 'Reset image',
 			colorLabel: 'Color to check',
-			pickColor: 'Pick a color from the image',
 			chooseColorVisually: 'Choose color visually',
 			chooseForegroundVisually: 'Choose foreground color visually',
 			chooseBackgroundVisually: 'Choose background color visually',
@@ -1077,7 +1068,7 @@
 			directionUp: 'up',
 			directionDown: 'down',
 			previewViewport: 'Vista previa de imagen con zoom',
-			previewHelp: 'Usa los controles de zoom para revisar la imagen. Si la imagen es más grande que la vista previa visible, usa los botones de desplazamiento o desplázate por la vista previa. Enfoca la vista previa y usa las flechas para mover el selector de color.',
+			previewHelp: 'Usa los controles de zoom para revisar la imagen. Si la imagen es más grande que la vista previa visible, usa los botones de desplazamiento o desplázate por la vista previa.',
 			panControls: 'Desplazar imagen',
 			dragImage: 'Arrastrar imagen',
 			panLeft: 'Desplazar a la izquierda',
@@ -1145,7 +1136,7 @@
 			accessibilityBack: 'Volver al comprobador'
 		},
 		de: {
-			description: 'Wähle eine Farbe aus einem Bild und prüfe, ob sie lesbar oder sichtbar bleibt.',
+			description: 'Wähle eine Farbe und prüfe, ob sie über einem Bild lesbar oder sichtbar bleibt.',
 			skipLink: 'Zum Hauptinhalt springen',
 			languageLabel: 'Sprache',
 			themeLabel: 'Design',
@@ -1154,7 +1145,7 @@
 			languageChanged: 'Sprache auf {language} geändert.',
 			themeChanged: 'Design auf {theme} geändert.',
 			title: 'Bildkontrast-Prüfer',
-			lede: 'Wähle eine Farbe aus dem Bild, starte den Test und prüfe, ob diese Farbe in den markierten Bereichen noch lesbar oder sichtbar ist.',
+			lede: 'Wähle eine Farbe, starte den Test und prüfe, ob diese Farbe in den markierten Bereichen noch lesbar oder sichtbar ist.',
 			chooseImage: 'Kontrast in einem Bild prüfen',
 			uploadCopy: 'Möchtest du Farbkontraste in einem Bild testen? Wähle hier ein Bild von deinem Gerät. PNG, JPG, GIF oder SVG. Die Datei bleibt in deinem Browser.',
 			loadImage: 'Bild laden',
@@ -1170,7 +1161,6 @@
 			
 			resetImage: 'Reset image',
 			colorLabel: 'Color to check',
-			pickColor: 'Pick a color from the image',
 			chooseColorVisually: 'Choose color visually',
 			chooseForegroundVisually: 'Choose foreground color visually',
 			chooseBackgroundVisually: 'Choose background color visually',
@@ -1201,7 +1191,7 @@
 			directionUp: 'up',
 			directionDown: 'down',
 			previewViewport: 'Zoombare Bildvorschau',
-			previewHelp: 'Nutzen Sie die Zoom-Steuerelemente, um das Bild zu prüfen. Wenn das Bild größer als die sichtbare Vorschau ist, verwenden Sie die Schwenk-Schaltflächen oder scrollen Sie in der Vorschau. Fokussieren Sie die Bildvorschau und bewegen Sie die Farbauswahl mit den Pfeiltasten.',
+			previewHelp: 'Nutzen Sie die Zoom-Steuerelemente, um das Bild zu prüfen. Wenn das Bild größer als die sichtbare Vorschau ist, verwenden Sie die Schwenk-Schaltflächen oder scrollen Sie in der Vorschau.',
 			panControls: 'Bild verschieben',
 			dragImage: 'Bild ziehen',
 			panLeft: 'Nach links verschieben',
@@ -1269,7 +1259,7 @@
 			accessibilityBack: 'Zurück zum Kontrastcheck'
 		},
 		fr: {
-			description: 'Choisissez une couleur dans une image et vérifiez si elle reste lisible ou visible.',
+			description: 'Choisissez une couleur et vérifiez si elle reste lisible ou visible sur une image.',
 			skipLink: 'Aller au contenu principal',
 			languageLabel: 'Langue',
 			themeLabel: 'Thème',
@@ -1278,7 +1268,7 @@
 			languageChanged: 'Langue changée en {language}.',
 			themeChanged: 'Thème changé en {theme}.',
 			title: 'Vérificateur de contraste d’image',
-			lede: 'Choisissez une couleur dans l’image, lancez le test, puis vérifiez si cette couleur reste lisible ou visible dans les zones mises en évidence.',
+			lede: 'Choisissez une couleur, lancez le test, puis vérifiez si cette couleur reste lisible ou visible dans les zones mises en évidence.',
 			chooseImage: 'Vérifier le contraste dans une image',
 			uploadCopy: 'Vous voulez tester les contrastes de couleur dans une image ? Choisissez ici une image sur votre machine. PNG, JPG, GIF ou SVG. Le fichier reste dans votre navigateur.',
 			loadImage: 'Charger l’image',
@@ -1294,7 +1284,6 @@
 			
 			resetImage: 'Reset image',
 			colorLabel: 'Color to check',
-			pickColor: 'Pick a color from the image',
 			chooseColorVisually: 'Choose color visually',
 			chooseForegroundVisually: 'Choose foreground color visually',
 			chooseBackgroundVisually: 'Choose background color visually',
@@ -1325,7 +1314,7 @@
 			directionUp: 'up',
 			directionDown: 'down',
 			previewViewport: 'Aperçu de l’image zoomable',
-			previewHelp: 'Utilisez les contrôles de zoom pour examiner l’image. Si l’image est plus grande que l’aperçu visible, utilisez les boutons de déplacement ou faites défiler l’aperçu. Placez le focus sur l’aperçu de l’image et utilisez les flèches pour déplacer le sélecteur de couleur.',
+			previewHelp: 'Utilisez les contrôles de zoom pour examiner l’image. Si l’image est plus grande que l’aperçu visible, utilisez les boutons de déplacement ou faites défiler l’aperçu.',
 			panControls: 'Déplacer l’image',
 			dragImage: 'Faire glisser l’image',
 			panLeft: 'Déplacer vers la gauche',
@@ -1393,7 +1382,7 @@
 			accessibilityBack: 'Retour au vérificateur'
 		},
 		pt: {
-			description: 'Escolha uma cor de uma imagem e verifique se continua legível ou visível.',
+			description: 'Escolha uma cor e verifique se continua legível ou visível sobre uma imagem.',
 			skipLink: 'Saltar para o conteúdo principal',
 			languageLabel: 'Idioma',
 			themeLabel: 'Tema',
@@ -1402,7 +1391,7 @@
 			languageChanged: 'Idioma alterado para {language}.',
 			themeChanged: 'Tema alterado para {theme}.',
 			title: 'Verificador de contraste de imagem',
-			lede: 'Escolha uma cor da imagem, execute o teste e veja se essa cor continua legível ou visível nas áreas destacadas.',
+			lede: 'Escolha uma cor, execute o teste e veja se essa cor continua legível ou visível nas áreas destacadas.',
 			chooseImage: 'Verificar contraste numa imagem',
 			uploadCopy: 'Quer testar contrastes de cor numa imagem? Escolha aqui uma imagem no seu computador. PNG, JPG, GIF ou SVG. O ficheiro fica no seu navegador.',
 			loadImage: 'Carregar imagem',
@@ -1418,7 +1407,6 @@
 			
 			resetImage: 'Reset image',
 			colorLabel: 'Color to check',
-			pickColor: 'Pick a color from the image',
 			chooseColorVisually: 'Choose color visually',
 			chooseForegroundVisually: 'Choose foreground color visually',
 			chooseBackgroundVisually: 'Choose background color visually',
@@ -1449,7 +1437,7 @@
 			directionUp: 'up',
 			directionDown: 'down',
 			previewViewport: 'Pré-visualização da imagem com zoom',
-			previewHelp: 'Use os controlos de zoom para analisar a imagem. Se a imagem for maior do que a pré-visualização visível, use os botões de deslocamento ou percorra a pré-visualização. Foque a pré-visualização da imagem e use as setas para mover o seletor de cor.',
+			previewHelp: 'Use os controlos de zoom para analisar a imagem. Se a imagem for maior do que a pré-visualização visível, use os botões de deslocamento ou percorra a pré-visualização.',
 			panControls: 'Deslocar imagem',
 			dragImage: 'Arrastar imagem',
 			panLeft: 'Deslocar para a esquerda',
@@ -1517,7 +1505,7 @@
 			accessibilityBack: 'Voltar ao verificador'
 		},
 		it: {
-			description: 'Scegli un colore da un’immagine e verifica se resta leggibile o visibile.',
+			description: 'Scegli un colore e verifica se resta leggibile o visibile su un’immagine.',
 			skipLink: 'Vai al contenuto principale',
 			languageLabel: 'Lingua',
 			themeLabel: 'Tema',
@@ -1526,7 +1514,7 @@
 			languageChanged: 'Lingua cambiata in {language}.',
 			themeChanged: 'Tema cambiato in {theme}.',
 			title: 'Verifica contrasto immagine',
-			lede: 'Scegli un colore dall’immagine, esegui il test e verifica se quel colore resta leggibile o visibile nelle aree evidenziate.',
+			lede: 'Scegli un colore, esegui il test e verifica se quel colore resta leggibile o visibile nelle aree evidenziate.',
 			chooseImage: 'Controlla il contrasto in un’immagine',
 			uploadCopy: 'Vuoi testare i contrasti di colore in un’immagine? Scegli qui un’immagine dal tuo computer. PNG, JPG, GIF o SVG. Il file resta nel tuo browser.',
 			loadImage: 'Carica immagine',
@@ -1542,7 +1530,6 @@
 			
 			resetImage: 'Reset image',
 			colorLabel: 'Color to check',
-			pickColor: 'Pick a color from the image',
 			chooseColorVisually: 'Choose color visually',
 			chooseForegroundVisually: 'Choose foreground color visually',
 			chooseBackgroundVisually: 'Choose background color visually',
@@ -1573,7 +1560,7 @@
 			directionUp: 'up',
 			directionDown: 'down',
 			previewViewport: 'Anteprima immagine ingrandibile',
-			previewHelp: 'Usa i controlli di zoom per esaminare l’immagine. Se l’immagine è più grande dell’anteprima visibile, usa i pulsanti di spostamento o scorri l’anteprima. Porta il focus sull’anteprima dell’immagine e usa le frecce per spostare il selettore colore.',
+			previewHelp: 'Usa i controlli di zoom per esaminare l’immagine. Se l’immagine è più grande dell’anteprima visibile, usa i pulsanti di spostamento o scorri l’anteprima.',
 			panControls: 'Sposta immagine',
 			dragImage: 'Trascina immagine',
 			panLeft: 'Sposta a sinistra',
@@ -1646,7 +1633,6 @@
 		da: {
 			resetImage: 'Nulstil billede',
 			colorLabel: 'Farve der skal tjekkes',
-			pickColor: 'Vælg en farve fra billedet',
 			chooseColorVisually: 'Vælg farve visuelt',
 			chooseForegroundVisually: 'Vælg forgrundsfarve visuelt',
 			chooseBackgroundVisually: 'Vælg baggrundsfarve visuelt',
@@ -1687,7 +1673,6 @@
 		no: {
 			resetImage: 'Tilbakestill bilde',
 			colorLabel: 'Farge som skal sjekkes',
-			pickColor: 'Velg en farge fra bildet',
 			chooseColorVisually: 'Velg farge visuelt',
 			chooseForegroundVisually: 'Velg forgrunnsfarge visuelt',
 			chooseBackgroundVisually: 'Velg bakgrunnsfarge visuelt',
@@ -1730,7 +1715,6 @@
 		sv: {
 			resetImage: 'Återställ bild',
 			colorLabel: 'Färg att kontrollera',
-			pickColor: 'Välj en färg från bilden',
 			chooseColorVisually: 'Välj färg visuellt',
 			chooseForegroundVisually: 'Välj förgrundsfärg visuellt',
 			chooseBackgroundVisually: 'Välj bakgrundsfärg visuellt',
@@ -1771,7 +1755,6 @@
 		fi: {
 			resetImage: 'Palauta kuva',
 			colorLabel: 'Tarkistettava väri',
-			pickColor: 'Valitse väri kuvasta',
 			chooseColorVisually: 'Valitse väri visuaalisesti',
 			chooseForegroundVisually: 'Valitse edustaväri visuaalisesti',
 			chooseBackgroundVisually: 'Valitse taustaväri visuaalisesti',
@@ -1811,7 +1794,6 @@
 		kl: {
 			resetImage: 'Assi aallaqqaataaniit inissiguk',
 			colorLabel: 'Qalipaat misissorneqartussaq',
-			pickColor: 'Assimit qalipaat toqqaruk',
 			chooseColorVisually: 'Qalipaat isigalugit toqqaruk',
 			chooseForegroundVisually: 'Saqqaani qalipaat isigalugit toqqaruk',
 			chooseBackgroundVisually: 'Tunuliaquttap qalipaataa isigalugit toqqaruk',
@@ -1859,7 +1841,6 @@
 		is: {
 			resetImage: 'Endurstilla mynd',
 			colorLabel: 'Litur til að athuga',
-			pickColor: 'Veldu lit úr myndinni',
 			chooseColorVisually: 'Veldu lit sjónrænt',
 			chooseForegroundVisually: 'Veldu forgrunnslit sjónrænt',
 			chooseBackgroundVisually: 'Veldu bakgrunnslit sjónrænt',
@@ -1899,7 +1880,6 @@
 		fo: {
 			resetImage: 'Endurstilla mynd',
 			colorLabel: 'Litur at kanna',
-			pickColor: 'Vel ein lit úr myndini',
 			chooseColorVisually: 'Vel lit sjónliga',
 			chooseForegroundVisually: 'Vel forgrundslit sjónliga',
 			chooseBackgroundVisually: 'Vel bakgrundslit sjónliga',
@@ -1941,7 +1921,6 @@
 		es: {
 			resetImage: 'Restablecer imagen',
 			colorLabel: 'Color a comprobar',
-			pickColor: 'Elegir un color de la imagen',
 			chooseColorVisually: 'Elegir color visualmente',
 			chooseForegroundVisually: 'Elegir color de primer plano visualmente',
 			chooseBackgroundVisually: 'Elegir color de fondo visualmente',
@@ -1983,7 +1962,6 @@
 		de: {
 			resetImage: 'Bild zurücksetzen',
 			colorLabel: 'Zu prüfende Farbe',
-			pickColor: 'Farbe aus dem Bild wählen',
 			chooseColorVisually: 'Farbe visuell wählen',
 			chooseForegroundVisually: 'Vordergrundfarbe visuell wählen',
 			chooseBackgroundVisually: 'Hintergrundfarbe visuell wählen',
@@ -2024,7 +2002,6 @@
 		fr: {
 			resetImage: 'Réinitialiser l’image',
 			colorLabel: 'Couleur à vérifier',
-			pickColor: 'Choisir une couleur dans l’image',
 			chooseColorVisually: 'Choisir la couleur visuellement',
 			chooseForegroundVisually: 'Choisir la couleur de premier plan visuellement',
 			chooseBackgroundVisually: 'Choisir la couleur d’arrière-plan visuellement',
@@ -2065,7 +2042,6 @@
 		pt: {
 			resetImage: 'Repor imagem',
 			colorLabel: 'Cor a verificar',
-			pickColor: 'Escolher uma cor da imagem',
 			chooseColorVisually: 'Escolher cor visualmente',
 			chooseForegroundVisually: 'Escolher cor de primeiro plano visualmente',
 			chooseBackgroundVisually: 'Escolher cor de fundo visualmente',
@@ -2106,7 +2082,6 @@
 		it: {
 			resetImage: 'Reimposta immagine',
 			colorLabel: 'Colore da controllare',
-			pickColor: 'Scegli un colore dall’immagine',
 			chooseColorVisually: 'Scegli colore visivamente',
 			chooseForegroundVisually: 'Scegli colore di primo piano visivamente',
 			chooseBackgroundVisually: 'Scegli colore di sfondo visivamente',
@@ -2273,7 +2248,6 @@
 			useImageUrl: 'Use an image URL',
 			replaceImage: 'Choose another image',
 			contrastUseLabel: 'What will the color be used for?',
-			pickerInstruction: 'Click or tap the image to choose a color. With a keyboard, focus the image, move with the arrow keys, and press Enter.',
 			findProblemAreas: 'Find problem areas',
 			updateResults: 'Update result',
 			problemAreas: 'Problem areas',
@@ -2292,40 +2266,40 @@
 			testCompleteStatus: 'Test complete. About {percent} percent of the preview does not meet {level} for {color}. Problem areas are marked with black and white stripes.'
 		},
 		da: {
-			toolChooserTitle: 'Hvad vil du tjekke?', toolChooserCopy: 'Vælg den opgave, der passer til det, du arbejder med.', simpleChoiceCopy: 'Sammenlign en forgrunds- og baggrundsfarve.', imageChoiceCopy: 'Find steder, hvor en valgt farve er svær at se.', changeTool: '← Skift værktøj', colorInvalid: 'Indtast en gyldig farve, for eksempel #1a2b3c.', swapColors: 'Byt farver', colorFormatHint: 'Brug en hexværdi eller en kendt CSS-farve.', textSizeHelpTitle: 'Hvad regnes som almindelig og stor tekst?', textSizeHelpCopy: 'Stor tekst er mindst 18 pt (typisk 24 px) eller 14 pt med fed skrift (typisk 18,5 px). Mindre tekst regnes som almindelig tekst.', useImageUrl: 'Brug en billed-URL', replaceImage: 'Vælg et andet billede', contrastUseLabel: 'Hvad skal farven bruges til?', pickerInstruction: 'Klik eller tryk på billedet for at vælge en farve. Med tastatur: fokuser billedet, flyt med piletasterne, og tryk Enter.', findProblemAreas: 'Find problemområder', updateResults: 'Opdater resultat', problemAreas: 'Problemområder', originalImage: 'Original', clearHighlights: 'Fjern markeringer', paletteAdvancedTitle: 'Avanceret: sammenlign billedets farver', paletteCopyUnique: 'Vælg en farveprøve som testfarve, eller gennemgå de 15 unikke par fra laveste til højeste kontrast.', selectPaletteColor: 'Brug {color} som testfarve', loadedImageSummary: '{name}, {width} gange {height} pixels', chooseImageFirstError: 'Vælg et billede, før du åbner tjekket.', clearHighlightsStatus: 'Markeringerne er fjernet. Originalbilledet vises.', resultOutdatedStatus: 'Indstillingerne er ændret. Opdater resultatet for at se de aktuelle problemområder.', simpleContrastPassLarge: 'Består AA for stor tekst og grafik.', smallTextAA: 'Almindelig tekst, AA (4,5:1)', smallTextAAA: 'Almindelig tekst, AAA (7:1)', testCompleteStatus: 'Testen er færdig. Cirka {percent} procent af forhåndsvisningen opfylder ikke {level} for {color}. Problemområder er markeret med sorte og hvide striber.'
+			toolChooserTitle: 'Hvad vil du tjekke?', toolChooserCopy: 'Vælg den opgave, der passer til det, du arbejder med.', simpleChoiceCopy: 'Sammenlign en forgrunds- og baggrundsfarve.', imageChoiceCopy: 'Find steder, hvor en valgt farve er svær at se.', changeTool: '← Skift værktøj', colorInvalid: 'Indtast en gyldig farve, for eksempel #1a2b3c.', swapColors: 'Byt farver', colorFormatHint: 'Brug en hexværdi eller en kendt CSS-farve.', textSizeHelpTitle: 'Hvad regnes som almindelig og stor tekst?', textSizeHelpCopy: 'Stor tekst er mindst 18 pt (typisk 24 px) eller 14 pt med fed skrift (typisk 18,5 px). Mindre tekst regnes som almindelig tekst.', useImageUrl: 'Brug en billed-URL', replaceImage: 'Vælg et andet billede', contrastUseLabel: 'Hvad skal farven bruges til?', findProblemAreas: 'Find problemområder', updateResults: 'Opdater resultat', problemAreas: 'Problemområder', originalImage: 'Original', clearHighlights: 'Fjern markeringer', paletteAdvancedTitle: 'Avanceret: sammenlign billedets farver', paletteCopyUnique: 'Vælg en farveprøve som testfarve, eller gennemgå de 15 unikke par fra laveste til højeste kontrast.', selectPaletteColor: 'Brug {color} som testfarve', loadedImageSummary: '{name}, {width} gange {height} pixels', chooseImageFirstError: 'Vælg et billede, før du åbner tjekket.', clearHighlightsStatus: 'Markeringerne er fjernet. Originalbilledet vises.', resultOutdatedStatus: 'Indstillingerne er ændret. Opdater resultatet for at se de aktuelle problemområder.', simpleContrastPassLarge: 'Består AA for stor tekst og grafik.', smallTextAA: 'Almindelig tekst, AA (4,5:1)', smallTextAAA: 'Almindelig tekst, AAA (7:1)', testCompleteStatus: 'Testen er færdig. Cirka {percent} procent af forhåndsvisningen opfylder ikke {level} for {color}. Problemområder er markeret med sorte og hvide striber.'
 		},
 		no: {
-			toolChooserTitle: 'Hva vil du sjekke?', toolChooserCopy: 'Velg oppgaven som passer til det du arbeider med.', simpleChoiceCopy: 'Sammenlign en forgrunns- og bakgrunnsfarge.', imageChoiceCopy: 'Finn steder der en valgt farge er vanskelig å se.', changeTool: '← Bytt verktøy', colorInvalid: 'Skriv inn en gyldig farge, for eksempel #1a2b3c.', swapColors: 'Bytt farger', colorFormatHint: 'Bruk en hexverdi eller en kjent CSS-farge.', textSizeHelpTitle: 'Hva regnes som vanlig og stor tekst?', textSizeHelpCopy: 'Stor tekst er minst 18 pt (vanligvis 24 px) eller 14 pt i fet skrift (vanligvis 18,5 px). Mindre tekst regnes som vanlig tekst.', useImageUrl: 'Bruk en bilde-URL', replaceImage: 'Velg et annet bilde', contrastUseLabel: 'Hva skal fargen brukes til?', pickerInstruction: 'Klikk eller trykk på bildet for å velge en farge. Med tastatur: fokuser bildet, flytt med piltastene og trykk Enter.', findProblemAreas: 'Finn problemområder', updateResults: 'Oppdater resultat', problemAreas: 'Problemområder', originalImage: 'Original', clearHighlights: 'Fjern markeringer', paletteAdvancedTitle: 'Avansert: sammenlign fargene i bildet', paletteCopyUnique: 'Velg en fargeprøve som testfarge, eller se de 15 unike parene fra lavest til høyest kontrast.', selectPaletteColor: 'Bruk {color} som testfarge', loadedImageSummary: '{name}, {width} ganger {height} piksler', chooseImageFirstError: 'Velg et bilde før du åpner kontrollen.', clearHighlightsStatus: 'Markeringene er fjernet. Originalbildet vises.', resultOutdatedStatus: 'Innstillingene er endret. Oppdater resultatet for å se gjeldende problemområder.', simpleContrastPassLarge: 'Består AA for stor tekst og grafikk.', smallTextAA: 'Vanlig tekst, AA (4,5:1)', smallTextAAA: 'Vanlig tekst, AAA (7:1)', testCompleteStatus: 'Testen er ferdig. Omtrent {percent} prosent av forhåndsvisningen oppfyller ikke {level} for {color}. Problemområdene er markert med svarte og hvite striper.'
+			toolChooserTitle: 'Hva vil du sjekke?', toolChooserCopy: 'Velg oppgaven som passer til det du arbeider med.', simpleChoiceCopy: 'Sammenlign en forgrunns- og bakgrunnsfarge.', imageChoiceCopy: 'Finn steder der en valgt farge er vanskelig å se.', changeTool: '← Bytt verktøy', colorInvalid: 'Skriv inn en gyldig farge, for eksempel #1a2b3c.', swapColors: 'Bytt farger', colorFormatHint: 'Bruk en hexverdi eller en kjent CSS-farge.', textSizeHelpTitle: 'Hva regnes som vanlig og stor tekst?', textSizeHelpCopy: 'Stor tekst er minst 18 pt (vanligvis 24 px) eller 14 pt i fet skrift (vanligvis 18,5 px). Mindre tekst regnes som vanlig tekst.', useImageUrl: 'Bruk en bilde-URL', replaceImage: 'Velg et annet bilde', contrastUseLabel: 'Hva skal fargen brukes til?', findProblemAreas: 'Finn problemområder', updateResults: 'Oppdater resultat', problemAreas: 'Problemområder', originalImage: 'Original', clearHighlights: 'Fjern markeringer', paletteAdvancedTitle: 'Avansert: sammenlign fargene i bildet', paletteCopyUnique: 'Velg en fargeprøve som testfarge, eller se de 15 unike parene fra lavest til høyest kontrast.', selectPaletteColor: 'Bruk {color} som testfarge', loadedImageSummary: '{name}, {width} ganger {height} piksler', chooseImageFirstError: 'Velg et bilde før du åpner kontrollen.', clearHighlightsStatus: 'Markeringene er fjernet. Originalbildet vises.', resultOutdatedStatus: 'Innstillingene er endret. Oppdater resultatet for å se gjeldende problemområder.', simpleContrastPassLarge: 'Består AA for stor tekst og grafikk.', smallTextAA: 'Vanlig tekst, AA (4,5:1)', smallTextAAA: 'Vanlig tekst, AAA (7:1)', testCompleteStatus: 'Testen er ferdig. Omtrent {percent} prosent av forhåndsvisningen oppfyller ikke {level} for {color}. Problemområdene er markert med svarte og hvite striper.'
 		},
 		sv: {
-			toolChooserTitle: 'Vad vill du kontrollera?', toolChooserCopy: 'Välj den uppgift som passar det du arbetar med.', simpleChoiceCopy: 'Jämför en förgrunds- och bakgrundsfärg.', imageChoiceCopy: 'Hitta platser där en vald färg är svår att se.', changeTool: '← Byt verktyg', colorInvalid: 'Ange en giltig färg, till exempel #1a2b3c.', swapColors: 'Byt färger', colorFormatHint: 'Använd ett hexvärde eller en känd CSS-färg.', textSizeHelpTitle: 'Vad räknas som normal och stor text?', textSizeHelpCopy: 'Stor text är minst 18 pt (vanligen 24 px) eller 14 pt i fetstil (vanligen 18,5 px). Mindre text räknas som normal text.', useImageUrl: 'Använd en bild-URL', replaceImage: 'Välj en annan bild', contrastUseLabel: 'Vad ska färgen användas till?', pickerInstruction: 'Klicka eller tryck på bilden för att välja en färg. Med tangentbord: fokusera bilden, flytta med piltangenterna och tryck Enter.', findProblemAreas: 'Hitta problemområden', updateResults: 'Uppdatera resultat', problemAreas: 'Problemområden', originalImage: 'Original', clearHighlights: 'Ta bort markeringar', paletteAdvancedTitle: 'Avancerat: jämför färgerna i bilden', paletteCopyUnique: 'Välj en färgruta som testfärg eller granska de 15 unika paren från lägst till högst kontrast.', selectPaletteColor: 'Använd {color} som testfärg', loadedImageSummary: '{name}, {width} gånger {height} pixlar', chooseImageFirstError: 'Välj en bild innan du öppnar kontrollen.', clearHighlightsStatus: 'Markeringarna har tagits bort. Originalbilden visas.', resultOutdatedStatus: 'Inställningarna har ändrats. Uppdatera resultatet för att se aktuella problemområden.', simpleContrastPassLarge: 'Godkänd för AA för stor text och grafik.', smallTextAA: 'Normal text, AA (4,5:1)', smallTextAAA: 'Normal text, AAA (7:1)', testCompleteStatus: 'Testet är klart. Cirka {percent} procent av förhandsvisningen uppfyller inte {level} för {color}. Problemområden markeras med svarta och vita ränder.'
+			toolChooserTitle: 'Vad vill du kontrollera?', toolChooserCopy: 'Välj den uppgift som passar det du arbetar med.', simpleChoiceCopy: 'Jämför en förgrunds- och bakgrundsfärg.', imageChoiceCopy: 'Hitta platser där en vald färg är svår att se.', changeTool: '← Byt verktyg', colorInvalid: 'Ange en giltig färg, till exempel #1a2b3c.', swapColors: 'Byt färger', colorFormatHint: 'Använd ett hexvärde eller en känd CSS-färg.', textSizeHelpTitle: 'Vad räknas som normal och stor text?', textSizeHelpCopy: 'Stor text är minst 18 pt (vanligen 24 px) eller 14 pt i fetstil (vanligen 18,5 px). Mindre text räknas som normal text.', useImageUrl: 'Använd en bild-URL', replaceImage: 'Välj en annan bild', contrastUseLabel: 'Vad ska färgen användas till?', findProblemAreas: 'Hitta problemområden', updateResults: 'Uppdatera resultat', problemAreas: 'Problemområden', originalImage: 'Original', clearHighlights: 'Ta bort markeringar', paletteAdvancedTitle: 'Avancerat: jämför färgerna i bilden', paletteCopyUnique: 'Välj en färgruta som testfärg eller granska de 15 unika paren från lägst till högst kontrast.', selectPaletteColor: 'Använd {color} som testfärg', loadedImageSummary: '{name}, {width} gånger {height} pixlar', chooseImageFirstError: 'Välj en bild innan du öppnar kontrollen.', clearHighlightsStatus: 'Markeringarna har tagits bort. Originalbilden visas.', resultOutdatedStatus: 'Inställningarna har ändrats. Uppdatera resultatet för att se aktuella problemområden.', simpleContrastPassLarge: 'Godkänd för AA för stor text och grafik.', smallTextAA: 'Normal text, AA (4,5:1)', smallTextAAA: 'Normal text, AAA (7:1)', testCompleteStatus: 'Testet är klart. Cirka {percent} procent av förhandsvisningen uppfyller inte {level} för {color}. Problemområden markeras med svarta och vita ränder.'
 		},
 		fi: {
-			toolChooserTitle: 'Mitä haluat tarkistaa?', toolChooserCopy: 'Valitse työhösi sopiva tehtävä.', simpleChoiceCopy: 'Vertaa edustan ja taustan väriä.', imageChoiceCopy: 'Etsi kohdat, joissa valittua väriä on vaikea nähdä.', changeTool: '← Vaihda työkalua', colorInvalid: 'Anna kelvollinen väri, esimerkiksi #1a2b3c.', swapColors: 'Vaihda värit', colorFormatHint: 'Käytä heksadesimaaliarvoa tai tunnettua CSS-väriä.', textSizeHelpTitle: 'Mikä on tavallista ja suurta tekstiä?', textSizeHelpCopy: 'Suuri teksti on vähintään 18 pt (yleensä 24 px) tai 14 pt lihavoituna (yleensä 18,5 px). Pienempi teksti on tavallista tekstiä.', useImageUrl: 'Käytä kuvan URL-osoitetta', replaceImage: 'Valitse toinen kuva', contrastUseLabel: 'Mihin väriä käytetään?', pickerInstruction: 'Valitse väri napsauttamalla tai napauttamalla kuvaa. Näppäimistöllä: kohdista kuvaan, liiku nuolinäppäimillä ja paina Enter.', findProblemAreas: 'Etsi ongelma-alueet', updateResults: 'Päivitä tulos', problemAreas: 'Ongelma-alueet', originalImage: 'Alkuperäinen', clearHighlights: 'Poista merkinnät', paletteAdvancedTitle: 'Lisäasetukset: vertaa kuvan värejä', paletteCopyUnique: 'Valitse värimalli testiväriksi tai tarkastele 15 ainutlaatuista paria pienimmästä suurimpaan kontrastiin.', selectPaletteColor: 'Käytä väriä {color} testivärinä', loadedImageSummary: '{name}, {width} kertaa {height} pikseliä', chooseImageFirstError: 'Valitse kuva ennen tarkistuksen avaamista.', clearHighlightsStatus: 'Merkinnät poistettiin. Alkuperäinen kuva näkyy.', resultOutdatedStatus: 'Asetukset muuttuivat. Päivitä tulos nähdäksesi nykyiset ongelma-alueet.', simpleContrastPassLarge: 'Täyttää suuren tekstin ja grafiikan AA-tason.', smallTextAA: 'Tavallinen teksti, AA (4,5:1)', smallTextAAA: 'Tavallinen teksti, AAA (7:1)', testCompleteStatus: 'Testi valmis. Noin {percent} prosenttia esikatselusta ei täytä tasoa {level} värille {color}. Ongelma-alueet on merkitty mustavalkoisilla raidoilla.'
+			toolChooserTitle: 'Mitä haluat tarkistaa?', toolChooserCopy: 'Valitse työhösi sopiva tehtävä.', simpleChoiceCopy: 'Vertaa edustan ja taustan väriä.', imageChoiceCopy: 'Etsi kohdat, joissa valittua väriä on vaikea nähdä.', changeTool: '← Vaihda työkalua', colorInvalid: 'Anna kelvollinen väri, esimerkiksi #1a2b3c.', swapColors: 'Vaihda värit', colorFormatHint: 'Käytä heksadesimaaliarvoa tai tunnettua CSS-väriä.', textSizeHelpTitle: 'Mikä on tavallista ja suurta tekstiä?', textSizeHelpCopy: 'Suuri teksti on vähintään 18 pt (yleensä 24 px) tai 14 pt lihavoituna (yleensä 18,5 px). Pienempi teksti on tavallista tekstiä.', useImageUrl: 'Käytä kuvan URL-osoitetta', replaceImage: 'Valitse toinen kuva', contrastUseLabel: 'Mihin väriä käytetään?', findProblemAreas: 'Etsi ongelma-alueet', updateResults: 'Päivitä tulos', problemAreas: 'Ongelma-alueet', originalImage: 'Alkuperäinen', clearHighlights: 'Poista merkinnät', paletteAdvancedTitle: 'Lisäasetukset: vertaa kuvan värejä', paletteCopyUnique: 'Valitse värimalli testiväriksi tai tarkastele 15 ainutlaatuista paria pienimmästä suurimpaan kontrastiin.', selectPaletteColor: 'Käytä väriä {color} testivärinä', loadedImageSummary: '{name}, {width} kertaa {height} pikseliä', chooseImageFirstError: 'Valitse kuva ennen tarkistuksen avaamista.', clearHighlightsStatus: 'Merkinnät poistettiin. Alkuperäinen kuva näkyy.', resultOutdatedStatus: 'Asetukset muuttuivat. Päivitä tulos nähdäksesi nykyiset ongelma-alueet.', simpleContrastPassLarge: 'Täyttää suuren tekstin ja grafiikan AA-tason.', smallTextAA: 'Tavallinen teksti, AA (4,5:1)', smallTextAAA: 'Tavallinen teksti, AAA (7:1)', testCompleteStatus: 'Testi valmis. Noin {percent} prosenttia esikatselusta ei täytä tasoa {level} värille {color}. Ongelma-alueet on merkitty mustavalkoisilla raidoilla.'
 		},
 		kl: {
-			toolChooserTitle: 'Suna misissorniar\u00adpiuk?', toolChooserCopy: 'Suliamut naleqquttumik toqqaruk.', simpleChoiceCopy: 'Sallit tunuliaqutallu qalipaataat sanilliukkit.', imageChoiceCopy: 'Qalipaatip toqqakkap takujuminaaffii nassaarikkit.', changeTool: '← Atortussaq allanngortiguk', colorInvalid: 'Qalipaat atuuttoq allaguk, assersuutigalugu #1a2b3c.', swapColors: 'Qalipaatit paarlaakkit', colorFormatHint: 'Hex-værdi imaluunniit CSS-ip qalipaataa ilisimaneqatoq atorlugu.', textSizeHelpTitle: 'Allatat nalinginnaasut angisuullu suuppat?', textSizeHelpCopy: 'Allatat angisuut minnerpaamik 18 pt-iupput (naliginnaasumik 24 px) imaluunniit fed-imik 14 pt-iullutik (naliginnaasumik 18,5 px). Mikinerit nalinginnaasuupput.', useImageUrl: 'Assip URL-ia atoruk', replaceImage: 'Assi alla toqqaruk', contrastUseLabel: 'Qalipaat sumut atorneqassava?', pickerInstruction: 'Qalipaat toqqarniarlugu assi tooruk. Keyboardimik assi fokusileruk, qarsut atorlugit nikisillutit Enter tooruk.', findProblemAreas: 'Ajornartorsiuteqarfiit nassaarikkit', updateResults: 'Angusaq nutarteruk', problemAreas: 'Ajornartorsiuteqarfiit', originalImage: 'Originali', clearHighlights: 'Nalunaaquttat piiakkit', paletteAdvancedTitle: 'Siuleqqiineq: assip qalipaatai sanilliukkit', paletteCopyUnique: 'Qalipaat misiliutissatut toqqaruk imaluunniit parit assigiinngitsut 15-it kontrastimik annikinnerpaamiit annerpaamut takukkit.', selectPaletteColor: '{color} misiliutissatut atoruk', loadedImageSummary: '{name}, {width} x {height} pixelit', chooseImageFirstError: 'Misissuut ammartinnagu assi toqqaruk.', clearHighlightsStatus: 'Nalunaaquttat piiarneqarput. Assi originali takutinneqarpoq.', resultOutdatedStatus: 'Aaqqissuussinerit allanngorput. Ajornartorsiuteqarfiit maanna atuuttut takuniarlugit angusaq nutarteruk.', simpleContrastPassLarge: 'Allatat angisuut grafikkillu AA naammassivaat.', smallTextAA: 'Allatat nalinginnaasut, AA (4,5:1)', smallTextAAA: 'Allatat nalinginnaasut, AAA (7:1)', testCompleteStatus: 'Misiliineq naammassivoq. Takussutissap {percent} procentia {color}-imut {level} naammassinngilaq. Ajornartorsiuteqarfiit qernertunik qaqortumillu titarnilersorneqarput.'
+			toolChooserTitle: 'Suna misissorniar\u00adpiuk?', toolChooserCopy: 'Suliamut naleqquttumik toqqaruk.', simpleChoiceCopy: 'Sallit tunuliaqutallu qalipaataat sanilliukkit.', imageChoiceCopy: 'Qalipaatip toqqakkap takujuminaaffii nassaarikkit.', changeTool: '← Atortussaq allanngortiguk', colorInvalid: 'Qalipaat atuuttoq allaguk, assersuutigalugu #1a2b3c.', swapColors: 'Qalipaatit paarlaakkit', colorFormatHint: 'Hex-værdi imaluunniit CSS-ip qalipaataa ilisimaneqatoq atorlugu.', textSizeHelpTitle: 'Allatat nalinginnaasut angisuullu suuppat?', textSizeHelpCopy: 'Allatat angisuut minnerpaamik 18 pt-iupput (naliginnaasumik 24 px) imaluunniit fed-imik 14 pt-iullutik (naliginnaasumik 18,5 px). Mikinerit nalinginnaasuupput.', useImageUrl: 'Assip URL-ia atoruk', replaceImage: 'Assi alla toqqaruk', contrastUseLabel: 'Qalipaat sumut atorneqassava?', findProblemAreas: 'Ajornartorsiuteqarfiit nassaarikkit', updateResults: 'Angusaq nutarteruk', problemAreas: 'Ajornartorsiuteqarfiit', originalImage: 'Originali', clearHighlights: 'Nalunaaquttat piiakkit', paletteAdvancedTitle: 'Siuleqqiineq: assip qalipaatai sanilliukkit', paletteCopyUnique: 'Qalipaat misiliutissatut toqqaruk imaluunniit parit assigiinngitsut 15-it kontrastimik annikinnerpaamiit annerpaamut takukkit.', selectPaletteColor: '{color} misiliutissatut atoruk', loadedImageSummary: '{name}, {width} x {height} pixelit', chooseImageFirstError: 'Misissuut ammartinnagu assi toqqaruk.', clearHighlightsStatus: 'Nalunaaquttat piiarneqarput. Assi originali takutinneqarpoq.', resultOutdatedStatus: 'Aaqqissuussinerit allanngorput. Ajornartorsiuteqarfiit maanna atuuttut takuniarlugit angusaq nutarteruk.', simpleContrastPassLarge: 'Allatat angisuut grafikkillu AA naammassivaat.', smallTextAA: 'Allatat nalinginnaasut, AA (4,5:1)', smallTextAAA: 'Allatat nalinginnaasut, AAA (7:1)', testCompleteStatus: 'Misiliineq naammassivoq. Takussutissap {percent} procentia {color}-imut {level} naammassinngilaq. Ajornartorsiuteqarfiit qernertunik qaqortumillu titarnilersorneqarput.'
 		},
 		is: {
-			toolChooserTitle: 'Hvað viltu athuga?', toolChooserCopy: 'Veldu verkefnið sem passar við það sem þú ert að vinna.', simpleChoiceCopy: 'Berðu saman forgrunns- og bakgrunnslit.', imageChoiceCopy: 'Finndu staði þar sem erfitt er að sjá valinn lit.', changeTool: '← Skipta um verkfæri', colorInvalid: 'Sláðu inn gildan lit, til dæmis #1a2b3c.', swapColors: 'Víxla litum', colorFormatHint: 'Notaðu hex-gildi eða þekktan CSS-lit.', textSizeHelpTitle: 'Hvað telst venjulegur og stór texti?', textSizeHelpCopy: 'Stór texti er að minnsta kosti 18 pt (venjulega 24 px) eða 14 pt feitletraður (venjulega 18,5 px). Minni texti telst venjulegur.', useImageUrl: 'Nota vefslóð myndar', replaceImage: 'Velja aðra mynd', contrastUseLabel: 'Í hvað verður liturinn notaður?', pickerInstruction: 'Smelltu eða pikkaðu á myndina til að velja lit. Með lyklaborði: settu fókus á myndina, færðu með örvatökkunum og ýrýstu á Enter.', findProblemAreas: 'Finna vandamálasvæði', updateResults: 'Uppfæra niðurstöðu', problemAreas: 'Vandamálasvæði', originalImage: 'Upprunaleg mynd', clearHighlights: 'Fjarlægja merkingar', paletteAdvancedTitle: 'Ítarlegt: bera saman liti myndarinnar', paletteCopyUnique: 'Veldu litasýni sem prófunarlit eða skoðaðu 15 einstök pör frá minnstu til mestu birtuskilum.', selectPaletteColor: 'Nota {color} sem prófunarlit', loadedImageSummary: '{name}, {width} sinnum {height} pixlar', chooseImageFirstError: 'Veldu mynd áður en þú opnar prófunina.', clearHighlightsStatus: 'Merkingar fjarlægðar. Upprunalega myndin sýnd.', resultOutdatedStatus: 'Stillingarnar breyttust. Uppfærðu niðurstöðuna til að sjá núverandi vandamálasvæði.', simpleContrastPassLarge: 'Stenst AA fyrir stóran texta og myndræna hluti.', smallTextAA: 'Venjulegur texti, AA (4,5:1)', smallTextAAA: 'Venjulegur texti, AAA (7:1)', testCompleteStatus: 'Prófun lokið. Um {percent} prósent af forskoðuninni uppfyllir ekki {level} fyrir {color}. Vandamálasvæði eru merkt með svörtum og hvítum röndum.'
+			toolChooserTitle: 'Hvað viltu athuga?', toolChooserCopy: 'Veldu verkefnið sem passar við það sem þú ert að vinna.', simpleChoiceCopy: 'Berðu saman forgrunns- og bakgrunnslit.', imageChoiceCopy: 'Finndu staði þar sem erfitt er að sjá valinn lit.', changeTool: '← Skipta um verkfæri', colorInvalid: 'Sláðu inn gildan lit, til dæmis #1a2b3c.', swapColors: 'Víxla litum', colorFormatHint: 'Notaðu hex-gildi eða þekktan CSS-lit.', textSizeHelpTitle: 'Hvað telst venjulegur og stór texti?', textSizeHelpCopy: 'Stór texti er að minnsta kosti 18 pt (venjulega 24 px) eða 14 pt feitletraður (venjulega 18,5 px). Minni texti telst venjulegur.', useImageUrl: 'Nota vefslóð myndar', replaceImage: 'Velja aðra mynd', contrastUseLabel: 'Í hvað verður liturinn notaður?', findProblemAreas: 'Finna vandamálasvæði', updateResults: 'Uppfæra niðurstöðu', problemAreas: 'Vandamálasvæði', originalImage: 'Upprunaleg mynd', clearHighlights: 'Fjarlægja merkingar', paletteAdvancedTitle: 'Ítarlegt: bera saman liti myndarinnar', paletteCopyUnique: 'Veldu litasýni sem prófunarlit eða skoðaðu 15 einstök pör frá minnstu til mestu birtuskilum.', selectPaletteColor: 'Nota {color} sem prófunarlit', loadedImageSummary: '{name}, {width} sinnum {height} pixlar', chooseImageFirstError: 'Veldu mynd áður en þú opnar prófunina.', clearHighlightsStatus: 'Merkingar fjarlægðar. Upprunalega myndin sýnd.', resultOutdatedStatus: 'Stillingarnar breyttust. Uppfærðu niðurstöðuna til að sjá núverandi vandamálasvæði.', simpleContrastPassLarge: 'Stenst AA fyrir stóran texta og myndræna hluti.', smallTextAA: 'Venjulegur texti, AA (4,5:1)', smallTextAAA: 'Venjulegur texti, AAA (7:1)', testCompleteStatus: 'Prófun lokið. Um {percent} prósent af forskoðuninni uppfyllir ekki {level} fyrir {color}. Vandamálasvæði eru merkt með svörtum og hvítum röndum.'
 		},
 		fo: {
-			toolChooserTitle: 'Hvat vilt tú kanna?', toolChooserCopy: 'Vel uppgávuna, sum hóskar til títt arbeiði.', simpleChoiceCopy: 'Samanber ein forgrunds- og bakgrundslit.', imageChoiceCopy: 'Finn støð, har ein valdur litur er ringur at síggja.', changeTool: '← Skift amboð', colorInvalid: 'Skriva ein gildugan lit, til dømis #1a2b3c.', swapColors: 'Být litir', colorFormatHint: 'Nýt eitt hex-virði ella ein kendan CSS-lit.', textSizeHelpTitle: 'Hvat telur sum vanligur og stórur tekstur?', textSizeHelpCopy: 'Stórur tekstur er minst 18 pt (vanliga 24 px), ella 14 pt við feitari skrift (vanliga 18,5 px). Minni tekstur telur sum vanligur.', useImageUrl: 'Nýt eina myndaleinkju', replaceImage: 'Vel eina aðra mynd', contrastUseLabel: 'Hvat skal liturin nýtast til?', pickerInstruction: 'Klikk ella trýst á myndina fyri at velja ein lit. Við knappaborði: fokusera myndina, flyt við pílunum og trýst Enter.', findProblemAreas: 'Finn trupulleikaøki', updateResults: 'Dagfør úrslitið', problemAreas: 'Trupulleikaøki', originalImage: 'Upprunalig mynd', clearHighlights: 'Tak merkingar burtur', paletteAdvancedTitle: 'Framkomið: samanber litirnar í myndini', paletteCopyUnique: 'Vel ein lit sum royndarlit ella kanna tey 15 serstøku pørini frá lágasta til hægsta kontrast.', selectPaletteColor: 'Nýt {color} sum royndarlit', loadedImageSummary: '{name}, {width} ferðir {height} pixlar', chooseImageFirstError: 'Vel eina mynd, áðrenn kanningin verður latin upp.', clearHighlightsStatus: 'Merkingarnar eru tiknar burtur. Upprunamyndin verður víst.', resultOutdatedStatus: 'Stillingarnar eru broyttar. Dagfør úrslitið fyri at síggja núverandi trupulleikaøki.', simpleContrastPassLarge: 'Stórur tekstur og grafikkur standa AA.', smallTextAA: 'Vanligur tekstur, AA (4,5:1)', smallTextAAA: 'Vanligur tekstur, AAA (7:1)', testCompleteStatus: 'Kanningin er liðug. Umleið {percent} prosent av forsýningini stendur ikki {level} fyri {color}. Trupulleikaøki eru merkt við svørtum og hvítum strípum.'
+			toolChooserTitle: 'Hvat vilt tú kanna?', toolChooserCopy: 'Vel uppgávuna, sum hóskar til títt arbeiði.', simpleChoiceCopy: 'Samanber ein forgrunds- og bakgrundslit.', imageChoiceCopy: 'Finn støð, har ein valdur litur er ringur at síggja.', changeTool: '← Skift amboð', colorInvalid: 'Skriva ein gildugan lit, til dømis #1a2b3c.', swapColors: 'Být litir', colorFormatHint: 'Nýt eitt hex-virði ella ein kendan CSS-lit.', textSizeHelpTitle: 'Hvat telur sum vanligur og stórur tekstur?', textSizeHelpCopy: 'Stórur tekstur er minst 18 pt (vanliga 24 px), ella 14 pt við feitari skrift (vanliga 18,5 px). Minni tekstur telur sum vanligur.', useImageUrl: 'Nýt eina myndaleinkju', replaceImage: 'Vel eina aðra mynd', contrastUseLabel: 'Hvat skal liturin nýtast til?', findProblemAreas: 'Finn trupulleikaøki', updateResults: 'Dagfør úrslitið', problemAreas: 'Trupulleikaøki', originalImage: 'Upprunalig mynd', clearHighlights: 'Tak merkingar burtur', paletteAdvancedTitle: 'Framkomið: samanber litirnar í myndini', paletteCopyUnique: 'Vel ein lit sum royndarlit ella kanna tey 15 serstøku pørini frá lágasta til hægsta kontrast.', selectPaletteColor: 'Nýt {color} sum royndarlit', loadedImageSummary: '{name}, {width} ferðir {height} pixlar', chooseImageFirstError: 'Vel eina mynd, áðrenn kanningin verður latin upp.', clearHighlightsStatus: 'Merkingarnar eru tiknar burtur. Upprunamyndin verður víst.', resultOutdatedStatus: 'Stillingarnar eru broyttar. Dagfør úrslitið fyri at síggja núverandi trupulleikaøki.', simpleContrastPassLarge: 'Stórur tekstur og grafikkur standa AA.', smallTextAA: 'Vanligur tekstur, AA (4,5:1)', smallTextAAA: 'Vanligur tekstur, AAA (7:1)', testCompleteStatus: 'Kanningin er liðug. Umleið {percent} prosent av forsýningini stendur ikki {level} fyri {color}. Trupulleikaøki eru merkt við svørtum og hvítum strípum.'
 		},
 		es: {
-			toolChooserTitle: '¿Qué quieres comprobar?', toolChooserCopy: 'Elige la tarea que corresponda a lo que estás haciendo.', simpleChoiceCopy: 'Compara un color de primer plano con uno de fondo.', imageChoiceCopy: 'Encuentra zonas donde sea difícil ver un color elegido.', changeTool: '← Cambiar herramienta', colorInvalid: 'Introduce un color válido, por ejemplo #1a2b3c.', swapColors: 'Intercambiar colores', colorFormatHint: 'Usa un valor hexadecimal o un color CSS reconocido.', textSizeHelpTitle: '¿Qué se considera texto normal y grande?', textSizeHelpCopy: 'El texto grande mide al menos 18 pt (normalmente 24 px), o 14 pt en negrita (normalmente 18,5 px). El texto menor se considera normal.', useImageUrl: 'Usar una URL de imagen', replaceImage: 'Elegir otra imagen', contrastUseLabel: '¿Para qué se usará el color?', pickerInstruction: 'Haz clic o toca la imagen para elegir un color. Con teclado: enfoca la imagen, muévete con las flechas y pulsa Intro.', findProblemAreas: 'Buscar zonas problemáticas', updateResults: 'Actualizar resultado', problemAreas: 'Zonas problemáticas', originalImage: 'Original', clearHighlights: 'Quitar marcas', paletteAdvancedTitle: 'Avanzado: comparar los colores de la imagen', paletteCopyUnique: 'Elige una muestra como color de prueba o revisa los 15 pares únicos de menor a mayor contraste.', selectPaletteColor: 'Usar {color} como color de prueba', loadedImageSummary: '{name}, {width} por {height} píxeles', chooseImageFirstError: 'Elige una imagen antes de abrir el comprobador.', clearHighlightsStatus: 'Se han quitado las marcas. Se muestra la imagen original.', resultOutdatedStatus: 'La configuración ha cambiado. Actualiza el resultado para ver las zonas problemáticas actuales.', simpleContrastPassLarge: 'Cumple AA para texto grande y gráficos.', smallTextAA: 'Texto normal, AA (4,5:1)', smallTextAAA: 'Texto normal, AAA (7:1)', testCompleteStatus: 'Prueba completada. Aproximadamente el {percent} por ciento de la vista previa no cumple {level} para {color}. Las zonas problemáticas se marcan con franjas blancas y negras.'
+			toolChooserTitle: '¿Qué quieres comprobar?', toolChooserCopy: 'Elige la tarea que corresponda a lo que estás haciendo.', simpleChoiceCopy: 'Compara un color de primer plano con uno de fondo.', imageChoiceCopy: 'Encuentra zonas donde sea difícil ver un color elegido.', changeTool: '← Cambiar herramienta', colorInvalid: 'Introduce un color válido, por ejemplo #1a2b3c.', swapColors: 'Intercambiar colores', colorFormatHint: 'Usa un valor hexadecimal o un color CSS reconocido.', textSizeHelpTitle: '¿Qué se considera texto normal y grande?', textSizeHelpCopy: 'El texto grande mide al menos 18 pt (normalmente 24 px), o 14 pt en negrita (normalmente 18,5 px). El texto menor se considera normal.', useImageUrl: 'Usar una URL de imagen', replaceImage: 'Elegir otra imagen', contrastUseLabel: '¿Para qué se usará el color?', findProblemAreas: 'Buscar zonas problemáticas', updateResults: 'Actualizar resultado', problemAreas: 'Zonas problemáticas', originalImage: 'Original', clearHighlights: 'Quitar marcas', paletteAdvancedTitle: 'Avanzado: comparar los colores de la imagen', paletteCopyUnique: 'Elige una muestra como color de prueba o revisa los 15 pares únicos de menor a mayor contraste.', selectPaletteColor: 'Usar {color} como color de prueba', loadedImageSummary: '{name}, {width} por {height} píxeles', chooseImageFirstError: 'Elige una imagen antes de abrir el comprobador.', clearHighlightsStatus: 'Se han quitado las marcas. Se muestra la imagen original.', resultOutdatedStatus: 'La configuración ha cambiado. Actualiza el resultado para ver las zonas problemáticas actuales.', simpleContrastPassLarge: 'Cumple AA para texto grande y gráficos.', smallTextAA: 'Texto normal, AA (4,5:1)', smallTextAAA: 'Texto normal, AAA (7:1)', testCompleteStatus: 'Prueba completada. Aproximadamente el {percent} por ciento de la vista previa no cumple {level} para {color}. Las zonas problemáticas se marcan con franjas blancas y negras.'
 		},
 		de: {
-			toolChooserTitle: 'Was möchtest du prüfen?', toolChooserCopy: 'Wähle die Aufgabe, die zu deiner Arbeit passt.', simpleChoiceCopy: 'Vergleiche eine Vordergrund- und eine Hintergrundfarbe.', imageChoiceCopy: 'Finde Stellen, an denen eine gewählte Farbe schwer zu erkennen ist.', changeTool: '← Werkzeug wechseln', colorInvalid: 'Gib eine gültige Farbe ein, zum Beispiel #1a2b3c.', swapColors: 'Farben tauschen', colorFormatHint: 'Verwende einen Hexwert oder eine bekannte CSS-Farbe.', textSizeHelpTitle: 'Was gilt als normaler und großer Text?', textSizeHelpCopy: 'Großer Text ist mindestens 18 pt groß (in der Regel 24 px) oder 14 pt bei Fettdruck (in der Regel 18,5 px). Kleinerer Text gilt als normal.', useImageUrl: 'Bild-URL verwenden', replaceImage: 'Anderes Bild wählen', contrastUseLabel: 'Wofür wird die Farbe verwendet?', pickerInstruction: 'Klicke oder tippe auf das Bild, um eine Farbe zu wählen. Mit der Tastatur: Bild fokussieren, mit den Pfeiltasten bewegen und Enter drücken.', findProblemAreas: 'Problembereiche finden', updateResults: 'Ergebnis aktualisieren', problemAreas: 'Problembereiche', originalImage: 'Original', clearHighlights: 'Markierungen entfernen', paletteAdvancedTitle: 'Erweitert: Farben im Bild vergleichen', paletteCopyUnique: 'Wähle ein Farbfeld als Testfarbe oder prüfe die 15 eindeutigen Paare vom niedrigsten zum höchsten Kontrast.', selectPaletteColor: '{color} als Testfarbe verwenden', loadedImageSummary: '{name}, {width} mal {height} Pixel', chooseImageFirstError: 'Wähle ein Bild, bevor du den Prüfer öffnest.', clearHighlightsStatus: 'Markierungen entfernt. Das Originalbild wird angezeigt.', resultOutdatedStatus: 'Die Einstellungen wurden geändert. Aktualisiere das Ergebnis, um die aktuellen Problembereiche zu sehen.', simpleContrastPassLarge: 'Erfüllt AA für großen Text und Grafiken.', smallTextAA: 'Normaler Text, AA (4,5:1)', smallTextAAA: 'Normaler Text, AAA (7:1)', testCompleteStatus: 'Test abgeschlossen. Etwa {percent} Prozent der Vorschau erfüllen {level} für {color} nicht. Problembereiche sind mit schwarzen und weißen Streifen markiert.'
+			toolChooserTitle: 'Was möchtest du prüfen?', toolChooserCopy: 'Wähle die Aufgabe, die zu deiner Arbeit passt.', simpleChoiceCopy: 'Vergleiche eine Vordergrund- und eine Hintergrundfarbe.', imageChoiceCopy: 'Finde Stellen, an denen eine gewählte Farbe schwer zu erkennen ist.', changeTool: '← Werkzeug wechseln', colorInvalid: 'Gib eine gültige Farbe ein, zum Beispiel #1a2b3c.', swapColors: 'Farben tauschen', colorFormatHint: 'Verwende einen Hexwert oder eine bekannte CSS-Farbe.', textSizeHelpTitle: 'Was gilt als normaler und großer Text?', textSizeHelpCopy: 'Großer Text ist mindestens 18 pt groß (in der Regel 24 px) oder 14 pt bei Fettdruck (in der Regel 18,5 px). Kleinerer Text gilt als normal.', useImageUrl: 'Bild-URL verwenden', replaceImage: 'Anderes Bild wählen', contrastUseLabel: 'Wofür wird die Farbe verwendet?', findProblemAreas: 'Problembereiche finden', updateResults: 'Ergebnis aktualisieren', problemAreas: 'Problembereiche', originalImage: 'Original', clearHighlights: 'Markierungen entfernen', paletteAdvancedTitle: 'Erweitert: Farben im Bild vergleichen', paletteCopyUnique: 'Wähle ein Farbfeld als Testfarbe oder prüfe die 15 eindeutigen Paare vom niedrigsten zum höchsten Kontrast.', selectPaletteColor: '{color} als Testfarbe verwenden', loadedImageSummary: '{name}, {width} mal {height} Pixel', chooseImageFirstError: 'Wähle ein Bild, bevor du den Prüfer öffnest.', clearHighlightsStatus: 'Markierungen entfernt. Das Originalbild wird angezeigt.', resultOutdatedStatus: 'Die Einstellungen wurden geändert. Aktualisiere das Ergebnis, um die aktuellen Problembereiche zu sehen.', simpleContrastPassLarge: 'Erfüllt AA für großen Text und Grafiken.', smallTextAA: 'Normaler Text, AA (4,5:1)', smallTextAAA: 'Normaler Text, AAA (7:1)', testCompleteStatus: 'Test abgeschlossen. Etwa {percent} Prozent der Vorschau erfüllen {level} für {color} nicht. Problembereiche sind mit schwarzen und weißen Streifen markiert.'
 		},
 		fr: {
-			toolChooserTitle: 'Que voulez-vous vérifier ?', toolChooserCopy: 'Choisissez la tâche qui correspond à votre travail.', simpleChoiceCopy: 'Comparez une couleur de premier plan et une couleur de fond.', imageChoiceCopy: 'Trouvez les zones où une couleur choisie est difficile à voir.', changeTool: '← Changer d’outil', colorInvalid: 'Saisissez une couleur valide, par exemple #1a2b3c.', swapColors: 'Permuter les couleurs', colorFormatHint: 'Utilisez une valeur hexadécimale ou une couleur CSS reconnue.', textSizeHelpTitle: 'Qu’est-ce qu’un texte normal ou grand ?', textSizeHelpCopy: 'Un grand texte mesure au moins 18 pt (généralement 24 px), ou 14 pt en gras (généralement 18,5 px). Un texte plus petit est considéré comme normal.', useImageUrl: 'Utiliser une URL d’image', replaceImage: 'Choisir une autre image', contrastUseLabel: 'À quoi la couleur servira-t-elle ?', pickerInstruction: 'Cliquez ou touchez l’image pour choisir une couleur. Au clavier : placez le focus sur l’image, déplacez-vous avec les flèches et appuyez sur Entrée.', findProblemAreas: 'Trouver les zones problématiques', updateResults: 'Actualiser le résultat', problemAreas: 'Zones problématiques', originalImage: 'Original', clearHighlights: 'Supprimer les marquages', paletteAdvancedTitle: 'Avancé : comparer les couleurs de l’image', paletteCopyUnique: 'Choisissez un échantillon comme couleur de test ou examinez les 15 paires uniques du contraste le plus faible au plus élevé.', selectPaletteColor: 'Utiliser {color} comme couleur de test', loadedImageSummary: '{name}, {width} par {height} pixels', chooseImageFirstError: 'Choisissez une image avant d’ouvrir le vérificateur.', clearHighlightsStatus: 'Les marquages sont supprimés. L’image originale est affichée.', resultOutdatedStatus: 'Les paramètres ont changé. Actualisez le résultat pour voir les zones problématiques actuelles.', simpleContrastPassLarge: 'Conforme au niveau AA pour le grand texte et les graphiques.', smallTextAA: 'Texte normal, AA (4,5:1)', smallTextAAA: 'Texte normal, AAA (7:1)', testCompleteStatus: 'Test terminé. Environ {percent} % de l’aperçu ne respecte pas {level} pour {color}. Les zones problématiques sont marquées par des rayures noires et blanches.'
+			toolChooserTitle: 'Que voulez-vous vérifier ?', toolChooserCopy: 'Choisissez la tâche qui correspond à votre travail.', simpleChoiceCopy: 'Comparez une couleur de premier plan et une couleur de fond.', imageChoiceCopy: 'Trouvez les zones où une couleur choisie est difficile à voir.', changeTool: '← Changer d’outil', colorInvalid: 'Saisissez une couleur valide, par exemple #1a2b3c.', swapColors: 'Permuter les couleurs', colorFormatHint: 'Utilisez une valeur hexadécimale ou une couleur CSS reconnue.', textSizeHelpTitle: 'Qu’est-ce qu’un texte normal ou grand ?', textSizeHelpCopy: 'Un grand texte mesure au moins 18 pt (généralement 24 px), ou 14 pt en gras (généralement 18,5 px). Un texte plus petit est considéré comme normal.', useImageUrl: 'Utiliser une URL d’image', replaceImage: 'Choisir une autre image', contrastUseLabel: 'À quoi la couleur servira-t-elle ?', findProblemAreas: 'Trouver les zones problématiques', updateResults: 'Actualiser le résultat', problemAreas: 'Zones problématiques', originalImage: 'Original', clearHighlights: 'Supprimer les marquages', paletteAdvancedTitle: 'Avancé : comparer les couleurs de l’image', paletteCopyUnique: 'Choisissez un échantillon comme couleur de test ou examinez les 15 paires uniques du contraste le plus faible au plus élevé.', selectPaletteColor: 'Utiliser {color} comme couleur de test', loadedImageSummary: '{name}, {width} par {height} pixels', chooseImageFirstError: 'Choisissez une image avant d’ouvrir le vérificateur.', clearHighlightsStatus: 'Les marquages sont supprimés. L’image originale est affichée.', resultOutdatedStatus: 'Les paramètres ont changé. Actualisez le résultat pour voir les zones problématiques actuelles.', simpleContrastPassLarge: 'Conforme au niveau AA pour le grand texte et les graphiques.', smallTextAA: 'Texte normal, AA (4,5:1)', smallTextAAA: 'Texte normal, AAA (7:1)', testCompleteStatus: 'Test terminé. Environ {percent} % de l’aperçu ne respecte pas {level} pour {color}. Les zones problématiques sont marquées par des rayures noires et blanches.'
 		},
 		pt: {
-			toolChooserTitle: 'O que pretende verificar?', toolChooserCopy: 'Escolha a tarefa adequada ao seu trabalho.', simpleChoiceCopy: 'Compare uma cor de primeiro plano e uma cor de fundo.', imageChoiceCopy: 'Encontre zonas onde seja difícil ver uma cor escolhida.', changeTool: '← Mudar de ferramenta', colorInvalid: 'Introduza uma cor válida, por exemplo #1a2b3c.', swapColors: 'Trocar cores', colorFormatHint: 'Use um valor hexadecimal ou uma cor CSS reconhecida.', textSizeHelpTitle: 'O que conta como texto normal e grande?', textSizeHelpCopy: 'O texto grande tem pelo menos 18 pt (normalmente 24 px), ou 14 pt em negrito (normalmente 18,5 px). Texto menor conta como normal.', useImageUrl: 'Usar um URL de imagem', replaceImage: 'Escolher outra imagem', contrastUseLabel: 'Para que será usada a cor?', pickerInstruction: 'Clique ou toque na imagem para escolher uma cor. Com o teclado: foque a imagem, mova com as setas e prima Enter.', findProblemAreas: 'Encontrar zonas problemáticas', updateResults: 'Atualizar resultado', problemAreas: 'Zonas problemáticas', originalImage: 'Original', clearHighlights: 'Remover marcações', paletteAdvancedTitle: 'Avançado: comparar as cores da imagem', paletteCopyUnique: 'Escolha uma amostra como cor de teste ou reveja os 15 pares únicos do menor para o maior contraste.', selectPaletteColor: 'Usar {color} como cor de teste', loadedImageSummary: '{name}, {width} por {height} píxeis', chooseImageFirstError: 'Escolha uma imagem antes de abrir o verificador.', clearHighlightsStatus: 'Marcações removidas. A imagem original é apresentada.', resultOutdatedStatus: 'As definições mudaram. Atualize o resultado para ver as zonas problemáticas atuais.', simpleContrastPassLarge: 'Passa AA para texto grande e gráficos.', smallTextAA: 'Texto normal, AA (4,5:1)', smallTextAAA: 'Texto normal, AAA (7:1)', testCompleteStatus: 'Teste concluído. Cerca de {percent} por cento da pré-visualização não cumpre {level} para {color}. As zonas problemáticas são marcadas com riscas pretas e brancas.'
+			toolChooserTitle: 'O que pretende verificar?', toolChooserCopy: 'Escolha a tarefa adequada ao seu trabalho.', simpleChoiceCopy: 'Compare uma cor de primeiro plano e uma cor de fundo.', imageChoiceCopy: 'Encontre zonas onde seja difícil ver uma cor escolhida.', changeTool: '← Mudar de ferramenta', colorInvalid: 'Introduza uma cor válida, por exemplo #1a2b3c.', swapColors: 'Trocar cores', colorFormatHint: 'Use um valor hexadecimal ou uma cor CSS reconhecida.', textSizeHelpTitle: 'O que conta como texto normal e grande?', textSizeHelpCopy: 'O texto grande tem pelo menos 18 pt (normalmente 24 px), ou 14 pt em negrito (normalmente 18,5 px). Texto menor conta como normal.', useImageUrl: 'Usar um URL de imagem', replaceImage: 'Escolher outra imagem', contrastUseLabel: 'Para que será usada a cor?', findProblemAreas: 'Encontrar zonas problemáticas', updateResults: 'Atualizar resultado', problemAreas: 'Zonas problemáticas', originalImage: 'Original', clearHighlights: 'Remover marcações', paletteAdvancedTitle: 'Avançado: comparar as cores da imagem', paletteCopyUnique: 'Escolha uma amostra como cor de teste ou reveja os 15 pares únicos do menor para o maior contraste.', selectPaletteColor: 'Usar {color} como cor de teste', loadedImageSummary: '{name}, {width} por {height} píxeis', chooseImageFirstError: 'Escolha uma imagem antes de abrir o verificador.', clearHighlightsStatus: 'Marcações removidas. A imagem original é apresentada.', resultOutdatedStatus: 'As definições mudaram. Atualize o resultado para ver as zonas problemáticas atuais.', simpleContrastPassLarge: 'Passa AA para texto grande e gráficos.', smallTextAA: 'Texto normal, AA (4,5:1)', smallTextAAA: 'Texto normal, AAA (7:1)', testCompleteStatus: 'Teste concluído. Cerca de {percent} por cento da pré-visualização não cumpre {level} para {color}. As zonas problemáticas são marcadas com riscas pretas e brancas.'
 		},
 		it: {
-			toolChooserTitle: 'Cosa vuoi controllare?', toolChooserCopy: 'Scegli l’attività adatta al tuo lavoro.', simpleChoiceCopy: 'Confronta un colore di primo piano e uno di sfondo.', imageChoiceCopy: 'Trova le zone in cui un colore scelto è difficile da vedere.', changeTool: '← Cambia strumento', colorInvalid: 'Inserisci un colore valido, ad esempio #1a2b3c.', swapColors: 'Scambia colori', colorFormatHint: 'Usa un valore esadecimale o un colore CSS riconosciuto.', textSizeHelpTitle: 'Cosa si intende per testo normale e grande?', textSizeHelpCopy: 'Il testo grande è di almeno 18 pt (in genere 24 px), oppure 14 pt in grassetto (in genere 18,5 px). Il testo più piccolo è considerato normale.', useImageUrl: 'Usa un URL immagine', replaceImage: 'Scegli un’altra immagine', contrastUseLabel: 'A cosa servirà il colore?', pickerInstruction: 'Fai clic o tocca l’immagine per scegliere un colore. Con la tastiera: porta il focus sull’immagine, spostati con le frecce e premi Invio.', findProblemAreas: 'Trova aree problematiche', updateResults: 'Aggiorna risultato', problemAreas: 'Aree problematiche', originalImage: 'Originale', clearHighlights: 'Rimuovi contrassegni', paletteAdvancedTitle: 'Avanzate: confronta i colori dell’immagine', paletteCopyUnique: 'Scegli un campione come colore di prova oppure esamina le 15 coppie uniche dal contrasto più basso al più alto.', selectPaletteColor: 'Usa {color} come colore di prova', loadedImageSummary: '{name}, {width} per {height} pixel', chooseImageFirstError: 'Scegli un’immagine prima di aprire il controllo.', clearHighlightsStatus: 'Contrassegni rimossi. Viene mostrata l’immagine originale.', resultOutdatedStatus: 'Le impostazioni sono cambiate. Aggiorna il risultato per vedere le aree problematiche attuali.', simpleContrastPassLarge: 'Supera AA per testo grande e grafica.', smallTextAA: 'Testo normale, AA (4,5:1)', smallTextAAA: 'Testo normale, AAA (7:1)', testCompleteStatus: 'Test completato. Circa il {percent} per cento dell’anteprima non soddisfa {level} per {color}. Le aree problematiche sono contrassegnate da strisce bianche e nere.'
+			toolChooserTitle: 'Cosa vuoi controllare?', toolChooserCopy: 'Scegli l’attività adatta al tuo lavoro.', simpleChoiceCopy: 'Confronta un colore di primo piano e uno di sfondo.', imageChoiceCopy: 'Trova le zone in cui un colore scelto è difficile da vedere.', changeTool: '← Cambia strumento', colorInvalid: 'Inserisci un colore valido, ad esempio #1a2b3c.', swapColors: 'Scambia colori', colorFormatHint: 'Usa un valore esadecimale o un colore CSS riconosciuto.', textSizeHelpTitle: 'Cosa si intende per testo normale e grande?', textSizeHelpCopy: 'Il testo grande è di almeno 18 pt (in genere 24 px), oppure 14 pt in grassetto (in genere 18,5 px). Il testo più piccolo è considerato normale.', useImageUrl: 'Usa un URL immagine', replaceImage: 'Scegli un’altra immagine', contrastUseLabel: 'A cosa servirà il colore?', findProblemAreas: 'Trova aree problematiche', updateResults: 'Aggiorna risultato', problemAreas: 'Aree problematiche', originalImage: 'Originale', clearHighlights: 'Rimuovi contrassegni', paletteAdvancedTitle: 'Avanzate: confronta i colori dell’immagine', paletteCopyUnique: 'Scegli un campione come colore di prova oppure esamina le 15 coppie uniche dal contrasto più basso al più alto.', selectPaletteColor: 'Usa {color} come colore di prova', loadedImageSummary: '{name}, {width} per {height} pixel', chooseImageFirstError: 'Scegli un’immagine prima di aprire il controllo.', clearHighlightsStatus: 'Contrassegni rimossi. Viene mostrata l’immagine originale.', resultOutdatedStatus: 'Le impostazioni sono cambiate. Aggiorna il risultato per vedere le aree problematiche attuali.', simpleContrastPassLarge: 'Supera AA per testo grande e grafica.', smallTextAA: 'Testo normale, AA (4,5:1)', smallTextAAA: 'Testo normale, AAA (7:1)', testCompleteStatus: 'Test completato. Circa il {percent} per cento dell’anteprima non soddisfa {level} per {color}. Le aree problematiche sono contrassegnate da strisce bianche e nere.'
 		}
 	};
 

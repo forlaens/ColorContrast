@@ -176,9 +176,6 @@
 							<span class="control-row">
 							<input id="test-color" class="hex-color-control" type="text" name="color" value="#000000" inputmode="text" spellcheck="false" autocomplete="off" aria-labelledby="testcolor-label" aria-describedby="test-color-error">
 								<input id="test-color-native" class="native-color-control" type="color" value="#000000" aria-label="Choose color visually" data-i18n-aria-label="chooseColorVisually">
-							<button id="colorpicker" class="cta ghost picker-button" type="button" aria-pressed="false" onclick="toggleColorPicker(this);">
-								<span data-i18n="pickColor">Pick a color from the image</span>
-							</button>
 						</span>
 						<span hidden id="test-color-error" class="field-error" data-i18n="colorInvalid">Enter a valid color, such as #1a2b3c.</span>
 							<span hidden id="selected-test-color" class="selected-test-color" aria-live="polite"></span>
@@ -196,7 +193,6 @@
 						</label>
 					</div>
 				</div>
-				<p hidden id="picker-instruction" class="picker-instruction" data-i18n="pickerInstruction">Click or tap the image to choose a color. With a keyboard, focus the image, move with the arrow keys, and press Enter.</p>
 				<div class="view-controls">
 					<button id="run-test" class="cta" type="button" onclick="initRenderContrast();" data-i18n="findProblemAreas">Find problem areas</button>
 				</div>
@@ -223,45 +219,12 @@
 					</div>
 				</div>
 
-				<p id="preview-help" class="sr-only" data-i18n="previewHelp">Use the zoom controls to inspect the image. If the image is larger than the visible preview, use the pan buttons or scroll the preview. Focus the image preview and use arrow keys to move the color picker.</p>
+				<p id="preview-help" class="sr-only" data-i18n="previewHelp">Use the zoom controls to inspect the image. If the image is larger than the visible preview, use the pan buttons or scroll the preview.</p>
 				<div class="preview-frame">
 					<section id="preview-viewport" class="preview-viewport">
 						<div id="preview-canvas-layer" class="preview-canvas-layer">
-						<canvas id="image_preview" class="preview" tabindex="0" aria-label="Image preview" data-i18n-aria-label="imagePreview" aria-describedby="preview-help" onmousedown="setTestColorFromCanvas(event, this);" onfocus="placeCrosshairs(this);" onkeydown="canvasKeyDown(this, event);" onkeyup="canvasKeyUp(event);" onblur="canvasBlur();"></canvas>
+						<canvas id="image_preview" class="preview" tabindex="0" aria-label="Image preview" data-i18n-aria-label="imagePreview" aria-describedby="preview-help"></canvas>
 						<canvas id="contrast_overlay" class="contrast-overlay" aria-hidden="true"></canvas>
-
-							<div id="crosshairs">
-					<svg aria-hidden="true" focusable="false" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1792 1792" xml:space="preserve">
-						<g>
-							<path class="white" d="M833.1,1691.6c-24.7,0-47.2-9.4-65-27.3c-17.9-17.9-27.3-40.4-27.3-65v-120.8
-								c-103-27.6-193.8-80.2-270.2-156.6c-76.4-76.4-129-167.2-156.6-270.2H193.1c-24.7,0-47.2-9.4-65-27.3c-17.9-17.9-27.3-40.4-27.3-65
-								v-128c0-24.7,9.4-47.2,27.3-65c17.9-17.9,40.4-27.3,65-27.3h120.8c27.6-103,80.2-193.8,156.6-270.2
-								c76.4-76.4,167.2-129,270.2-156.6V191.3c0-24.7,9.4-47.2,27.3-65c17.9-17.9,40.4-27.3,65-27.3h128c24.7,0,47.2,9.4,65,27.3
-								c17.9,17.9,27.3,40.4,27.3,65v120.8c103,27.6,193.8,80.2,270.2,156.6c76.4,76.4,129,167.2,156.6,270.2h120.8
-								c24.7,0,47.2,9.4,65,27.3c17.9,17.9,27.3,40.4,27.3,65v128c0,24.7-9.4,47.2-27.3,65c-17.9,17.9-40.4,27.3-65,27.3h-120.8
-								c-27.6,103-80.2,193.8-156.6,270.2c-76.4,76.4-167.2,129-270.2,156.6v120.8c0,24.7-9.4,47.2-27.3,65c-17.9,17.9-40.4,27.3-65,27.3
-								H833.1z M961.1,1122.9c24.7,0,47.2,9.4,65,27.3c17.9,17.9,27.3,40.4,27.3,65v69.2c52.3-20.9,99.3-52,140.1-92.8
-								c40.8-40.8,71.9-87.8,92.8-140.1h-69.2c-24.7,0-47.2-9.4-65-27.3c-17.9-17.9-27.3-40.4-27.3-65v-128c0-24.7,9.4-47.2,27.3-65
-								c17.9-17.9,40.4-27.3,65-27.3h69.2c-20.9-52.3-52-99.3-92.8-140.1c-40.8-40.8-87.8-71.9-140.1-92.8v69.2c0,24.7-9.4,47.2-27.3,65
-								c-17.9,17.9-40.4,27.3-65,27.3h-128c-24.7,0-47.2-9.4-65-27.3c-17.9-17.9-27.3-40.4-27.3-65v-69.2c-52.3,20.9-99.3,52-140.1,92.8
-								c-40.8,40.8-71.9,87.8-92.8,140.1h69.2c24.7,0,47.2,9.4,65,27.3c17.9,17.9,27.3,40.4,27.3,65v128c0,24.7-9.4,47.2-27.3,65
-								c-17.9,17.9-40.4,27.3-65,27.3h-69.2c20.9,52.3,52,99.3,92.8,140.1c40.8,40.8,87.8,71.9,140.1,92.8v-69.2c0-24.7,9.4-47.2,27.3-65
-								c17.9-17.9,40.4-27.3,65-27.3H961.1z"/>
-						</g>
-						<g>
-							<path d="M1325,1024h-109c-17.3,0-32.3-6.3-45-19s-19-27.7-19-45V832c0-17.3,6.3-32.3,19-45s27.7-19,45-19h109
-								c-21.3-72-58.8-134.8-112.5-188.5S1096,488.3,1024,467v109c0,17.3-6.3,32.3-19,45s-27.7,19-45,19H832c-17.3,0-32.3-6.3-45-19
-								s-19-27.7-19-45V467c-72,21.3-134.8,58.8-188.5,112.5S488.3,696,467,768h109c17.3,0,32.3,6.3,45,19s19,27.7,19,45v128
-								c0,17.3-6.3,32.3-19,45s-27.7,19-45,19H467c21.3,72,58.8,134.8,112.5,188.5S696,1303.7,768,1325v-109c0-17.3,6.3-32.3,19-45
-								s27.7-19,45-19h128c17.3,0,32.3,6.3,45,19s19,27.7,19,45v109c72-21.3,134.8-58.8,188.5-112.5S1303.7,1096,1325,1024z M1664,832v128
-								c0,17.3-6.3,32.3-19,45s-27.7,19-45,19h-143c-24.7,107.3-76.2,200.2-154.5,278.5S1131.3,1432.3,1024,1457v143
-								c0,17.3-6.3,32.3-19,45s-27.7,19-45,19H832c-17.3,0-32.3-6.3-45-19s-19-27.7-19-45v-143c-107.3-24.7-200.2-76.2-278.5-154.5
-								S359.7,1131.3,335,1024H192c-17.3,0-32.3-6.3-45-19s-19-27.7-19-45V832c0-17.3,6.3-32.3,19-45s27.7-19,45-19h143
-								c24.7-107.3,76.2-200.2,154.5-278.5S660.7,359.7,768,335V192c0-17.3,6.3-32.3,19-45s27.7-19,45-19h128c17.3,0,32.3,6.3,45,19
-								s19,27.7,19,45v143c107.3,24.7,200.2,76.2,278.5,154.5S1432.3,660.7,1457,768h143c17.3,0,32.3,6.3,45,19S1664,814.7,1664,832z"/>
-						</g>
-								</svg>
-								</div>
 					</div>
 			</section>
 						<div hidden id="pan-controls" class="pan-controls" role="group" aria-label="Pan image" data-i18n-aria-label="panControls">

@@ -1074,76 +1074,6 @@ test('image chooser rejects non-image files with a useful error', async () => {
   }
 });
 
-test('color picker supports keyboard placement and selection', async () => {
-  buildApp();
-
-  const server = await startStaticServer();
-  let browser;
-
-  try {
-    browser = await chromium.launch({ headless: true });
-    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
-    const page = await context.newPage();
-    await page.goto(`${server.url}#image-contrast`, { waitUntil: 'networkidle' });
-
-    await page.locator('#image_file').setInputFiles(resolve('dist/img/social-card.png'));
-    await page.waitForFunction(() => !document.querySelector('#step-2').hidden);
-
-    await page.locator('#colorpicker').click();
-    assert.equal(await page.evaluate(() => document.activeElement.id), 'image_preview');
-    const initialPickerPosition = await page.evaluate(() => {
-      const canvas = document.querySelector('#image_preview');
-      const crosshairs = document.querySelector('#crosshairs');
-
-      return {
-        x: Number(crosshairs.getAttribute('data-posx')),
-        y: Number(crosshairs.getAttribute('data-posy')),
-        expectedX: Math.floor(canvas.width / 2),
-        expectedY: Math.floor(canvas.height / 2)
-      };
-    });
-    assert.deepEqual(
-      { x: initialPickerPosition.x, y: initialPickerPosition.y },
-      { x: initialPickerPosition.expectedX, y: initialPickerPosition.expectedY }
-    );
-
-    await page.keyboard.press('ArrowRight');
-    await page.keyboard.press('Shift+ArrowDown');
-    await page.keyboard.press('Enter');
-
-    const pickerState = await page.evaluate(() => {
-      const crosshairs = document.querySelector('#crosshairs');
-      const x = Number(crosshairs.getAttribute('data-posx'));
-      const y = Number(crosshairs.getAttribute('data-posy'));
-
-      return {
-        pressed: document.querySelector('#colorpicker').getAttribute('aria-pressed'),
-        x,
-        y,
-        expected: pixelToHex(getContext(), x, y),
-        actual: document.querySelector('[name=color]').value
-      };
-    });
-
-    assert.equal(pickerState.pressed, 'true');
-    assert.deepEqual(
-      { x: pickerState.x, y: pickerState.y },
-      { x: initialPickerPosition.expectedX + 1, y: initialPickerPosition.expectedY + 10 }
-    );
-    assert.equal(pickerState.actual, pickerState.expected);
-    await page.waitForFunction((color) => document.querySelector('#settings-status').textContent.includes(color), pickerState.actual);
-    const escapedColor = pickerState.actual.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    assert.match(await page.locator('#settings-status').textContent(), new RegExp(`^Selected color ${escapedColor} \\(.+\\)\\.$`));
-
-    await context.close();
-  } finally {
-    if (browser) {
-      await browser.close();
-    }
-    await server.stop();
-  }
-});
-
 test('checker remembers the last color and conformance level', async () => {
   buildApp();
 
@@ -1459,31 +1389,11 @@ test('image preview supports zoom and only shows pan controls when the image ove
 
     const initialHandState = await page.evaluate(() => ({
       handPressed: document.querySelector('#hand-tool').getAttribute('aria-pressed'),
-      handMode: document.querySelector('#preview-viewport').classList.contains('is-hand-tool'),
-      pickerPressed: document.querySelector('#colorpicker').getAttribute('aria-pressed')
+      handMode: document.querySelector('#preview-viewport').classList.contains('is-hand-tool')
     }));
 
     assert.equal(initialHandState.handPressed, 'true');
     assert.equal(initialHandState.handMode, true);
-    assert.equal(initialHandState.pickerPressed, 'false');
-
-    await page.getByRole('button', { name: 'Pick a color from the image' }).click();
-
-    const pickerModeState = await page.evaluate(() => ({
-      handPressed: document.querySelector('#hand-tool').getAttribute('aria-pressed'),
-      handMode: document.querySelector('#preview-viewport').classList.contains('is-hand-tool'),
-      pickerPressed: document.querySelector('#colorpicker').getAttribute('aria-pressed'),
-      pickerMode: document.querySelector('#preview-viewport').classList.contains('is-color-picker')
-    }));
-
-    assert.equal(pickerModeState.handPressed, 'false');
-    assert.equal(pickerModeState.handMode, false);
-    assert.equal(pickerModeState.pickerPressed, 'true');
-    assert.equal(pickerModeState.pickerMode, true);
-
-    await page.evaluate(() => toggleHandTool(document.querySelector('#hand-tool')));
-    assert.equal(await page.locator('#hand-tool').getAttribute('aria-pressed'), 'true');
-    assert.equal(await page.locator('#preview-viewport').evaluate((viewport) => viewport.classList.contains('is-hand-tool')), true);
 
     await page.evaluate(() => {
       document.querySelector('#preview-viewport').scrollLeft = 0;
