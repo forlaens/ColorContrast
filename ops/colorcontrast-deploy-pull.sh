@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-readonly site_root='/srv/www/colorcontrast.2biaz.dk/public'
+readonly site_root='/srv/www/forlaens.com/colorcontrast/public'
 readonly release_sha_url='https://raw.githubusercontent.com/forlaens/ColorContrast/colorcontrast-production/.deploy-sha'
 readonly release_archive_url='https://codeload.github.com/forlaens/ColorContrast/tar.gz/refs/heads/colorcontrast-production'
 
