@@ -72,17 +72,20 @@ jobs:
           git -C "$release_dir" push --force origin colorcontrast-production
 
       - name: Verify live site
+        timeout-minutes: 6
         env:
           DEPLOY_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.merge_commit_sha || github.sha }}
         run: |
-          for attempt in $(seq 1 24); do
-            live_sha="$(curl --fail --silent --show-error --max-time 10 https://colorcontrast.forlaens.com/.deploy-sha || true)"
+          deadline=$((SECONDS + 300))
+          live_sha=''
+          while [ "$SECONDS" -lt "$deadline" ]; do
+            live_sha="$(curl --fail --silent --show-error --max-time 10 \
+              --header 'Cache-Control: no-cache' \
+              "https://colorcontrast.forlaens.com/.deploy-sha?expected=${DEPLOY_SOURCE_SHA}&check=${SECONDS}" || true)"
             if [ "$live_sha" = "$DEPLOY_SOURCE_SHA" ]; then
               exit 0
             fi
-            if [ "$attempt" -lt 24 ]; then
-              sleep 5
-            fi
+            sleep 5
           done
-          echo 'The live site did not receive the expected release.' >&2
+          printf 'Expected release %s; last observed release %s.\n' "$DEPLOY_SOURCE_SHA" "$live_sha" >&2
           exit 1
