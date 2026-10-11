@@ -1,0 +1,27 @@
+{
+  "name": "Forlæns Color Contrast Checker",
+  "short_name": "Forlæns Contrast",
+  "description": "Choose a color and check whether it stays readable or visible over an image.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fffaf4",
+  "theme_color": "#fffaf4",
+  "icons": [
+    {
+      "src": "/img/brand/forlaens-circle-mark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/img/favicon/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/img/favicon/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
