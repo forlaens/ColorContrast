@@ -18,6 +18,7 @@ jobs:
     name: Assign PR to owner
     if: github.event.action != 'closed'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Assign 2biazdk
@@ -42,6 +43,7 @@ jobs:
     name: Delete merged PR branch
     if: github.event.action == 'closed' && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Delete source branch
