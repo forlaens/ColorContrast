@@ -13,12 +13,13 @@ permissions:
 
 concurrency:
   group: deploy-colorcontrast-production
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
     name: Deploy static build
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     environment:
       name: production
       url: https://colorcontrast.forlaens.com
