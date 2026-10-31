@@ -1,44 +1,36 @@
 name: Deploy to production
 
 on:
-  workflow_run:
-    workflows:
-      - Tests
+  pull_request:
     branches:
       - main
     types:
-      - completed
+      - closed
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: deploy-colorcontrast-production
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
     name: Deploy static build
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     environment:
       name: production
       url: https://colorcontrast.forlaens.com
     if: >
-      github.event_name == 'workflow_dispatch' ||
-      (
-        github.event_name == 'workflow_run' &&
-        github.event.workflow_run.conclusion == 'success' &&
-        github.event.workflow_run.event == 'push' &&
-        github.event.workflow_run.head_repository.full_name == github.repository &&
-        github.event.workflow_run.head_branch == 'main'
-      )
+      github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
 
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || 'main' }}
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.merge_commit_sha || 'main' }}
 
       - name: Set up Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -63,24 +55,38 @@ jobs:
           test -d dist
           find dist -maxdepth 2 -type f | sort | head -50
 
-      - name: Configure restricted SSH deployment
+      - name: Publish static release
         env:
-          DEPLOY_SSH_PRIVATE_KEY: ${{ secrets.HETZNER_COLORCONTRAST_DEPLOY_SSH_KEY }}
+          DEPLOY_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.merge_commit_sha || github.sha }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
-          test -n "$DEPLOY_SSH_PRIVATE_KEY"
-          install -d -m 700 "$HOME/.ssh"
-          printf '%s\n' "$DEPLOY_SSH_PRIVATE_KEY" > "$HOME/.ssh/colorcontrast_deploy"
-          chmod 600 "$HOME/.ssh/colorcontrast_deploy"
-          printf '%s\n' '2.28.78.95 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPNkQnGVw2OTZX30yZTiiAdtzlo2llh1KEnkCtbCGD0/' > "$HOME/.ssh/known_hosts"
-          chmod 600 "$HOME/.ssh/known_hosts"
-
-      - name: Upload static files to Hetzner
-        run: |
-          rsync -rlptDz --delete --itemize-changes \
-            -e 'ssh -i ~/.ssh/colorcontrast_deploy -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes' \
-            dist/ deploy-colorcontrast@2.28.78.95:/srv/www/colorcontrast.2biaz.dk/public/
+          release_dir="$RUNNER_TEMP/colorcontrast-release"
+          install -d "$release_dir"
+          cp -R dist/. "$release_dir/"
+          printf '%s\n' "$DEPLOY_SOURCE_SHA" > "$release_dir/.deploy-sha"
+          git -C "$release_dir" init --initial-branch=colorcontrast-production
+          git -C "$release_dir" config user.name 'github-actions[bot]'
+          git -C "$release_dir" config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git -C "$release_dir" add --all
+          git -C "$release_dir" commit -m "Publish ColorContrast $DEPLOY_SOURCE_SHA"
+          git -C "$release_dir" remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git -C "$release_dir" push --force origin colorcontrast-production
 
       - name: Verify live site
+        timeout-minutes: 6
+        env:
+          DEPLOY_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.merge_commit_sha || github.sha }}
         run: |
-          curl --fail --silent --show-error --retry 5 --retry-all-errors --retry-delay 2 \
-            https://colorcontrast.forlaens.com/ -o /dev/null
+          deadline=$((SECONDS + 300))
+          live_sha=''
+          while [ "$SECONDS" -lt "$deadline" ]; do
+            live_sha="$(curl --fail --silent --show-error --max-time 10 \
+              --header 'Cache-Control: no-cache' \
+              "https://colorcontrast.forlaens.com/.deploy-sha?expected=${DEPLOY_SOURCE_SHA}&check=${SECONDS}" || true)"
+            if [ "$live_sha" = "$DEPLOY_SOURCE_SHA" ]; then
+              exit 0
+            fi
+            sleep 5
+          done
+          printf 'Expected release %s; last observed release %s.\n' "$DEPLOY_SOURCE_SHA" "$live_sha" >&2
+          exit 1

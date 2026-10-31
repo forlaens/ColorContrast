@@ -32,7 +32,7 @@ test('build creates a static release artifact', async () => {
   assert.equal(result.status, 0, [result.stdout, result.stderr].join('\n'));
 
   const index = await readFile(join(distDir, 'index.html'), 'utf8');
-  assert.match(index, /<title>Color contrast checker<\/title>/);
+  assert.match(index, /<title>Forlæns \| Color contrast checker<\/title>/);
   assert.match(index, /<meta property="og:url" content="https:\/\/colorcontrast\.forlaens\.com\/">/);
   assert.match(index, /<meta property="og:image" content="https:\/\/colorcontrast\.forlaens\.com\/img\/social-card\.png">/);
   assert.match(index, /<meta name="twitter:image" content="https:\/\/colorcontrast\.forlaens\.com\/img\/social-card\.png">/);
@@ -40,6 +40,7 @@ test('build creates a static release artifact', async () => {
   assert.match(index, /<script src="\/js\/app\.bundle\.js" defer><\/script>/);
   assert.equal(index.includes('<link href="/css/style.css" rel="stylesheet">'), false);
   assert.match(index, /<link rel="manifest" href="\/manifest\.webmanifest">/);
+  assert.match(index, /<link rel="icon" type="image\/svg\+xml" href="\/img\/brand\/forlaens-circle-mark\.svg">/);
 
   const rootEntries = await readdir('dist');
   assert.equal(rootEntries.includes('app'), false);
@@ -99,7 +100,7 @@ test('document provides a skip link to main content', async () => {
   assert.match(index, /<div class="app-shell">/);
   assert.match(index, /<header class="hero" aria-labelledby="app-title">/);
   assert.match(index, /<h1 id="app-title">/);
-  assert.match(index, /<a class="home-title-link" href="\/" onclick="return showFrontView\(\);" data-i18n="title">Color contrast checker<\/a>/);
+  assert.match(index, /<a class="home-title-link" href="\/" onclick="return showFrontView\(\);">\s*<img class="brand-mark" src="\/img\/brand\/forlaens-circle-mark\.svg" width="32" height="32" alt="">\s*<span data-i18n="title">Color contrast checker<\/span>\s*<\/a>/);
   assert.match(index, /<main id="main-content" class="app-main" tabindex="-1">/);
   assert.ok(index.indexOf('<header class="hero"') < index.indexOf('id="main-content"'));
   assert.ok(index.indexOf('<header class="hero"') < index.indexOf('<a class="skip-link"'));
@@ -118,7 +119,8 @@ test('document includes contact footer', async () => {
   assert.match(index, /<footer class="site-footer">/);
   assert.match(index, /<section hidden id="accessibility-statement" class="accessibility-page" aria-labelledby="accessibility-statement-title" tabindex="-1">/);
   assert.match(index, /<h2 id="accessibility-statement-title" data-i18n="accessibilityTitle">Accessibility statement<\/h2>/);
-  assert.match(index, /<p class="accessibility-lede" data-i18n="accessibilityIntro">/);
+  assert.match(index, /<p class="accessibility-lede" data-i18n="accessibilityIntro">This statement explains the accessibility target for the Color contrast checker/);
+  assert.doesNotMatch(index, /Image contrast checker/);
   assert.match(index, /<h3 id="accessibility-status-title" data-i18n="accessibilityStatusTitle">Conformance status<\/h3>/);
   assert.match(index, /<h3 id="accessibility-scope-title" data-i18n="accessibilityScopeTitle">Scope<\/h3>/);
   assert.match(index, /<h3 id="accessibility-standard-title" data-i18n="accessibilityStandardTitle">Accessibility approach<\/h3>/);
@@ -197,7 +199,9 @@ test('document implements the task-first workflow without eyebrow labels', async
   assert.match(index, /<div hidden id="pan-controls" class="pan-controls" role="group" aria-label="Pan image" data-i18n-aria-label="panControls">/);
   assert.match(index, /data-pan-direction="right" onclick="panPreview\(1, 0\);">→<\/button>/);
   assert.match(index, /<section id="preview-viewport" class="preview-viewport">/);
-  assert.match(index, /<canvas id="image_preview" class="preview" tabindex="0" aria-label="Image preview" data-i18n-aria-label="imagePreview" aria-describedby="preview-help"/);
+  assert.match(index, /<canvas id="image_preview" class="preview" tabindex="0" aria-label="Image preview" data-i18n-aria-label="imagePreview" aria-describedby="preview-help"><\/canvas>/);
+  assert.doesNotMatch(index, /id="colorpicker"/);
+  assert.doesNotMatch(index, /id="crosshairs"/);
   assert.match(index, /<details hidden id="palette-card" class="palette-card">/);
   assert.match(index, /<h2 id="palette-title" data-i18n="paletteTitle">Main colors in this image<\/h2>/);
   assert.match(index, /<ul id="palette-swatches" class="palette-swatches"><\/ul>/);
@@ -276,6 +280,12 @@ test('document includes dark mode support', async () => {
   assert.match(app, /prefers-color-scheme: dark/);
 });
 
+test('short views do not force empty space before the footer', async () => {
+  const styles = await readFile(join(distDir, 'css/style.css'), 'utf8');
+
+  assert.doesNotMatch(styles, /\.app-main\s*\{[^}]*min-height:\s*calc\(100vh - 148px\)/s);
+});
+
 test('document remembers checker settings', async () => {
   const app = await readFile(join(distDir, 'js/app.bundle.js'), 'utf8');
 
@@ -292,7 +302,7 @@ test('document keeps help contextual instead of a permanent instruction panel', 
   const index = await readFile(join(distDir, 'index.html'), 'utf8');
 
   assert.doesNotMatch(index, /id="intro-panel"/);
-  assert.match(index, /id="picker-instruction"/);
+  assert.doesNotMatch(index, /id="picker-instruction"/);
   assert.match(index, /class="help-disclosure"/);
   assert.match(index, /class="image-url-disclosure"/);
 });
@@ -300,12 +310,21 @@ test('document keeps help contextual instead of a permanent instruction panel', 
 test('build includes PWA files', async () => {
   const manifest = JSON.parse(await readFile(join(distDir, 'manifest.webmanifest'), 'utf8'));
   const serviceWorker = await readFile(join(distDir, 'sw.js'), 'utf8');
+  const brandMark = await readFile(join(distDir, 'img', 'brand', 'forlaens-circle-mark.svg'), 'utf8');
 
   assert.equal(manifest.display, 'standalone');
   assert.equal(manifest.start_url, '/');
   assert.equal(manifest.icons.length >= 2, true);
+  assert.deepEqual(manifest.icons[0], {
+    src: '/img/brand/forlaens-circle-mark.svg',
+    sizes: 'any',
+    type: 'image/svg+xml'
+  });
+  assert.match(brandMark, /#C95F2E/);
+  assert.match(brandMark, /#102F49/);
   assert.match(serviceWorker, /colorcontrast-[a-f0-9]{12}/);
   assert.match(serviceWorker, /\/js\/app\.bundle\.js/);
+  assert.match(serviceWorker, /\/img\/brand\/forlaens-circle-mark\.svg/);
   assert.match(serviceWorker, /fetch\(event\.request\)/);
   assert.match(serviceWorker, /caches\.match\(event\.request\)/);
 });

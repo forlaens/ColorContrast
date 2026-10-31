@@ -11,60 +11,6 @@ function resetFileInput() {
 	}
 }
 
-function setColorPickerActive(active) {
-	var button = id('colorpicker');
-	var viewport = id('preview-viewport');
-	var instruction = id('picker-instruction');
-	var selected = id('selected-test-color');
-
-	if (!button) {
-		return false;
-	}
-
-	active = active === true;
-	button.setAttribute('aria-pressed', active ? 'true' : 'false');
-
-	if (viewport) {
-		viewport.classList.toggle('is-color-picker', active);
-	}
-
-	if (instruction) {
-		instruction.hidden = !active;
-	}
-
-	if (selected) {
-		selected.hidden = !active;
-	}
-
-	return true;
-}
-
-function isColorPickerActive() {
-	var button = id('colorpicker');
-
-	return !!(button && button.getAttribute('aria-pressed') === 'true');
-}
-
-function toggleColorPicker(button) {
-	var value = (button.getAttribute('aria-pressed') !== 'true');
-
-	if (value && window.setHandToolActive) {
-		window.setHandToolActive(false);
-	}
-
-	setColorPickerActive(value);
-
-	button.setAttribute('aria-pressed', value);
-	if (value) {
-		activateColorPicker(button);
-	}
-}
-
-function activateColorPicker(button) {
-	var preview = selector('#image_preview');
-	preview.focus();
-}
-
 function getTestContrast() {
 	var contrastValue = selector('[name=contrast]').value;
 	return parseFloat(contrastValue);
@@ -74,23 +20,6 @@ function getTestColor() {
 	var testColor = normalizeColorToHex(selector('[name=color]').value);
 	return hexToRgb(testColor);
 }
-
-function setTestColorFromCanvas(e, canvas) {
-	if ((window.isHandToolActive && window.isHandToolActive()) || !isColorPickerActive()) {
-		return false;
-	}
-
-	var position = getCanvasCursorPosition(e, canvas);
-	var x = Math.floor(position.x);
-	var y = Math.floor(position.y);
-
-	moveCrosshairs(canvas, x, y);
-
-	var color = pixelToHex(getContext(), x, y);
-	setTestColor(color, true);
-}
-
-window.setColorPickerActive = setColorPickerActive;
 
 function setTestColor(hex, shouldAnnounce) {
 	if (hex == 'transparent') {
@@ -224,46 +153,4 @@ function showResetBtn() {
 
 function hideResetBtn() {
 	selector('#reset-image').hidden = true;
-}
-
-function placeCrosshairs(canvas) {
-	var crosshairs = selector('#crosshairs');
-	var x = parseInt(crosshairs.getAttribute('data-posx'));
-	var y = parseInt(crosshairs.getAttribute('data-posy'));
-
-	if (Number.isNaN(x) || Number.isNaN(y) || x >= canvas.width || y >= canvas.height) {
-		x = Math.floor(canvas.width / 2);
-		y = Math.floor(canvas.height / 2);
-	}
-
-	moveCrosshairs(canvas, x, y);
-	crosshairs.setAttribute('data-positioned', 'true');
-}
-
-function moveCrosshairs(canvas, x, y) {
-	var crosshairs = selector('#crosshairs');
-	var maxX = Math.max(0, canvas.width - 1);
-	var maxY = Math.max(0, canvas.height - 1);
-
-	x = Math.max(x, 0);
-	x = Math.min(x, maxX);
-
-	y = Math.max(y, 0);
-	y = Math.min(y, maxY);
-
-	crosshairs.setAttribute('data-posx', x);
-	crosshairs.setAttribute('data-posy', y);
-
-	crosshairs.style.left = canvas.offsetLeft + x - (crosshairs.offsetWidth / 2) + 'px';
-	crosshairs.style.top = y - (crosshairs.offsetWidth / 2) + 'px';
-}
-
-function pickColorFromCrosshairs() {
-	var crosshairs = selector('#crosshairs');
-
-	var x = parseInt(crosshairs.getAttribute('data-posx'));
-	var y = parseInt(crosshairs.getAttribute('data-posy'));
-
-	var color = pixelToHex(getContext(), x, y);
-	setTestColor(color, true);
 }

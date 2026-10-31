@@ -36,15 +36,17 @@ function updateDocumentTitleForView() {
 		return false;
 	}
 
+	var pageTitle = translate('title');
+
 	if (isAccessibilityStatementView()) {
-		document.title = translate('accessibilityTitle') + ' - ' + translate('title');
+		pageTitle = translate('accessibilityTitle') + ' - ' + pageTitle;
 	} else if (isSimpleContrastView()) {
-		document.title = translate('simpleContrastTitle') + ' - ' + translate('title');
+		pageTitle = translate('simpleContrastTitle') + ' - ' + pageTitle;
 	} else if (isImageContrastView()) {
-		document.title = translate('chooseImage') + ' - ' + translate('title');
-	} else {
-		document.title = translate('title');
+		pageTitle = translate('chooseImage') + ' - ' + pageTitle;
 	}
+
+	document.title = 'Forlæns | ' + pageTitle;
 
 	return true;
 }

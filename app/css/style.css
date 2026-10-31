@@ -1168,10 +1168,6 @@ input[type=color] {
 	user-select: none;
 }
 
-.preview-viewport.is-color-picker {
-	cursor: crosshair;
-}
-
 .preview-canvas-layer {
 	position: relative;
 	min-width: 100%;
@@ -1228,10 +1224,6 @@ input[type=color] {
 	background-position: 0 0, 0 16px, 16px -16px, -16px 0;
 }
 
-.preview-viewport.is-color-picker .preview {
-	cursor: crosshair;
-}
-
 .preview-viewport.is-hand-tool .preview {
 	cursor: grab;
 }
@@ -1243,29 +1235,6 @@ input[type=color] {
 #checker-settings .cta {
 	max-width: 100%;
 	white-space: normal;
-}
-
-#crosshairs {
-	pointer-events: none;
-	display: none;
-	position: absolute;
-	width: 16px;
-	height: 16px;
-}
-
-#crosshairs svg {
-	width: 100%;
-	height: 100%;
-}
-
-#crosshairs svg .white {
-	stroke: white;
-	stroke-linejoin: round;
-	stroke-width: 100;
-}
-
-.preview:focus + .contrast-overlay + #crosshairs {
-	display: block;
 }
 
 /* One task at a time: chooser, simple checker, and image checker. */
@@ -1312,7 +1281,7 @@ input[type=color] {
 	text-decoration: none;
 }
 
-.tool-choice:hover {
+.tool-choice:hover:not(:focus-visible) {
 	border-color: var(--accent);
 	background: var(--panel-soft);
 }
@@ -1449,18 +1418,6 @@ input[type=color] {
 	font-weight: 700;
 }
 
-.picker-button {
-	gap: 8px;
-	white-space: normal;
-}
-
-.picker-button svg {
-	flex: 0 0 auto;
-	width: 18px;
-	height: 18px;
-	fill: currentColor;
-}
-
 .selected-test-color {
 	display: inline-flex;
 	align-items: center;
@@ -1478,15 +1435,6 @@ input[type=color] {
 	border: 1px solid var(--border-strong);
 	border-radius: 4px;
 	background: var(--selected-color);
-}
-
-.picker-instruction {
-	flex-basis: 100%;
-	margin: 0;
-	padding: 10px 12px;
-	border-left: 4px solid var(--accent);
-	background: var(--panel);
-	color: var(--text);
 }
 
 .result-view-controls {
@@ -1509,10 +1457,6 @@ input[type=color] {
 	top: 0;
 	left: 0;
 	z-index: 1;
-}
-
-#crosshairs {
-	z-index: 2;
 }
 
 .palette-card {
@@ -1633,10 +1577,6 @@ input[type=color] {
 		flex-wrap: wrap;
 	}
 
-	.picker-button {
-		flex: 1 1 190px;
-	}
-
 	select {
 		width: 100%;
 	}
@@ -1645,7 +1585,6 @@ input[type=color] {
 @media (forced-colors: active) {
 	.tool-choice,
 	.checker-result,
-	.picker-instruction,
 	.palette-pairs > li {
 		forced-color-adjust: auto;
 		border: 2px solid CanvasText;
@@ -1722,27 +1661,27 @@ input[type=color] {
 	}
 }
 
-/* Editorial workbench: one clear hierarchy, restrained surfaces, stronger previews. */
+/* Forlæns light mode: an off-white field, deep-blue structure, and warm orange actions. */
 :root {
-	--bg: #f6f7fb;
+	--bg: #fffaf4;
 	--panel: #ffffff;
-	--panel-soft: #f8fafc;
-	--text: #111827;
-	--muted: #374151;
-	--border: #d9dee7;
-	--border-strong: #c5ccd8;
-	--accent: #0b4f4a;
-	--accent-dark: #083d39;
-	--accent-text: #ffffff;
-	--button-strong-bg: #111827;
-	--button-strong-text: #ffffff;
-	--focus-ring: #075eeb;
-	--focus-gap: #ffffff;
+	--panel-soft: #f7eee3;
+	--text: #102f49;
+	--muted: #284158;
+	--border: #dfd2c1;
+	--border-strong: #c9b8a5;
+	--accent: #7c3519;
+	--accent-dark: #5e260f;
+	--accent-text: #fffaf4;
+	--button-strong-bg: #102f49;
+	--button-strong-text: #fffaf4;
+	--focus-ring: #9d4a24;
+	--focus-gap: #fffaf4;
 	--status-pass-bg: #d1fae5;
 	--status-pass-text: #064e3b;
 	--status-fail-bg: #fee2e2;
 	--status-fail-text: #7f1d1d;
-	--transparent-canvas: #7f8b93;
+	--transparent-canvas: #586e80;
 	--transparent-grid: rgba(255, 255, 255, 0.16);
 	--radius: 6px;
 	--content: 1120px;
@@ -1859,7 +1798,14 @@ body {
 .home-title-link {
 	display: inline-flex;
 	align-items: center;
+	gap: 10px;
 	min-height: 44px;
+}
+
+.brand-mark {
+	flex: 0 0 auto;
+	width: 32px;
+	height: 32px;
 }
 
 .header-controls {
@@ -1894,7 +1840,6 @@ body {
 
 .app-main {
 	width: min(var(--content), calc(100% - 40px));
-	min-height: calc(100vh - 148px);
 	margin: 0 auto;
 	padding: clamp(28px, 5vw, 68px) 0 clamp(56px, 7vw, 92px);
 }
@@ -1961,12 +1906,12 @@ body {
 	color: var(--text);
 }
 
-.tool-choice:hover {
+.tool-choice:hover:not(:focus-visible) {
 	background: var(--panel-soft);
 	box-shadow: none;
 }
 
-.tool-choice:first-child:hover {
+.tool-choice:first-child:hover:not(:focus-visible) {
 	background: var(--panel-soft);
 }
 
@@ -2360,8 +2305,7 @@ body {
 	min-height: 40px;
 }
 
-.loaded-image-summary .cta:hover,
-.picker-button:hover {
+.loaded-image-summary .cta:hover {
 	border-color: var(--text);
 	background: var(--panel-soft);
 	color: var(--text);
@@ -2402,7 +2346,6 @@ body {
 	display: grid;
 	grid-template-areas:
 		"settings action"
-		"instruction instruction"
 		"result result";
 	grid-template-columns: minmax(0, 1fr) auto;
 	align-content: start;
@@ -2443,11 +2386,6 @@ body {
 	gap: 8px;
 }
 
-.color-field .picker-button {
-	grid-column: 1 / span 2;
-	justify-content: flex-start;
-}
-
 .color-field .hex-color-control,
 .checker select {
 	width: 100%;
@@ -2466,15 +2404,6 @@ body {
 	min-height: 36px;
 	padding: 7px;
 	background: var(--panel-soft);
-}
-
-.picker-instruction {
-	grid-area: instruction;
-	margin: 0;
-	padding: 8px 0 8px 16px;
-	border: 0;
-	border-left: 3px solid var(--accent);
-	background: transparent;
 }
 
 .view-controls {

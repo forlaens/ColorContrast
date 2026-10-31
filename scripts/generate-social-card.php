@@ -3,14 +3,14 @@
 $width = 1200;
 $height = 630;
 $output = __DIR__ . '/../app/img/social-card.png';
-$lines = ['Color contrast', 'image checker'];
+$lines = ['Forlæns', 'Color Contrast Checker'];
 
 $image = imagecreatetruecolor($width, $height);
 
-$white = imagecolorallocate($image, 255, 255, 255);
-$black = imagecolorallocate($image, 17, 24, 39);
+$cream = imagecolorallocate($image, 255, 250, 244);
+$blue = imagecolorallocate($image, 16, 47, 73);
 
-imagefilledrectangle($image, 0, 0, $width, $height, $white);
+imagefilledrectangle($image, 0, 0, $width, $height, $blue);
 
 $fontPaths = [
 	'/System/Library/Fonts/Supplemental/Arial Bold.ttf',
@@ -51,7 +51,7 @@ if ($fontPath && function_exists('imagettftext')) {
 	foreach ($lines as $index => $line) {
 		$x = (int) (($width - $lineWidths[$index]) / 2);
 		$baseline = $y + $lineHeights[$index];
-		imagettftext($image, $fontSize, 0, $x, $baseline, $black, $fontPath, $line);
+		imagettftext($image, $fontSize, 0, $x, $baseline, $cream, $fontPath, $line);
 		$y = $baseline + $lineGap;
 	}
 } else {
@@ -63,7 +63,7 @@ if ($fontPath && function_exists('imagettftext')) {
 	foreach ($lines as $line) {
 		$textWidth = imagefontwidth($font) * strlen($line);
 		$x = (int) (($width - $textWidth) / 2);
-		imagestring($image, $font, $x, $y, $line, $black);
+		imagestring($image, $font, $x, $y, $line, $cream);
 		$y += $textHeight + 12;
 	}
 }
