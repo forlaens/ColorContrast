@@ -42,5 +42,11 @@
     "esbuild": "^0.28.2",
     "html-validate": "^11.10.0",
     "ws": "^8.21.3"
+  },
+  "overrides": {
+    "@siteimprove/alfa-test-utils": {
+      "simple-git": "4.0.2"
+    },
+    "body-parser@2": "2.4.0"
   }
 }
