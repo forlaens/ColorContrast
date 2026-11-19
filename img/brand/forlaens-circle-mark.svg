@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Verified export of the active circular Forlæns mark from forlaens.com. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" shape-rendering="geometricPrecision">
+  <circle cx="500" cy="500" r="460" fill="#FFFFFF"/>
+  <defs>
+    <clipPath id="forlaensCircleMarkClip"><circle cx="500" cy="500" r="460"/></clipPath>
+  </defs>
+  <g clip-path="url(#forlaensCircleMarkClip)">
+    <path d="M-20 -20 L330 20 L490 500 L330 980 L-20 1020 Z" fill="#C95F2E"/>
+    <path d="M412.5 20 L507.5 20 L667.5 500 L507.5 980 L412.5 980 L572.5 500 Z" fill="#102F49"/>
+    <path d="M590 20 L1100 -100 L1100 1100 L590 980 L750 500 Z" fill="#102F49"/>
+  </g>
+</svg>
