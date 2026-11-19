@@ -1,11 +1,9 @@
 name: Deploy to production
 
 on:
-  pull_request:
+  push:
     branches:
       - main
-    types:
-      - closed
   workflow_dispatch:
 
 permissions:
@@ -23,14 +21,13 @@ jobs:
     environment:
       name: production
       url: https://colorcontrast.forlaens.com
-    if: >
-      github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.merge_commit_sha || 'main' }}
+          ref: ${{ github.sha }}
 
       - name: Set up Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -57,7 +54,7 @@ jobs:
 
       - name: Publish static release
         env:
-          DEPLOY_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.merge_commit_sha || github.sha }}
+          DEPLOY_SOURCE_SHA: ${{ github.sha }}
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           release_dir="$RUNNER_TEMP/colorcontrast-release"
@@ -75,7 +72,7 @@ jobs:
       - name: Verify live site
         timeout-minutes: 6
         env:
-          DEPLOY_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.merge_commit_sha || github.sha }}
+          DEPLOY_SOURCE_SHA: ${{ github.sha }}
         run: |
           deadline=$((SECONDS + 300))
           live_sha=''

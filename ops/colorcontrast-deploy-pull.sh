@@ -36,4 +36,7 @@ test -f "$work_dir/release/js/app.bundle.js"
 test -f "$work_dir/release/.deploy-sha"
 test "$(<"$work_dir/release/.deploy-sha")" = "$candidate_sha"
 
-rsync -rlptD --delete --safe-links "$work_dir/release/" "$site_root/"
+# A missing marker means the site is between releases and the timer must retry.
+rm -f -- "$site_root/.deploy-sha"
+rsync -rlptD --delete --safe-links --exclude='/.deploy-sha' "$work_dir/release/" "$site_root/"
+rsync -pt "$work_dir/release/.deploy-sha" "$site_root/.deploy-sha"
